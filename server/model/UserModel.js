@@ -14,9 +14,11 @@ const UsersSchema = new Schema(
       type: String,
       required: true,
     },
-    gender: {
+    sex: {
       type: String,
+      enum: ["Male", "Female"],
       required: true,
+      default: "Male",
     },
     email: {
       type: String,
@@ -47,12 +49,20 @@ const UsersSchema = new Schema(
       type: String,
       default: null, // Only relevant for INSTITUTION
     },
+    institutionPosition: {
+      type: String,
+      default: null, // Only relevant for INSTITUTION
+    },
+    InstitutionAccountStatus: {
+      type: String,
+      default: "null",
+    },
     studentId: {
       type: String,
       default: null, // Only relevant for STUDENT
     },
-    DepartmentId: {
-      type: Schema.Types.ObjectId,
+    Department: {
+      type: String,
       default: null,
     },
   },

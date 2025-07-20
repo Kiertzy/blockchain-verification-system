@@ -3,6 +3,9 @@ const dotenv = require("dotenv");
 const app = new express();
 const path = require("path"); 
 
+//Import route
+const routes = require("./routes");
+
 //Internal Lib Import
 const {
   DefaultErrorHandler,
@@ -31,6 +34,9 @@ const DB_OPTIONS = {
 
 //connection database
 connectDB(MONGODB_CONNECTION_URL, DB_OPTIONS);
+
+// Routing Implement
+app.use("/api/v1", routes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
