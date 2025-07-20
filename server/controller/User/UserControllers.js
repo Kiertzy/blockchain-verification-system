@@ -12,7 +12,7 @@ const RecoveryResetPassService = require("../../services/User/RecoveryResetPassS
 /**
  * @desc Employee Change Password
  * @access private
- * @route /api/v1/Employee/EmployeeChangePassword
+ * @route /api/v1/User/UserChangePassword
  * @methud PUT
  */
 const UserChangePassword = async (req, res, next) => {
@@ -40,7 +40,7 @@ const SendRecoveryOtp = async (req, res, next) => {
 };
 
 /**
- * @desc Verify Recovary Otp
+ * @desc Verify Recovery Otp
  * @access public
  * @route /api/v1/User/VerifyRecoveryOtp/:/email/:otpCode
  * @methud GET

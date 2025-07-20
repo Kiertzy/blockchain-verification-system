@@ -1,5 +1,5 @@
 //External Lib Import
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 //Internal Import
 const { CreateError } = require("../../helper/ErrorHandler");

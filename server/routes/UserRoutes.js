@@ -26,3 +26,5 @@ UserRoutes.post(
   "/RecoveryResetPass/:email/:otpCode",
   UserControllers.RecoveryResetPass,
 );
+
+module.exports = UserRoutes;
