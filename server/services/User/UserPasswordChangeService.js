@@ -25,4 +25,5 @@ const UserPasswordChangeService = async (Request, DataModel) => {
 
   return { message: "User Password Change Successful" };
 };
+
 module.exports = UserPasswordChangeService;

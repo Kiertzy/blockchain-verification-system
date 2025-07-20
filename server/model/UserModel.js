@@ -53,15 +53,28 @@ const UsersSchema = new Schema(
       type: String,
       default: null, // Only relevant for INSTITUTION
     },
-    InstitutionAccountStatus: {
+    accountStatus: {
       type: String,
-      default: "null",
+      enum: ["PENDING", "APPROVED"],
+      default: "PENDING",
+    },
+    accreditationInfo: {
+      type: String,
+      default: null, // Only relevant for INSTITUTION
     },
     studentId: {
       type: String,
       default: null, // Only relevant for STUDENT
     },
-    Department: {
+    college: {
+      type: String,
+      default: null,
+    },
+    department: {
+      type: String,
+      default: null,
+    },
+    major: {
       type: String,
       default: null,
     },

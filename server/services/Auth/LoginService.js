@@ -4,31 +4,42 @@ const { CreateError } = require("../../helper/ErrorHandler");
 const { VerifyPassword } = require("../../utility/BcryptHelper");
 
 const LoginService = async (Request, DataModel) => {
-  const { email, password } = Request.body;
+  const { email, password, walletAddress } = Request.body;
 
-  if (!email || !password) {
-    throw CreateError("Invalid Data", 400);
+  // 1. Check if all data is provided
+  if (!email || !password || !walletAddress) {
+    throw CreateError("Invalid Data: email, password, and wallet address are required", 400);
   }
+
+  // 2. Fetch the user by email
   const User = await DataModel.aggregate([{ $match: { email } }]);
 
   if (!User.length > 0) {
-    throw CreateError("User Not found", 404);
+    throw CreateError("User Not Found", 404);
   }
 
-  const verifyPassword = await VerifyPassword(password, User[0].password);
+  const user = User[0];
+
+  // 3. Verify password
+  const verifyPassword = await VerifyPassword(password, user.password);
   if (!verifyPassword) {
     throw CreateError("Unauthorized Credentials", 401);
   }
 
+  // 4. Verify wallet address
+  if (user.walletAddress !== walletAddress) {
+    throw CreateError("Invalid Wallet Address", 401);
+  }
+
   const payLoad = {
-    id: User[0]._id,
+    id: user._id,
   };
 
-  delete User[0].password;
+  delete user.password;
 
   const token = await CreateToken(payLoad);
 
-  return { AccessToken: token, UserDetails: User[0] };
+  return { AccessToken: token, UserDetails: user };
 };
 
 module.exports = LoginService;

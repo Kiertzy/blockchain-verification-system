@@ -13,9 +13,12 @@ const RegistrationService = async (Request, UsersModel) => {
     walletAddress,
     institutionName,
     institutionPosition,
-    InstitutionAccountStatus,
+    accountStatus,
+    accreditationInfo,
     studentId,
-    Department,
+    college,
+    department,
+    major
   } = Request.body;
 
   // 1. Validate required fields
@@ -30,6 +33,9 @@ const RegistrationService = async (Request, UsersModel) => {
     }
     if (!institutionPosition) {
       throw CreateError("Institution Position is required for INSTITUTION role", 400);
+    }
+    if (!accreditationInfo) {
+      throw CreateError("Institution Accreditation info is required for INSTITUTION role", 400);
     }
   }
 
@@ -66,12 +72,15 @@ const RegistrationService = async (Request, UsersModel) => {
     email,
     password: hashedPassword,
     role,
+    accountStatus,
     walletAddress: walletAddress || null,
     institutionName: role === "INSTITUTION" ? institutionName : null,
     institutionPosition: role === "INSTITUTION" ? institutionPosition : null,
-    InstitutionAccountStatus: role === "INSTITUTION" ? (InstitutionAccountStatus || "Not Verified") : undefined,
+    accreditationInfo: role === "INSTITUTION" ? accreditationInfo : null,
     studentId: role === "STUDENT" ? studentId : null,
-    Department: Department || null,
+    college: college || null,
+    department: department || null,
+    major: major || null,
   });
 
   // 6. Save to database

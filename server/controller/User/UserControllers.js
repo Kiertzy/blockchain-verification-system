@@ -24,6 +24,7 @@ const UserChangePassword = async (req, res, next) => {
   }
 };
 
+
 /**
  * @desc Send Recovery Otp
  * @access public
@@ -38,6 +39,7 @@ const SendRecoveryOtp = async (req, res, next) => {
     next(error);
   }
 };
+
 
 /**
  * @desc Verify Recovery Otp
@@ -55,6 +57,7 @@ const VerifyRecoveryOtp = async (req, res, next) => {
   }
 };
 
+
 /**
  * @desc Recovery Reset Password
  * @access public
@@ -69,7 +72,6 @@ const RecoveryResetPass = async (req, res, next) => {
     next(error);
   }
 };
-
 
 module.exports = {
   UserChangePassword,
