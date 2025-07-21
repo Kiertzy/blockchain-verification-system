@@ -37,7 +37,7 @@ const UsersSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["ADMIN", "INSTITUTION", "STUDENT"],
+      enum: ["ADMIN", "INSTITUTION", "VERIFIER", "STUDENT"],
       required: true,
     },
     walletAddress: {

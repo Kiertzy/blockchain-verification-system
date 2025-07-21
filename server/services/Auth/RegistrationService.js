@@ -1,5 +1,13 @@
 const { CreateError } = require("../../helper/ErrorHandler");
 const { HashPassword } = require("../../utility/BcryptHelper");
+const { ethers } = require("ethers");
+
+const contractABI = require("../../../smart-contracts/artifacts/contracts/UserRegistry.sol/UserRegistry.json"); // Update with ABI path
+const contractAddress = process.env.USER_REGISTRY_CONTRACT; // Replace with actual address
+
+const provider = new ethers.providers.JsonRpcProvider(process.env.BLOCKCHAIN_RPC_URL); // e.g. Mumbai RPC
+const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
 const RegistrationService = async (Request, UsersModel) => {
   const {
@@ -18,32 +26,23 @@ const RegistrationService = async (Request, UsersModel) => {
     studentId,
     college,
     department,
-    major
+    major,
   } = Request.body;
 
-  // 1. Validate required fields
   if (!firstName || !middleName || !lastName || !sex || !email || !password || !role) {
     throw CreateError("Invalid Data: Required fields missing", 400);
   }
 
-  // 2. Role-specific validation
   if (role === "INSTITUTION") {
-    if (!institutionName) {
-      throw CreateError("Institution Name is required for INSTITUTION role", 400);
-    }
-    if (!institutionPosition) {
-      throw CreateError("Institution Position is required for INSTITUTION role", 400);
-    }
-    if (!accreditationInfo) {
-      throw CreateError("Institution Accreditation info is required for INSTITUTION role", 400);
-    }
+    if (!institutionName) throw CreateError("Institution Name is required", 400);
+    if (!institutionPosition) throw CreateError("Institution Position is required", 400);
+    if (!accreditationInfo) throw CreateError("Institution Accreditation info is required", 400);
   }
 
   if (role === "STUDENT" && !studentId) {
     throw CreateError("Student ID is required for STUDENT role", 400);
   }
 
-  // 3. Check if user already exists
   const existingUser = await UsersModel.aggregate([
     {
       $match: {
@@ -60,10 +59,29 @@ const RegistrationService = async (Request, UsersModel) => {
     throw CreateError("User already registered", 400);
   }
 
-  // 4. Hash password
+  // Hash password (for DB)
   const hashedPassword = await HashPassword(password);
 
-  // 5. Create new user object
+  // Solidity-compatible password hash (for contract)
+  const solidityHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(password));
+
+  // Blockchain registration
+  if (walletAddress) {
+    const isRegistered = await contract.isRegistered(walletAddress);
+    if (isRegistered) {
+      throw CreateError("Wallet already registered on blockchain", 400);
+    }
+
+    try {
+      const tx = await contract.connect(signer).register(email, solidityHash);
+      await tx.wait(); // Optional: wait for confirmation
+    } catch (err) {
+      console.error("Smart contract registration failed:", err);
+      throw CreateError("Blockchain registration failed", 500);
+    }
+  }
+
+  // Save to MongoDB
   const newUser = new UsersModel({
     firstName,
     middleName,
@@ -83,10 +101,7 @@ const RegistrationService = async (Request, UsersModel) => {
     major: major || null,
   });
 
-  // 6. Save to database
   const savedUser = await newUser.save();
-
-  // 7. Remove password before returning
   const userObject = savedUser.toObject();
   delete userObject.password;
 
