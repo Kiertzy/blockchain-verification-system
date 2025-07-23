@@ -66,6 +66,9 @@ const RegistrationService = async (Request, UsersModel) => {
   // Solidity-compatible password hash (for contract)
   const solidityHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(password));
 
+  let blockchainTxHash = null;
+  let blockchainConfirmed = false;
+
   // Blockchain registration
   if (walletAddress) {
     const isRegistered = await contract.isRegistered(walletAddress);
@@ -74,8 +77,32 @@ const RegistrationService = async (Request, UsersModel) => {
     }
 
     try {
-      const tx = await contract.connect(signer).register(email, solidityHash);
+      const tx = await contract.connect(signer).registerUser(
+        walletAddress, // 👈 added!
+        firstName,
+        middleName,
+        lastName,
+        sex,
+        email,
+        role === "INSTITUTION" ? institutionName : "",
+        role === "INSTITUTION" ? institutionPosition : "",
+        role === "INSTITUTION" ? accreditationInfo : "",
+        role === "STUDENT" ? studentId : "",
+        college || "",
+        department || "",
+        major || "",
+        role === "INSTITUTION" ? 2 :
+        role === "STUDENT" ? 1 :
+        role === "VERIFIER" ? 3 : 0 // fallback to ADMIN
+      );
+      
       await tx.wait(); // Optional: wait for confirmation
+
+      blockchainTxHash = tx.hash;
+
+      // Double check: verify if registered now
+      blockchainConfirmed = await contract.isRegistered(walletAddress);
+
     } catch (err) {
       console.error("Smart contract registration failed:", err);
       throw CreateError("Blockchain registration failed", 500);
@@ -106,7 +133,21 @@ const RegistrationService = async (Request, UsersModel) => {
   const userObject = savedUser.toObject();
   delete userObject.password;
 
-  return userObject;
+  return {
+    message: "User registration successful",
+    user: userObject,
+    blockchain: walletAddress
+      ? {
+          success: blockchainConfirmed,
+          txHash: blockchainTxHash,
+          walletAddress: walletAddress,
+          registeredOnChain: blockchainConfirmed,
+        }
+      : {
+          success: false,
+          reason: "No wallet address provided",
+        },
+  }
 };
 
 module.exports = RegistrationService;
