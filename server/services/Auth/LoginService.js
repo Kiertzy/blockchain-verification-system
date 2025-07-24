@@ -8,7 +8,7 @@ const LoginService = async (Request, DataModel) => {
 
   // 1. Check if all data is provided
   if (!email || !password || !walletAddress) {
-    throw CreateError("Invalid Data: email, password, and wallet address are required", 400);
+    throw CreateError("Invalid Data: email, and password are required", 400);
   }
 
   // 2. Fetch the user by email
