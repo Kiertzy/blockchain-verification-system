@@ -27,4 +27,17 @@ UserRoutes.post(
   UserControllers.RecoveryResetPass,
 );
 
+//User Update Details
+UserRoutes.put(
+  "/UpdateUserDetails/:userId",
+  UserControllers.UpdateUserDetails,
+);
+
+//User Update Details
+UserRoutes.put(
+  "/UpdateUserDetails/Account/Status/:userId",
+  UserControllers.UpdateUserAccountStatus,
+);
+
+
 module.exports = UserRoutes;

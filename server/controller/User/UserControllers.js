@@ -8,6 +8,8 @@ const UserPasswordChangeService = require("../../services/User/UserPasswordChang
 const VerifyRecoveryOtpService = require("../../services/User/VerifyRecoveryOtpService");
 const SendRecoveryOtpService = require("../../services/User/SendRecoveryOtpService");
 const RecoveryResetPassService = require("../../services/User/RecoveryResetPassService");
+const UpdateUserDetailsService = require("../../services/User/UpdateUserDetailsService");
+const UpdateUserAccountStatusService = require("../../services/User/UpdateUserAccountStatusService");
 
 /**
  * @desc Employee Change Password
@@ -73,9 +75,41 @@ const RecoveryResetPass = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc Update User Details
+ * @access public
+ * @route /api/v1/User/UpdateUserDetails/:userId
+ * @methud PUT
+ */
+const UpdateUserDetails = async (req, res, next) => {
+  try {
+    const result = await UpdateUserDetailsService(req, UserModel);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc Update User Details
+ * @access public
+ * @route /api/v1/User/UpdateUserAccountStatus/:userId
+ * @methud PUT
+ */
+const UpdateUserAccountStatus = async (req, res, next) => {
+  try {
+    const result = await UpdateUserAccountStatusService(req, UserModel);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   UserChangePassword,
   SendRecoveryOtp,
   VerifyRecoveryOtp,
   RecoveryResetPass,
+  UpdateUserDetails,
+  UpdateUserAccountStatus,
 };
