@@ -2,6 +2,7 @@
 const UserModel = require("../../model/UserModel");
 const RegistrationService = require("../../services/Auth/RegistrationService");
 const LoginService = require("../../services/Auth/LoginService");
+const VerifyOtpLoginService = require("../../services/Auth/VerifyOtpLoginService");
 
 /**
  * @desc Login User
@@ -9,10 +10,24 @@ const LoginService = require("../../services/Auth/LoginService");
  * @route /api/v1/Auth/LoginUser
  * @methud POST
  */
-
 const LoginUser = async (req, res, next) => {
   try {
     const result = await LoginService(req, UserModel);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc OTP Verify User
+ * @access public
+ * @route /api/v1/Auth/OtpVerifyUser
+ * @method POST
+ */
+const OtpVerifyUser = async (req, res, next) => {
+  try {
+    const result = await VerifyOtpLoginService(req, UserModel);
     res.json(result);
   } catch (error) {
     next(error);
@@ -25,7 +40,6 @@ const LoginUser = async (req, res, next) => {
  * @route /api/v1/Auth/RegisterUser
  * @method POST
  */
-
 const RegisterUser = async (req, res, next) => {
   try {
     const result = await RegistrationService(req, UserModel);
@@ -38,4 +52,5 @@ const RegisterUser = async (req, res, next) => {
 module.exports = {
   LoginUser,
   RegisterUser,
+  OtpVerifyUser,
 };

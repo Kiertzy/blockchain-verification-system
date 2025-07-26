@@ -10,4 +10,7 @@ AuthRoutes.post("/LoginUser", AuthControllers.LoginUser);
 //Register User
 AuthRoutes.post("/RegisterUser", AuthControllers.RegisterUser);
 
+//OTP verification User
+AuthRoutes.post("/OtpVerifyUser", AuthControllers.OtpVerifyUser);
+
 module.exports = AuthRoutes;

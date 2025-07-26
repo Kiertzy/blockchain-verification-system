@@ -7,6 +7,10 @@ const OtpSchema = new Schema(
       type: String,
       required: true,
     },
+    otpVerified: {
+      type: Boolean,
+      default: false,
+    },
     otpStatus: {
       type: Number,
       default: 0,
@@ -28,7 +32,7 @@ const OtpSchema = new Schema(
       },
     },
   },
-  { versionKey: false, timestamps: true },
+  { versionKey: false, timestamps: true }
 );
 
 const OtpModel = model("Otp", OtpSchema);

@@ -1,45 +1,52 @@
-//Internal Lib Import
-const CreateToken = require("../../utility/CreateToken");
 const { CreateError } = require("../../helper/ErrorHandler");
 const { VerifyPassword } = require("../../utility/BcryptHelper");
+const { ethers } = require("ethers");
+const GenRandNumber = require("../../helper/GenRandNumber");
+const SendMailUtility = require("../../utility/SendMailUtility");
+const OtpModel = require("../../model/OtpModel"); // Your OTP schema
+
+const contractABI = require("../../../smart-contracts/artifacts/contracts/UserRegistry.sol/UserRegistry.json").abi;
+const contractAddress = process.env.USER_REGISTRY_CONTRACT;
+const provider = new ethers.providers.JsonRpcProvider(process.env.BLOCKCHAIN_RPC_URL);
+const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+const contract = new ethers.Contract(contractAddress, contractABI, signer);
 
 const LoginService = async (Request, DataModel) => {
   const { email, password, walletAddress } = Request.body;
 
-  // 1. Check if all data is provided
   if (!email || !password || !walletAddress) {
-    throw CreateError("Invalid Data: email, and password are required", 400);
+    throw CreateError("All fields are required", 400);
   }
 
-  // 2. Fetch the user by email
-  const User = await DataModel.aggregate([{ $match: { email } }]);
+  const users = await DataModel.aggregate([{ $match: { email, walletAddress } }]);
+  if (!users.length) throw CreateError("Invalid credentials", 404);
 
-  if (!User.length > 0) {
-    throw CreateError("User Not Found", 404);
-  }
+  const user = users[0];
 
-  const user = User[0];
+  const isPasswordValid = await VerifyPassword(password, user.password);
+  if (!isPasswordValid) throw CreateError("Unauthorized: Invalid password", 401);
 
-  // 3. Verify password
-  const verifyPassword = await VerifyPassword(password, user.password);
-  if (!verifyPassword) {
-    throw CreateError("Unauthorized Credentials", 401);
-  }
+  const isRegistered = await contract.isRegistered(walletAddress);
+  if (!isRegistered) throw CreateError("Wallet is not registered on the blockchain", 401);
 
-  // 4. Verify wallet address
-  if (user.walletAddress !== walletAddress) {
-    throw CreateError("Invalid Wallet Address", 401);
-  }
+  // Generate and email OTP
+  const otpCode = GenRandNumber(6);
+  const emailText = `
+    <h3>Two-Factor Authentication Code</h3>
+    <p>Use the following code to complete your login:</p>
+    <h1>${otpCode}</h1>
+  `;
+  await SendMailUtility(email, emailText, "Your Login Verification Code");
 
-  const payLoad = {
-    id: user._id,
-  };
+  await OtpModel.create({
+    email,
+    otpCode,
+    otpStatus: 0, // pending
+    otpCodeExpire: Date.now() + 15 * 60 * 1000,
+  });
 
-  delete user.password;
-
-  const token = await CreateToken(payLoad);
-
-  return { AccessToken: token, UserDetails: user };
+  return { message: "OTP sent successfully to your email" };
 };
 
 module.exports = LoginService;
+
