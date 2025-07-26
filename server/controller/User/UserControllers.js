@@ -10,6 +10,8 @@ const SendRecoveryOtpService = require("../../services/User/SendRecoveryOtpServi
 const RecoveryResetPassService = require("../../services/User/RecoveryResetPassService");
 const UpdateUserDetailsService = require("../../services/User/UpdateUserDetailsService");
 const UpdateUserAccountStatusService = require("../../services/User/UpdateUserAccountStatusService");
+const GetAllUsersService = require("../../services/User/GetAllUsersService");
+const GetUserByIDService = require("../../services/User/GetUserByIDService");
 
 /**
  * @desc Employee Change Password
@@ -105,6 +107,38 @@ const UpdateUserAccountStatus = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc Get All User Details
+ * @access public
+ * @route /api/v1/User/GetAllUsers
+ * @methud GET
+ */
+const GetAllUsers = async (req, res, next) => {
+  try {
+    const result = await GetAllUsersService(UserModel);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc Get User by ID
+ * @access public
+ * @route /api/v1/User/GetUser/:id
+ * 
+ * @methud GET
+ */
+const GetUserByID = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await GetUserByIDService(UserModel, id);
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   UserChangePassword,
   SendRecoveryOtp,
@@ -112,4 +146,8 @@ module.exports = {
   RecoveryResetPass,
   UpdateUserDetails,
   UpdateUserAccountStatus,
+  GetAllUsers,
+  GetUserByID,
 };
+
+

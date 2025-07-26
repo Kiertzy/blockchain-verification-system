@@ -33,10 +33,22 @@ UserRoutes.put(
   UserControllers.UpdateUserDetails,
 );
 
-//User Update Details
+//User Account Update Status
 UserRoutes.put(
   "/UpdateUserDetails/Account/Status/:userId",
   UserControllers.UpdateUserAccountStatus,
+);
+
+//Get All Users 
+UserRoutes.get(
+  "/GetAllUsers",
+  UserControllers.GetAllUsers,
+);
+
+//Get All Users 
+UserRoutes.get(
+  "/GetUser/:id",
+  UserControllers.GetUserByID,
 );
 
 
