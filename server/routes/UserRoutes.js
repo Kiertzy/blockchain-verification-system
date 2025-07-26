@@ -35,7 +35,7 @@ UserRoutes.put(
 
 //User Account Update Status
 UserRoutes.put(
-  "/UpdateUserDetails/Account/Status/:userId",
+  "/UpdateUserDetails/AccountStatus/:userId",
   UserControllers.UpdateUserAccountStatus,
 );
 

@@ -55,7 +55,7 @@ const UsersSchema = new Schema(
     },
     accountStatus: {
       type: String,
-      enum: ["PENDING", "APPROVED"],
+      enum: ["PENDING", "APPROVED", "DISAPPROVED"],
       default: "PENDING",
     },
     accreditationInfo: {
