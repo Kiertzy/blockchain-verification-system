@@ -2,7 +2,6 @@
 const UserRoutes = require("express").Router();
 const UserControllers = require("../controller/User/UserControllers");
 
-
 //User Change Password
 UserRoutes.put(
   "/UserChangePassword",
@@ -50,6 +49,5 @@ UserRoutes.get(
   "/GetUser/:id",
   UserControllers.GetUserByID,
 );
-
 
 module.exports = UserRoutes;
