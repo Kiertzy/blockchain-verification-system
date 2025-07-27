@@ -1,6 +1,6 @@
 const { CreateError } = require("../../helper/ErrorHandler");
 
-const addCollegeService = async (req, CollegeModel) => {
+const AddCollegeService = async (req, CollegeModel) => {
   const { collegeName, collegeCode } = req.body;
 
   // Input validation
@@ -28,4 +28,4 @@ const addCollegeService = async (req, CollegeModel) => {
   };
 };
 
-module.exports = addCollegeService;
+module.exports = AddCollegeService;

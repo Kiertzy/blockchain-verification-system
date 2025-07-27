@@ -3,9 +3,8 @@ const mongoose = require("mongoose");
 
 //Internal Lib Import
 const CollegeModel = require("../../model/CollegeModel");
-const addCollegeService = require("../../services/College/addCollegeService");
-const getAllCollegeService = require("../../services/College/getAllCollegeService");
-
+const AddCollegeService = require("../../services/College/AddCollegeService");
+const GetAllCollegeService = require("../../services/College/GetAllCollegeService");
 
 /**
  * @desc Add College
@@ -13,9 +12,9 @@ const getAllCollegeService = require("../../services/College/getAllCollegeServic
  * @route /api/v1/College/AddCollege
  * @methud POST
  */
-const addCollege = async (req, res, next) => {
+const AddCollege = async (req, res, next) => {
   try {
-    const result = await addCollegeService(req, CollegeModel);
+    const result = await AddCollegeService(req, CollegeModel);
     res.json(result);
   } catch (error) {
     next(error);
@@ -28,9 +27,9 @@ const addCollege = async (req, res, next) => {
  * @access public
  * @method GET
  */
-const getAllCollege = async (req, res, next) => {
+const GetAllCollege = async (req, res, next) => {
   try {
-    const result = await getAllCollegeService(req, CollegeModel);
+    const result = await GetAllCollegeService(req, CollegeModel);
     res.json(result);
   } catch (error) {
     next(error);
@@ -38,6 +37,6 @@ const getAllCollege = async (req, res, next) => {
 };
 
 module.exports = {
-  addCollege,
-  getAllCollege,
+  AddCollege,
+  GetAllCollege,
 };

@@ -5,10 +5,10 @@ const CollegeRoutes = require("express").Router();
 const CollegeControllers = require("../controller/College/CollegeControllers");
 
 //Add College
-CollegeRoutes.post("/AddCollege", CollegeControllers.addCollege);
+CollegeRoutes.post("/AddCollege", CollegeControllers.AddCollege);
 
 //Get All College
-CollegeRoutes.get("/GetAllCollege", CollegeControllers.getAllCollege);
+CollegeRoutes.get("/GetAllCollege", CollegeControllers.GetAllCollege);
 
 
 module.exports = CollegeRoutes;

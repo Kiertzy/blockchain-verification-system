@@ -1,6 +1,6 @@
 const { CreateError } = require("../../helper/ErrorHandler");
 
-const getAllCollegeService = async (req, CollegeModel) => {
+const GetAllCollegeService = async (req, CollegeModel) => {
   const colleges = await CollegeModel.find().sort({ createdAt: -1 });
 
   if (!colleges || colleges.length === 0) {
@@ -14,4 +14,4 @@ const getAllCollegeService = async (req, CollegeModel) => {
   };
 };
 
-module.exports = getAllCollegeService;
+module.exports = GetAllCollegeService;
