@@ -10,5 +10,8 @@ CollegeRoutes.post("/AddCollege", CollegeControllers.AddCollege);
 //Get All College
 CollegeRoutes.get("/GetAllCollege", CollegeControllers.GetAllCollege);
 
+//Get All College
+CollegeRoutes.delete("/DeleteCollege/:id", CollegeControllers.DeleteCollege);
+
 
 module.exports = CollegeRoutes;

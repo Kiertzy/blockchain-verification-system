@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const CollegeModel = require("../../model/CollegeModel");
 const AddCollegeService = require("../../services/College/AddCollegeService");
 const GetAllCollegeService = require("../../services/College/GetAllCollegeService");
+const DeleteCollegeService = require("../../services/College/DeleteCollegeService");
 
 /**
  * @desc Add College
@@ -36,7 +37,23 @@ const GetAllCollege = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc Delete a college
+ * @route /api/v1/College/DeleteCollege/:id
+ * @access public
+ * @method DELETE
+ */
+const DeleteCollege = async (req, res, next) => {
+  try {
+    const result = await DeleteCollegeService(req, CollegeModel);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   AddCollege,
   GetAllCollege,
+  DeleteCollege,
 };
