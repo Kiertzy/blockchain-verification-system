@@ -1,10 +1,21 @@
-import mongoose, { Schema, model, models } from "mongoose";
+const { model, Schema } = require("mongoose");
 
-const CollegeSchema = new Schema({
-  collegeName: { type: String, required: true, unique: true },
-  collegeCode: { type: String, required: true, unique: true }
+const CollegeSchema = new Schema(
+  {
+    collegeName: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    collegeCode: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+  },
+  { versionKey: false, timestamps: true }
+);
 
-});
+const CollegeModel = model("College", CollegeSchema);
 
-const College = models.College || model("College", CollegeSchema);
-export default College;
+module.exports = CollegeModel;
