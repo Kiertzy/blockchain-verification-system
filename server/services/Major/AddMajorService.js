@@ -18,7 +18,7 @@ const AddMajorService = async (req, MajorModel) => {
   }
 
   // Create and save new college
-  const newMajor = new MajorModel({ majorName, courseCode });
+  const newMajor = new MajorModel({ majorName, majorCode });
   const savedMajor = await newMajor.save();
 
   return {
