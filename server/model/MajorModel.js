@@ -1,10 +1,21 @@
-import mongoose, { Schema, model, models } from "mongoose";
+const { model, Schema } = require("mongoose");
 
-const MajorSchema = new Schema({
-  MajorName: { type: String, required: true, unique: true },
-  MajorCode: { type: String, required: true, unique: true }
+const MajorSchema = new Schema(
+  {
+    majorName: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    majorCode: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+  },
+  { versionKey: false, timestamps: true }
+);
 
-});
+const MajorModel = model("Major", MajorSchema);
 
-const Major = models.CMajor || model("Major", MajorSchema);
-export default Major;
+module.exports = MajorModel;
