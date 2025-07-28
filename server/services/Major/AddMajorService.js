@@ -29,3 +29,4 @@ const AddMajorService = async (req, MajorModel) => {
 };
 
 module.exports = AddMajorService;
+

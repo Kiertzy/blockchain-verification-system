@@ -3,7 +3,7 @@ const { CreateError } = require("../../helper/ErrorHandler");
 const GetAllMajorService = async (req, MajorModel) => {
   const majors = await MajorModel.find().sort({ createdAt: -1 });
 
-  if (!courses || majors.length === 0) {
+  if (!majors || majors.length === 0) {
     throw CreateError("No majors found", 404);
   }
 
