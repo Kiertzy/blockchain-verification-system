@@ -1,6 +1,5 @@
 const { CreateError } = require("../../helper/ErrorHandler");
 
-
 const DeleteCourseService = async (req, CourseModel) => {
   const { id } = req.params;
 
