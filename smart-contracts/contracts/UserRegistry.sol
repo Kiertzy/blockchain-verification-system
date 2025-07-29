@@ -70,3 +70,4 @@ contract UserRegistry {
         return users[_user].isRegistered;
     }
 }
+

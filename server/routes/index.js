@@ -7,6 +7,7 @@ const UserRoutes = require("./UserRoutes");
 const CollegeRoutes = require("./CollegeRoutes");
 const CourseRoutes = require("./CourseRoutes");
 const MajorRoutes = require("./MajorRoutes");
+const CertificateRoutes = require("./CertificateRoutes");
 
 //Auth Routes
 routes.use("/Auth", AuthRoutes);
@@ -22,6 +23,9 @@ routes.use("/Course", CourseRoutes);
 
 //Major Routes
 routes.use("/Major", MajorRoutes);
+
+//Certificate Routes
+routes.use("/Certificate", CertificateRoutes);
 
 
 module.exports = routes;

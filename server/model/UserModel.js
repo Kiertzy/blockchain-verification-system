@@ -1,19 +1,11 @@
-const { model, Schema } = require("mongoose");
+const mongoose = require("mongoose");
+const { model, Schema } = mongoose;
 
 const UsersSchema = new Schema(
   {
-    firstName: {
-      type: String,
-      required: true,
-    },
-    middleName: {
-      type: String,
-      required: true,
-    },
-    lastName: {
-      type: String,
-      required: true,
-    },
+    firstName: { type: String, required: true },
+    middleName: { type: String, required: true },
+    lastName: { type: String, required: true },
     sex: {
       type: String,
       enum: ["Male", "Female"],
@@ -31,10 +23,7 @@ const UsersSchema = new Schema(
       },
       unique: true,
     },
-    password: {
-      type: String,
-      required: true,
-    },
+    password: { type: String, required: true },
     role: {
       type: String,
       enum: ["ADMIN", "INSTITUTION", "VERIFIER", "STUDENT"],
@@ -43,45 +32,29 @@ const UsersSchema = new Schema(
     walletAddress: {
       type: String,
       default: null,
-      match: /^0x[a-fA-F0-9]{40}$/, // Basic Ethereum address validation
+      match: /^0x[a-fA-F0-9]{40}$/,
     },
-    institutionName: {
-      type: String,
-      default: null, // Only relevant for INSTITUTION
-    },
-    institutionPosition: {
-      type: String,
-      default: null, // Only relevant for INSTITUTION
-    },
+    institutionName: { type: String, default: null },
+    institutionPosition: { type: String, default: null },
     accountStatus: {
       type: String,
       enum: ["PENDING", "APPROVED", "DISAPPROVED"],
       default: "PENDING",
     },
-    accreditationInfo: {
-      type: String,
-      default: null, // Only relevant for INSTITUTION
-    },
-    studentId: {
-      type: String,
-      default: null, // Only relevant for STUDENT
-    },
-    college: {
-      type: String,
-      default: null,
-    },
-    department: {
-      type: String,
-      default: null,
-    },
-    major: {
-      type: String,
-      default: null,
-    },
+    accreditationInfo: { type: String, default: null },
+    studentId: { type: String, default: null },
+    college: { type: String, default: null },
+    department: { type: String, default: null },
+    major: { type: String, default: null },
+    certIssued: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CertificateIssued",
+      },
+    ],
   },
   { versionKey: false, timestamps: true }
 );
 
 const UsersModel = model("User", UsersSchema);
-
 module.exports = UsersModel;
