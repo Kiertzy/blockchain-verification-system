@@ -6,6 +6,11 @@ import DashboardPage from "@/pages/dashboard/adminDashboard/adminDashboard";
 import Analytics from "./analytics";
 import Reports from "./reports";
 import Institutions from "./institution";
+import PendingUsers from "./pendingUsers";
+import Students from "./students";
+import Colleges from "./colleges";
+import Courses from "./courses";
+import Majors from "./Majors";
 
 const router = createBrowserRouter([
   {
@@ -25,33 +30,33 @@ const router = createBrowserRouter([
         element: <Reports/>,
       },
       {
+        path: "pendingUsers",
+        element: <PendingUsers/>,
+      },
+      {
         path: "institution",
         element: <Institutions/>,
       },
-    //   {
-    //     path: "new-customer",
-    //     element: <h1 className="title">New Customer</h1>,
-    //   },
-    //   {
-    //     path: "verified-customers",
-    //     element: <h1 className="title">Verified Customers</h1>,
-    //   },
-    //   {
-    //     path: "products",
-    //     element: <h1 className="title">Products</h1>,
-    //   },
-    //   {
-    //     path: "new-product",
-    //     element: <h1 className="title">New Product</h1>,
-    //   },
-    //   {
-    //     path: "inventory",
-    //     element: <h1 className="title">Inventory</h1>,
-    //   },
-    //   {
-    //     path: "settings",
-    //     element: <h1 className="title">Settings</h1>,
-    //   },
+      {
+        path: "students",
+        element: <Students/>,
+      },
+      {
+        path: "colleges",
+        element: <Colleges/>,
+      },
+      {
+        path: "courses",
+        element: <Courses/>,
+      },
+      {
+        path: "majors",
+        element: <Majors/>,
+      },
+      {
+        path: "settings",
+        element: <h1 className="title">Settings</h1>,
+      },
     ],
   },
 ]);

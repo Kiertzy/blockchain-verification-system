@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import { NavLink } from "react-router-dom";
 
-import { navbarLinks } from "@/constants";
+import { navbarAdminLinks } from "@/constants";
 
 import logoLight from "@/assets/logo-light.svg";
 import logoDark from "@/assets/logo-dark.svg";
@@ -34,7 +34,7 @@ export const Sidebar = forwardRef(({ collapsed }, ref) => {
                 {!collapsed && <p className="text-lg font-medium text-slate-900 transition-colors dark:text-slate-50">Logoipsum</p>}
             </div>
             <div className="flex w-full flex-col gap-y-4 overflow-y-auto overflow-x-hidden p-3 [scrollbar-width:_thin]">
-                {navbarLinks.map((navbarLink) => (
+                {navbarAdminLinks.map((navbarLink) => (
                     <nav
                         key={navbarLink.title}
                         className={cn("sidebar-group", collapsed && "md:items-center")}

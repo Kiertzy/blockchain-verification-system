@@ -3,7 +3,7 @@ import { ChartColumn, Home, NotepadText, Package, PackagePlus, Settings, Shoppin
 import ProfileImage from "@/assets/profile-image.jpg";
 import ProductImage from "@/assets/product-image.jpg";
 
-export const navbarLinks = [
+export const navbarAdminLinks = [
     {
         title: "Dashboard",
         links: [
@@ -30,17 +30,17 @@ export const navbarLinks = [
             {
                 label: "Pending Users",
                 icon: Users,
-                path: "/institution",
+                path: "/pendingUsers",
             },
             {
                 label: "Verified Institutions",
                 icon: UserPlus,
-                path: "/new-customer",
+                path: "/institution",
             },
             {
                 label: "Verified Students",
                 icon: UserCheck,
-                path: "/verified-customers",
+                path: "/students",
             },
         ],
     },
