@@ -3,6 +3,99 @@ import { ChartColumn, Home, NotepadText, Package, PackagePlus, Settings, Shoppin
 import ProfileImage from "@/assets/profile-image.jpg";
 import ProductImage from "@/assets/product-image.jpg";
 
+// export const navbarAdminLinks = [
+//     {
+//         title: "Dashboard",
+//         links: [
+//             {
+//                 label: "Dashboard",
+//                 icon: Home,
+//                 path: "/",
+//             },
+//             {
+//                 label: "Analytics",
+//                 icon: ChartColumn,
+//                 path: "/analytics",
+//             },
+//             {
+//                 label: "Reports",
+//                 icon: NotepadText,
+//                 path: "/reports",
+//             },
+//         ],
+//     },
+//     {
+//         title: "Users",
+//         links: [
+//             {
+//                 label: "Pending Users",
+//                 icon: Users,
+//                 path: "/pending-Users",
+//             },
+//             {
+//                 label: "Verified Institutions",
+//                 icon: UserPlus,
+//                 path: "/institution",
+//             },
+//             {
+//                 label: "Verified Students",
+//                 icon: UserCheck,
+//                 path: "/students",
+//             },
+//         ],
+//     },
+//     {
+//         title: "Education",
+//         links: [
+//             {
+//                 label: "Colleges",
+//                 icon: Users,
+//                 path: "/colleges",
+//             },
+//             {
+//                 label: "Courses",
+//                 icon: UserPlus,
+//                 path: "/courses",
+//             },
+//             {
+//                 label: "Majors",
+//                 icon: UserCheck,
+//                 path: "/majors",
+//             },
+//         ],
+//     },
+//     {
+//         title: "Products",
+//         links: [
+//             {
+//                 label: "Products",
+//                 icon: Package,
+//                 path: "/products",
+//             },
+//             {
+//                 label: "New product",
+//                 icon: PackagePlus,
+//                 path: "/new-product",
+//             },
+//             {
+//                 label: "Inventory",
+//                 icon: ShoppingBag,
+//                 path: "/inventory",
+//             },
+//         ],
+//     },
+//     {
+//         title: "Settings",
+//         links: [
+//             {
+//                 label: "Settings",
+//                 icon: Settings,
+//                 path: "/settings",
+//             },
+//         ],
+//     },
+// ];
+
 export const navbarAdminLinks = [
     {
         title: "Dashboard",
@@ -10,17 +103,17 @@ export const navbarAdminLinks = [
             {
                 label: "Dashboard",
                 icon: Home,
-                path: "/",
+                path: "/dashboard", // or "/dashboard/" is fine too
             },
             {
                 label: "Analytics",
                 icon: ChartColumn,
-                path: "/analytics",
+                path: "/dashboard/analytics",
             },
             {
                 label: "Reports",
                 icon: NotepadText,
-                path: "/reports",
+                path: "/dashboard/reports",
             },
         ],
     },
@@ -30,17 +123,17 @@ export const navbarAdminLinks = [
             {
                 label: "Pending Users",
                 icon: Users,
-                path: "/pendingUsers",
+                path: "/dashboard/pending-users",
             },
             {
                 label: "Verified Institutions",
                 icon: UserPlus,
-                path: "/institution",
+                path: "/dashboard/institution",
             },
             {
                 label: "Verified Students",
                 icon: UserCheck,
-                path: "/students",
+                path: "/dashboard/students",
             },
         ],
     },
@@ -50,17 +143,17 @@ export const navbarAdminLinks = [
             {
                 label: "Colleges",
                 icon: Users,
-                path: "/colleges",
+                path: "/dashboard/colleges",
             },
             {
                 label: "Courses",
                 icon: UserPlus,
-                path: "/courses",
+                path: "/dashboard/courses",
             },
             {
                 label: "Majors",
                 icon: UserCheck,
-                path: "/majors",
+                path: "/dashboard/majors",
             },
         ],
     },
@@ -70,17 +163,17 @@ export const navbarAdminLinks = [
             {
                 label: "Products",
                 icon: Package,
-                path: "/products",
+                path: "/dashboard/products",
             },
             {
                 label: "New product",
                 icon: PackagePlus,
-                path: "/new-product",
+                path: "/dashboard/new-product",
             },
             {
                 label: "Inventory",
                 icon: ShoppingBag,
-                path: "/inventory",
+                path: "/dashboard/inventory",
             },
         ],
     },
@@ -90,7 +183,7 @@ export const navbarAdminLinks = [
             {
                 label: "Settings",
                 icon: Settings,
-                path: "/settings",
+                path: "/dashboard/settings",
             },
         ],
     },
