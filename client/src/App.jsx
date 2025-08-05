@@ -38,7 +38,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<LoginPage />} />
-          <Route path="/dashboard/*" element={<AdminDashboardRoutes />} />
+          <Route path="/*" element={<AdminDashboardRoutes />}/>
           {/* Add a 404 fallback if needed */}
         </Routes>
       </BrowserRouter>
