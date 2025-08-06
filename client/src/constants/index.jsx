@@ -10,7 +10,7 @@ export const navbarAdminLinks = [
             {
                 label: "Dashboard",
                 icon: Home,
-                path: "/dashboard", // or "/dashboard/" is fine too
+                path: "/dashboard",
             },
             {
                 label: "Analytics",
