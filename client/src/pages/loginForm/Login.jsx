@@ -1,4 +1,4 @@
-  import React, { useState, useEffect, useRef } from 'react';
+  import { useState, useEffect, useRef } from 'react';
   import { Sun, Moon, X } from "lucide-react";
   import { useTheme } from "@/hooks/use-theme";
   import { useNavigate, useLocation } from "react-router-dom";
@@ -21,21 +21,38 @@
     const [timeLeft, setTimeLeft] = useState(900); // 15 minutes
     
     // Redux state
-    const { isLoading, error, otpSent, isAuthenticated, email } = useSelector(
+    const { isLoading, error, otpSent, isAuthenticated, email, otpFailed } = useSelector(
       (state) => state.auth
     );
+
+    useEffect(() => {
+      if (otpFailed) {
+        setTimeout(() => {
+          window.location.reload(); // 🔁 Reload the page after 1 second
+        }, 1000);
+      }
+    }, [otpFailed]);
 
     useEffect(() => {
       dispatch(clearError());
     }, []);
 
     useEffect(() => {
-  if (isAuthenticated) {
-    if (location.pathname !== '/dashboard') {
-      navigate('/dashboard');
-    }
-  }
-}, [isAuthenticated, navigate, location]);
+      if (isAuthenticated) {
+        if (location.pathname !== '/dashboard') {
+          navigate('/dashboard');
+        }
+      }
+    }, [isAuthenticated, navigate, location]);
+
+    useEffect(() => {
+      if (otpFailed) {
+        setTimeout(() => {
+          window.location.reload(); // Reload after a short delay
+        }, 1000);
+      }
+    }, [otpFailed]);
+
 
 
     // Timer for OTP expiration

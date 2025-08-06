@@ -1,15 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// Make sure your backend is not running on the same port as frontend
-const API_BASE_URL = 'http://localhost:5000/api/v1'; // Update port if needed
+const API_BASE_URL = 'http://localhost:5000/api/v1';
 
-// ✅ Safe JSON parse helper
 const safeParseJson = async (response) => {
   const text = await response.text();
   return text ? JSON.parse(text) : {};
 };
 
-// Async thunk for login
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials, { rejectWithValue }) => {
@@ -35,7 +32,6 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-// Async thunk for OTP verification
 export const verifyOTP = createAsyncThunk(
   'auth/verifyOTP',
   async (otpData, { rejectWithValue }) => {
@@ -54,7 +50,6 @@ export const verifyOTP = createAsyncThunk(
         return rejectWithValue(data.message || 'OTP verification failed');
       }
 
-      // Store token in localStorage
       if (data.token) {
         localStorage.setItem('token', data.token);
       }
@@ -76,6 +71,7 @@ const authSlice = createSlice({
     isAuthenticated: !!localStorage.getItem('token'),
     otpSent: false,
     email: null,
+    otpFailed: false, // ⬅️ Added flag
   },
   reducers: {
     clearError: (state) => {
@@ -87,24 +83,26 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.otpSent = false;
       state.email = null;
+      state.otpFailed = false;
       localStorage.removeItem('token');
     },
     resetOtpState: (state) => {
       state.otpSent = false;
       state.email = null;
+      state.otpFailed = false;
     },
   },
   extraReducers: (builder) => {
     builder
-      // Login cases
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
         state.error = null;
+        state.otpFailed = false;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
         state.otpSent = true;
-        state.email = action.meta.arg.email; // Store email for OTP verification
+        state.email = action.meta.arg.email;
         state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
@@ -112,7 +110,6 @@ const authSlice = createSlice({
         state.error = action.payload;
         state.otpSent = false;
       })
-      // OTP verification cases
       .addCase(verifyOTP.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -124,10 +121,12 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.otpSent = false;
         state.error = null;
+        state.otpFailed = false;
       })
       .addCase(verifyOTP.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload;
+        state.otpFailed = true; // ⬅️ Set flag to true
       });
   },
 });
