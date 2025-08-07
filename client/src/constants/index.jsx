@@ -96,6 +96,25 @@ export const navbarAdminLinks = [
     },
 ];
 
+
+export const navbarStudentLinks = [
+    {
+        title: "Dashboard",
+        links: [
+            {
+                label: "Dashboard",
+                icon: Home,
+                path: "/student-dashboard",
+            },
+            {
+                label: "Certificates",
+                icon: ChartColumn,
+                path: "/student-certificates",
+            },
+        ],
+    },
+];
+
 export const overviewData = [
     {
         name: "Jan",

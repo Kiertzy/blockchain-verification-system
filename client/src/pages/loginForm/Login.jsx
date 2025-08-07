@@ -21,7 +21,7 @@
     const [timeLeft, setTimeLeft] = useState(900); // 15 minutes
     
     // Redux state
-    const { isLoading, error, otpSent, isAuthenticated, email, otpFailed } = useSelector(
+    const { isLoading, error, otpSent, isAuthenticated, email, otpFailed, user } = useSelector(
       (state) => state.auth
     );
 
@@ -38,12 +38,17 @@
     }, []);
 
     useEffect(() => {
-      if (isAuthenticated) {
-        if (location.pathname !== '/dashboard') {
+      if (isAuthenticated && user) {
+        if (user.role === "ADMIN") {
           navigate('/dashboard');
+        } else if (user.role === "STUDENT") {
+          navigate('/student-dashboard');
+        } else {
+          navigate('/'); // fallback
         }
       }
-    }, [isAuthenticated, navigate, location]);
+    }, [isAuthenticated, user, navigate]);
+
 
     useEffect(() => {
       if (otpFailed) {
