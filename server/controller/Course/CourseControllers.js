@@ -6,6 +6,7 @@ const CourseModel = require("../../model/CourseModel");
 const AddCourseService = require("../../services/Course/AddCourseService");
 const GetAllCourseService = require("../../services/Course/GetAllCourseService");
 const DeleteCourseService = require("../../services/Course/DeleteCourseService");
+const UpdateCourseService = require("../../services/Course/UpdateCourseService");
 
 /**
  * @desc Add Course
@@ -52,8 +53,25 @@ const DeleteCourse = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc Update a Course
+ * @route /api/v1/Course/UpdateCourse/:id
+ * @access public
+ * @method PUT
+ */
+const UpdateCourse = async (req, res, next) => {
+  try {
+    const result = await UpdateCourseService(req, CourseModel);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   AddCourse,
   GetAllCourse,
   DeleteCourse,
+  UpdateCourse,
 };
+

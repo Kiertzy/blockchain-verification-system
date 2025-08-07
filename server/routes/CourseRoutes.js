@@ -10,8 +10,10 @@ CourseRoutes.post("/AddCourse", CourseControllers.AddCourse);
 //Get All Course
 CourseRoutes.get("/GetAllCourse", CourseControllers.GetAllCourse);
 
-//Get All Course
+//Delete Course
 CourseRoutes.delete("/DeleteCourse/:id", CourseControllers.DeleteCourse);
 
+//Update Course
+CourseRoutes.put("/UpdateCourse/:id", CourseControllers.UpdateCourse);
 
 module.exports = CourseRoutes;
