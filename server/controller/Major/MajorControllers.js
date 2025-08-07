@@ -6,6 +6,7 @@ const MajorModel = require("../../model/MajorModel");
 const AddMajorService = require("../../services/Major/AddMajorService");
 const GetAllMajorService = require("../../services/Major/GetAllMajorService");
 const DeleteMajorService = require("../../services/Major/DeleteMajorService");
+const UpdateMajorService = require("../../services/Major/UpdateMajorService");
 
 /**
  * @desc Add Major
@@ -52,8 +53,24 @@ const DeleteMajor = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc Update a Major
+ * @route /api/v1/Major/UpdateMajor/:id
+ * @access public
+ * @method PUT
+ */
+const UpdateMajor = async (req, res, next) => {
+  try {
+    const result = await UpdateMajorService(req, MajorModel);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   AddMajor,
   GetAllMajor,
   DeleteMajor,
+  UpdateMajor,
 };

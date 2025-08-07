@@ -10,8 +10,10 @@ MajorRoutes.post("/AddMajor", MajorControllers.AddMajor);
 //Get All Major
 MajorRoutes.get("/GetAllMajor", MajorControllers.GetAllMajor);
 
-//Get All Major
+//Delete Major
 MajorRoutes.delete("/DeleteMajor/:id", MajorControllers.DeleteMajor);
 
+//Delete Major
+MajorRoutes.put("/UpdateMajor/:id", MajorControllers.UpdateMajor);
 
 module.exports = MajorRoutes;
