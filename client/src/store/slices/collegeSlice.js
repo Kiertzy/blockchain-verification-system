@@ -43,6 +43,21 @@ export const getAllColleges = createAsyncThunk(
   }
 );
 
+export const updateCollege = createAsyncThunk(
+  "college/updateCollege",
+  async ({ id, collegeName, collegeCode }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`${API_BASE_URL}/College/UpdateCollege/${id}`, {
+        collegeName,
+        collegeCode,
+      });
+      return { id, ...response.data };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to update college");
+    }
+  }
+);
+
 // Slice
 const collegeSlice = createSlice({
   name: "college",
@@ -101,6 +116,24 @@ const collegeSlice = createSlice({
         state.colleges = action.payload;
       })
       .addCase(getAllColleges.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // Update college
+      .addCase(updateCollege.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateCollege.fulfilled, (state, action) => {
+        state.loading = false;
+        const index = state.colleges.findIndex((c) => c._id === action.payload.id);
+        if (index !== -1) {
+          state.colleges[index] = action.payload.data;
+        }
+        state.message = action.payload.message;
+      })
+      .addCase(updateCollege.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

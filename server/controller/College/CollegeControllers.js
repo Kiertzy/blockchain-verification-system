@@ -6,6 +6,7 @@ const CollegeModel = require("../../model/CollegeModel");
 const AddCollegeService = require("../../services/College/AddCollegeService");
 const GetAllCollegeService = require("../../services/College/GetAllCollegeService");
 const DeleteCollegeService = require("../../services/College/DeleteCollegeService");
+const UpdateCollegeService = require("../../services/College/UpdateCollegeService");
 
 /**
  * @desc Add College
@@ -52,8 +53,24 @@ const DeleteCollege = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc Update a college
+ * @route /api/v1/College/UpdateCollege/:id
+ * @access public
+ * @method PUT
+ */
+const UpdateCollege = async (req, res, next) => {
+  try {
+    const result = await UpdateCollegeService(req, CollegeModel);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   AddCollege,
   GetAllCollege,
   DeleteCollege,
+  UpdateCollege,
 };

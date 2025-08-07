@@ -10,8 +10,11 @@ CollegeRoutes.post("/AddCollege", CollegeControllers.AddCollege);
 //Get All College
 CollegeRoutes.get("/GetAllCollege", CollegeControllers.GetAllCollege);
 
-//Get All College
+//Delete All College
 CollegeRoutes.delete("/DeleteCollege/:id", CollegeControllers.DeleteCollege);
+
+//Update College
+CollegeRoutes.put("/UpdateCollege/:id", CollegeControllers.UpdateCollege);
 
 
 module.exports = CollegeRoutes;
