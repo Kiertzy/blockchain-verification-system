@@ -80,7 +80,7 @@ const Colleges = () => {
     <div className="flex flex-col gap-y-4">
       <h1 className="title">Colleges</h1>
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <input
           type="text"
           placeholder="Search by name or code..."
@@ -94,7 +94,7 @@ const Colleges = () => {
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm"
         >
           <Plus size={16} />
           Add College
