@@ -143,3 +143,4 @@ const courseSlice = createSlice({
 export const { clearCourseState } = courseSlice.actions;
 
 export default courseSlice.reducer;
+

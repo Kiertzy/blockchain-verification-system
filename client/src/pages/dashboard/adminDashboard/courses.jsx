@@ -79,28 +79,6 @@ const Courses = () => {
   return (
     <div className="flex flex-col gap-y-4">
       <h1 className="title">Courses</h1>
-
-      {/* <div className="flex justify-between items-center">
-        <input
-          type="text"
-          placeholder="Search by name or code..."
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            setCurrentPage(1);
-          }}
-          className="w-full max-w-md px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white"
-        />
-
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-sm"
-        >
-          <Plus size={16} />
-          Add Course
-        </button>
-      </div> */}
-
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <input
           type="text"
@@ -186,7 +164,7 @@ const Courses = () => {
                   ) : (
                     <tr>
                       <td colSpan="4" className="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
-                        No colleges found.
+                        No courses found.
                       </td>
                     </tr>
                   )}
@@ -335,3 +313,4 @@ const Courses = () => {
 }
 
 export default Courses
+
