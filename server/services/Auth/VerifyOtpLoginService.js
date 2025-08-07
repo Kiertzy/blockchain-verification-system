@@ -27,8 +27,8 @@ const VerifyOtpLoginService = async (Request, UsersModel) => {
   const token = await CreateToken({ id: user._id });
 
   return {
-    AccessToken: token,
-    UserDetails: user,
+    token: token,
+    user: user,
     message: "Login successful via OTP",
   };
 };
