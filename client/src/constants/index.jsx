@@ -13,11 +13,6 @@ export const navbarAdminLinks = [
                 path: "/dashboard",
             },
             {
-                label: "Analytics",
-                icon: ChartColumn,
-                path: "/analytics",
-            },
-            {
                 label: "Reports",
                 icon: NotepadText,
                 path: "/reports",
@@ -65,37 +60,21 @@ export const navbarAdminLinks = [
         ],
     },
     {
-        title: "Products",
+        title: "Certificates",
         links: [
             {
-                label: "Products",
+                label: "Verify Certificates",
                 icon: Package,
-                path: "/dashboard/products",
+                path: "/certificates/verify",
             },
             {
-                label: "New product",
+                label: "Bulk Verification",
                 icon: PackagePlus,
-                path: "/dashboard/new-product",
-            },
-            {
-                label: "Inventory",
-                icon: ShoppingBag,
-                path: "/dashboard/inventory",
-            },
-        ],
-    },
-    {
-        title: "Settings",
-        links: [
-            {
-                label: "Settings",
-                icon: Settings,
-                path: "/dashboard/settings",
+                path: "/certificates/bulk-verification",
             },
         ],
     },
 ];
-
 
 export const navbarStudentLinks = [
     {

@@ -7,7 +7,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./pages/dashboard/adminDashboard/layout";
 import LayoutStudent from "./pages/dashboard/studentDashboard/layout";
 import DashboardPage from "./pages/dashboard/adminDashboard/adminDashboard";
-import Analytics from "@/pages/dashboard/adminDashboard/analytics";
 import Reports from "@/pages/dashboard/adminDashboard/reports";
 import Institutions from "@/pages/dashboard/adminDashboard/institution";
 import PendingUsers from "@/pages/dashboard/adminDashboard/pendingUsers";
@@ -19,6 +18,8 @@ import Majors from "@/pages/dashboard/adminDashboard/majors";
 import StudentDashboardPage from "@/pages/dashboard/studentDashboard/studentDashboard";
 import StudentCertificates from "@/pages/dashboard/studentDashboard/studentCertificates";
 import ForgotPassword from "./pages/recoveryPassword/ForgotPassword";
+import VerifyCertificates from "./pages/dashboard/adminDashboard/verifyCertificates";
+import BulkVerificationCertificate from "./pages/dashboard/adminDashboard/bulkVerificationCertificate";
 
 function App() {
     return (
@@ -46,10 +47,6 @@ function App() {
                             <Route
                                 path="dashboard"
                                 element={<DashboardPage />}
-                            />
-                            <Route
-                                path="analytics"
-                                element={<Analytics />}
                             />
                             <Route
                                 path="reports"
@@ -80,8 +77,12 @@ function App() {
                                 element={<Majors />}
                             />
                             <Route
-                                path="settings"
-                                element={<h1 className="title">Settings</h1>}
+                                path="certificates/verify"
+                                element={<VerifyCertificates />}
+                            />
+                            <Route
+                                path="certificates/bulk-verification"
+                                element={<BulkVerificationCertificate />}
                             />
                             <Route
                                 path="*"

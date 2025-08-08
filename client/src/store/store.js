@@ -6,6 +6,7 @@ import courseReducer from './slices/courseSlice';
 import majorReducer from './slices/majorSlice';
 import registrationReducer from './slices/registrationSlice';
 import authRecoveryReducer from './slices/authRecoverySlice';
+import userReducer from './slices/userSlice';
 
 export const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ export const store = configureStore({
     major: majorReducer,
     registration: registrationReducer,
     authRecovery: authRecoveryReducer,
+    users: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
