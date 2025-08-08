@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/theme-context";
 import LoginPage from "./pages/loginForm/Login";
+import Register from "./pages/RegistrationForm/Register";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 import Layout from "./pages/dashboard/adminDashboard/layout";
@@ -26,6 +27,11 @@ function App() {
                     <Route
                         path="/"
                         element={<LoginPage />}
+                    />
+
+                    <Route
+                        path="/register"
+                        element={<Register />}
                     />
 
                     {/* Admin Protected Routes */}
