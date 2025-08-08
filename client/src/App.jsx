@@ -18,6 +18,7 @@ import Majors from "@/pages/dashboard/adminDashboard/majors";
 
 import StudentDashboardPage from "@/pages/dashboard/studentDashboard/studentDashboard";
 import StudentCertificates from "@/pages/dashboard/studentDashboard/studentCertificates";
+import ForgotPassword from "./pages/recoveryPassword/ForgotPassword";
 
 function App() {
     return (
@@ -32,6 +33,11 @@ function App() {
                     <Route
                         path="/register"
                         element={<Register />}
+                    />
+
+                    <Route
+                        path="/forgot-password"
+                        element={<ForgotPassword />}
                     />
 
                     {/* Admin Protected Routes */}

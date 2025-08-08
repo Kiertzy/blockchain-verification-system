@@ -1,7 +1,7 @@
   import { useState, useEffect, useRef } from 'react';
   import { Sun, Moon, X } from "lucide-react";
   import { useTheme } from "@/hooks/use-theme";
-  import { useNavigate, useLocation } from "react-router-dom";
+  import { useNavigate } from "react-router-dom";
   import { useSelector, useDispatch } from 'react-redux';
   import { loginUser, verifyOTP, clearError, resetOtpState } from '../../store/slices/authSlice';
 
@@ -9,7 +9,6 @@
     const { theme, setTheme } = useTheme();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const location = useLocation();
     const inputRefs = useRef([]);
     
     // Local state
@@ -48,7 +47,6 @@
         }
       }
     }, [isAuthenticated, user, navigate]);
-
 
     useEffect(() => {
       if (otpFailed) {
@@ -207,12 +205,9 @@
                     >
                       Password
                     </label>
-                    <a
-                      href="#"
-                      className="text-sm font-medium text-blue-600 hover:text-blue-500"
-                    >
-                      Forgot password?
-                    </a>
+                      <button  type="button" className="text-sm font-medium text-blue-600 hover:text-blue-500" onClick={() => navigate("/forgot-password")}>
+                        Forgot password?
+                      </button>
                   </div>
                   <input
                     id="password"
