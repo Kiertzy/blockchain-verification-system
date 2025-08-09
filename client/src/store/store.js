@@ -7,6 +7,7 @@ import majorReducer from './slices/majorSlice';
 import registrationReducer from './slices/registrationSlice';
 import authRecoveryReducer from './slices/authRecoverySlice';
 import userReducer from './slices/userSlice';
+import updateUserAccountStatusReducer from './slices/updateUserAccountStatusSlice';
 
 export const store = configureStore({
   reducer: {
@@ -17,7 +18,9 @@ export const store = configureStore({
     registration: registrationReducer,
     authRecovery: authRecoveryReducer,
     users: userReducer,
+    updateUserAccountStatus: updateUserAccountStatusReducer,
   },
+
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -27,3 +30,4 @@ export const store = configureStore({
 });
 
 export default store;
+

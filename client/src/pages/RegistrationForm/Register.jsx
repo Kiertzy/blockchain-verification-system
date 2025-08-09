@@ -117,10 +117,6 @@ const Register = () => {
                     {formData.role === "STUDENT" && (
                         <>
                             <Input label="Student ID" name="studentId" placeholder="2022-00123" value={formData.studentId} onChange={handleChange} />
-                            {/* <Input label="College" name="college" placeholder="College of Computer Studies" value={formData.college} onChange={handleChange} />
-                            <Input label="Department" name="department" placeholder="Department of Software Engineering" value={formData.department} onChange={handleChange} />
-                            <Input label="Major" name="major" placeholder="Blockchain Development" value={formData.major} onChange={handleChange} /> */}
-                            {/* College Dropdown */}
                             <Select
                                 label="College"
                                 name="college"
@@ -128,7 +124,7 @@ const Register = () => {
                                 onChange={handleChange}
                                 options={(colleges || []).map((c) => ({
                                     label: c.collegeName,
-                                    value: c._id
+                                    value: c.collegeName
                                 }))}
                             />
 
@@ -140,7 +136,7 @@ const Register = () => {
                                 onChange={handleChange}
                                 options={(courses || []).map((c) => ({
                                     label: c.courseName,
-                                    value: c._id
+                                    value: c.courseName
                                 }))}
                             />
 
@@ -152,7 +148,7 @@ const Register = () => {
                                 onChange={handleChange}
                                 options={(majors || []).map((m) => ({
                                     label: m.majorName,
-                                    value: m._id
+                                    value: m.majorName
                                 }))}
                             />
                         </>
@@ -186,6 +182,7 @@ const Register = () => {
 };
 
 // Input component
+// eslint-disable-next-line react/prop-types
 const Input = ({ label, name, type = "text", value, onChange, placeholder = "", ...props }) => (
     <div>
         <label htmlFor={name} className="block text-sm font-medium text-gray-700 dark:text-gray-200">
