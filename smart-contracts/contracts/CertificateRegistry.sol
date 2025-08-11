@@ -42,7 +42,7 @@ contract CertificateRegistry {
         string memory _college,
         string memory _course,
         string memory _major,
-         string memory _certStatus,
+        string memory _certStatus,
         string memory _certHash,
         string memory _imageOfCertificate
     ) public onlyInstitution {

@@ -20,8 +20,7 @@ const CertificateIssuedSchema = new mongoose.Schema(
     dateIssued: { type: Date, required: true },
     certStatus: {type: String,
       enum: ["CONFIRMED", "REVOKED"],
-      required: true,
-      default: ["CONFIRMED"]
+      default: "CONFIRMED"
     },
     issuedBy: {
       type: mongoose.Schema.Types.ObjectId,

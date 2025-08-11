@@ -26,9 +26,19 @@ const IssueCertificateService = async (Request) => {
     dateIssued,
   } = Request.body;
 
+  // ✅ Validate ALL required fields
   if (
-    !nameOfInstitution || !nameOfCertificate || !nameOfStudent || !college ||
-    !course || !major || !walletAddressInstitution || !walletAddressStudent || !imageOfCertificate
+    !nameOfInstitution ||
+    !nameOfCertificate ||
+    !nameOfStudent ||
+    !college ||
+    !course ||
+    !major ||
+    !walletAddressInstitution ||
+    !walletAddressStudent ||
+    !imageOfCertificate ||
+    !certStatus ||
+    !dateIssued
   ) {
     throw CreateError("Missing required certificate data", 400);
   }
@@ -42,22 +52,22 @@ const IssueCertificateService = async (Request) => {
 
   // Create certificate hash (off-chain identifier)
   const certData = `${nameOfInstitution}-${nameOfCertificate}-${nameOfStudent}-${college}-${course}-${major}-${walletAddressStudent}-${dateIssued}`;
-  const certHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(certData));
+  const certHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(certData)); // hex string
 
-  // Interact with blockchain — passing ALL 9 arguments
+  // Interact with blockchain
   let txHash = null;
   try {
     const tx = await contract.issueCertificate(
-      walletAddressStudent,        // address
-      nameOfInstitution,           // string
-      nameOfCertificate,           // string
-      nameOfStudent,                // string
-      college,                      // string
-      course,                       // string
-      major,
-      certStatus,                       
-      certHash,                     // string (on-chain hash)
-      imageOfCertificate            // string (IPFS hash or URL)
+      walletAddressStudent,          // address
+      nameOfInstitution,             // string
+      nameOfCertificate,             // string
+      nameOfStudent,                  // string
+      college,                        // string
+      course,                         // string
+      major,                          // string
+      certStatus,                     // string
+      certHash,                       // string (hex)
+      imageOfCertificate              // string
     );
     await tx.wait();
     txHash = tx.hash;
@@ -94,9 +104,9 @@ const IssueCertificateService = async (Request) => {
   await institution.save();
 
   // Populate issuer & receiver details
-const populatedCertificate = await CertificateIssuedModel.findById(certificate._id)
-  .populate("issuedBy", "firstName lastName email walletAddress role institutionName")
-  .populate("issuedTo", "firstName lastName email walletAddress role studentId college department major");
+  const populatedCertificate = await CertificateIssuedModel.findById(certificate._id)
+    .populate("issuedBy", "firstName lastName email walletAddress role institutionName")
+    .populate("issuedTo", "firstName lastName email walletAddress role studentId college department major");
 
   return {
     message: "Certificate issued successfully",

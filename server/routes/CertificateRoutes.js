@@ -9,4 +9,8 @@ CertificateRoutes.post("/IssueCertificate", CertificateControllers.IssueCertific
 
 CertificateRoutes.delete("/DeleteCertificate/:certId", CertificateControllers.DeleteCertificate);
 
+CertificateRoutes.put("/UpdateCertificate/:certId/Status", CertificateControllers.UpdateCertificate);
+
+CertificateRoutes.get("/GetAllCertificate", CertificateControllers.GetAllCertificate);
+
 module.exports = CertificateRoutes;
