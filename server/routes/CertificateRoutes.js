@@ -13,4 +13,6 @@ CertificateRoutes.put("/UpdateCertificate/:certId/Status", CertificateController
 
 CertificateRoutes.get("/GetAllCertificate", CertificateControllers.GetAllCertificate);
 
+CertificateRoutes.post("/VerifyCertificate", CertificateControllers.VerifyCertificate);
+
 module.exports = CertificateRoutes;

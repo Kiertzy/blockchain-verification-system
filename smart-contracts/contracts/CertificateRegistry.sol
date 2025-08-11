@@ -28,8 +28,6 @@ contract CertificateRegistry {
     );
 
     modifier onlyInstitution() {
-        // In real implementation, you'd check against a registry of institutions
-        // For simplicity, we allow any address to act as institution
         require(msg.sender != address(0), "Invalid institution address");
         _;
     }
@@ -78,4 +76,20 @@ contract CertificateRegistry {
     function getCertificateCount(address _studentWallet) public view returns (uint256) {
         return studentCertificates[_studentWallet].length;
     }
+
+      // ✅ New function to get a certificate by its hash
+    function getCertificateByHash(address _studentWallet, string memory _certHash) 
+        public 
+        view 
+        returns (Certificate memory) 
+    {
+        Certificate[] memory certs = studentCertificates[_studentWallet];
+        for (uint256 i = 0; i < certs.length; i++) {
+            if (keccak256(bytes(certs[i].certHash)) == keccak256(bytes(_certHash))) {
+                return certs[i];
+            }
+        }
+        revert("Certificate does not exist");
+    }
 }
+

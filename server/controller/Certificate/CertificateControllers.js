@@ -7,6 +7,7 @@ const IssueCertificateService = require("../../services/Certificate/IssueCertifi
 const DeleteCertificateService = require("../../services/Certificate/DeleteCertificateService");
 const UpdateCertificateStatusService = require("../../services/Certificate/UpdateCertificateStatusService");
 const GetAllCertificateService = require("../../services/Certificate/GetAllCertificateService");
+const VerifyCertificateService = require("../../services/Certificate/VerifyCertificateService");
 
 /**
  * @desc Issue Certificate
@@ -69,6 +70,20 @@ const GetAllCertificate = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc Issue Certificate
+ * @access public
+ * @route /api/v1/Certificate/:certId/Status
+ * @methud GET
+ */
+const VerifyCertificate = async (req, res, next) => {
+  try {
+    const result = await VerifyCertificateService(req, CertificateIssuedModel);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
 
 
 module.exports = {
@@ -76,4 +91,5 @@ module.exports = {
   DeleteCertificate,
   UpdateCertificate,
   GetAllCertificate,
+  VerifyCertificate,
 };
