@@ -16,6 +16,7 @@ const IssueCertificateService = async (Request) => {
     nameOfInstitution,
     nameOfCertificate,
     nameOfStudent,
+    certStatus,
     college,
     course,
     major,
@@ -53,7 +54,8 @@ const IssueCertificateService = async (Request) => {
       nameOfStudent,                // string
       college,                      // string
       course,                       // string
-      major,                        // string
+      major,
+      certStatus,                       
       certHash,                     // string (on-chain hash)
       imageOfCertificate            // string (IPFS hash or URL)
     );
@@ -76,6 +78,7 @@ const IssueCertificateService = async (Request) => {
     txHash,
     walletAddressStudent,
     walletAddressInstitution,
+    certStatus,
     imageOfCertificate,
     issuedBy: institution._id,
     issuedTo: student._id,

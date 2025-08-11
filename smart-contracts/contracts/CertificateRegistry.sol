@@ -10,7 +10,8 @@ contract CertificateRegistry {
         string college;
         string course;
         string major;
-        string certHash; // Optional: hash of the certificate data
+        string certStatus;
+        string certHash; 
         address walletAddressOfStudent;
         address walletAddressOfInstitution;
         string imageOfCertificate; // Store IPFS hash or URL
@@ -41,6 +42,7 @@ contract CertificateRegistry {
         string memory _college,
         string memory _course,
         string memory _major,
+         string memory _certStatus,
         string memory _certHash,
         string memory _imageOfCertificate
     ) public onlyInstitution {
@@ -50,6 +52,7 @@ contract CertificateRegistry {
             nameOfStudent: _nameOfStudent,
             college: _college,
             course: _course,
+            certStatus: _certStatus,
             major: _major,
             certHash: _certHash,
             walletAddressOfStudent: _studentWallet,
