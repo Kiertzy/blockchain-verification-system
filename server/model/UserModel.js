@@ -52,6 +52,13 @@ const UsersSchema = new Schema(
         ref: "CertificateIssued",
       },
     ],
+    certificateIssued: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CertificateIssued",
+        default: [],
+      },
+    ],
   },
   { versionKey: false, timestamps: true }
 );

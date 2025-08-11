@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const CertificateIssuedModel = require("../../model/CertificateIssuedModel");
 const IssueCertificateService = require("../../services/Certificate/IssueCertificateService");
 
-
 /**
  * @desc Issue Certificate
  * @access public

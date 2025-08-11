@@ -18,7 +18,11 @@ const CertificateIssuedSchema = new mongoose.Schema(
     walletAddressStudent: { type: String, required: true },
     walletAddressInstitution: { type: String, required: true },
     dateIssued: { type: Date, required: true },
-
+    certStatus: {type: String,
+      enum: ["CONFIRMED", "REVOKED"],
+      required: true,
+      default: ["CONFIRMED"]
+    },
     issuedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

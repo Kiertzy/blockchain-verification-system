@@ -43,11 +43,20 @@ const IssueCertificateService = async (Request) => {
   const certData = `${nameOfInstitution}-${nameOfCertificate}-${nameOfStudent}-${college}-${course}-${major}-${walletAddressStudent}-${dateIssued}`;
   const certHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(certData));
 
-  // Interact with blockchain (optional)
+  // Interact with blockchain — passing ALL 9 arguments
   let txHash = null;
-  
   try {
-    const tx = await contract.issueCertificate(walletAddressStudent, certHash);
+    const tx = await contract.issueCertificate(
+      walletAddressStudent,        // address
+      nameOfInstitution,           // string
+      nameOfCertificate,           // string
+      nameOfStudent,                // string
+      college,                      // string
+      course,                       // string
+      major,                        // string
+      certHash,                     // string (on-chain hash)
+      imageOfCertificate            // string (IPFS hash or URL)
+    );
     await tx.wait();
     txHash = tx.hash;
   } catch (err) {
@@ -81,9 +90,14 @@ const IssueCertificateService = async (Request) => {
   institution.certificateIssued.push(certificate._id);
   await institution.save();
 
+  // Populate issuer & receiver details
+const populatedCertificate = await CertificateIssuedModel.findById(certificate._id)
+  .populate("issuedBy", "firstName lastName email walletAddress role institutionName")
+  .populate("issuedTo", "firstName lastName email walletAddress role studentId college department major");
+
   return {
     message: "Certificate issued successfully",
-    certificate,
+    certificate: populatedCertificate,
     blockchain: {
       txHash,
       certHash,
