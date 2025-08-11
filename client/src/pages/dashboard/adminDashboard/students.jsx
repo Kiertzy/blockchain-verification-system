@@ -92,9 +92,6 @@ const Students = () => {
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">College</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Department</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Major</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Institution</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Institution Position</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Accreditation Info</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Status</th>
                                         <th
                                             className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700"
@@ -143,15 +140,6 @@ const Students = () => {
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.major || "—"}
-                                                </td>
-                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                                    {user.institutionName || "—"}
-                                                </td>
-                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                                    {user.institutionPosition || "—"}
-                                                </td>
-                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                                    {user.accreditationInfo || "—"}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 font-bold text-green-500 dark:border-slate-700">
                                                     {user.accountStatus}
