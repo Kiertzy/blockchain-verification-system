@@ -37,6 +37,9 @@
         } else if (user.role === "INSTITUTION") {
           navigate('/institution-dashboard');
         }
+        else if (user.role === "VERIFIER") {
+          navigate('/verifier/dashboard');
+        }
         else {
           navigate('/'); // fallback
         }

@@ -78,17 +78,50 @@ export const navbarAdminLinks = [
 
 export const navbarStudentLinks = [
     {
+        title: "Dashboard",
+        links: [
+            {
+                label: "Profile",
+                icon: Package,
+                path: "/student-dashboard",
+            },
+            {
+                label: "Certificates",
+                icon: PackagePlus,
+                path: "/student-certificates",
+            },
+        ],
+    },
+];
+
+export const navbarVerifierLinks = [
+    {
+       title: "Dashboard",
+        links: [
+            {
+                label: "Dashboard",
+                icon: Home,
+                path: "/verifier/dashboard",
+            },
+            {
+                label: "Reports",
+                icon: NotepadText,
+                path: "/verifier/reports",
+            },
+        ],
+    },
+    {
         title: "Certificates",
         links: [
             {
                 label: "Verify Certificate",
                 icon: Package,
-                path: "/certificates/verify",
+                path: "verifier/certificates/verify",
             },
             {
                 label: "Bulk Verification",
                 icon: PackagePlus,
-                path: "/certificates/bulk-verification",
+                path: "verifier/certificates/bulk-verification",
             },
         ],
     },

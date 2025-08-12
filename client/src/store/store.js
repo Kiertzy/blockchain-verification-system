@@ -9,6 +9,7 @@ import authRecoveryReducer from './slices/authRecoverySlice';
 import userReducer from './slices/userSlice';
 import updateUserAccountStatusReducer from './slices/updateUserAccountStatusSlice';
 import CertificateReducer from './slices/certificateSlice';
+import IssueCertificateReducer from './slices/issueCertificateSlice';
 
 export const store = configureStore({
   reducer: {
@@ -21,6 +22,7 @@ export const store = configureStore({
     users: userReducer,
     updateUserAccountStatus: updateUserAccountStatusReducer,
     certificate: CertificateReducer,
+    issueCertificate:IssueCertificateReducer,
   },
 
   middleware: (getDefaultMiddleware) =>

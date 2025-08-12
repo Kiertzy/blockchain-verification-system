@@ -28,6 +28,13 @@ import InstitutionCertificateList from "./pages/dashboard/institutionDashboard/i
 import InstitutionCertificateStudentList from "./pages/dashboard/institutionDashboard/institutionCertificateStudentList";
 import LayoutInstitution from "./pages/dashboard/institutionDashboard/layout";
 
+import VerifierDashboard from "./pages/dashboard/verifierDashboard/verifierDashboard";
+import VerifierReports from "./pages/dashboard/verifierDashboard/reports";
+import VerifierCertificates from "./pages/dashboard/verifierDashboard/verifyCertificates";
+import BulkVerification from "./pages/dashboard/verifierDashboard/bulkVerification";
+import VerifierLayout from "./pages/dashboard/verifierDashboard/layout";
+
+
 function App() {
     return (
         <ThemeProvider storageKey="theme">
@@ -137,6 +144,29 @@ function App() {
                             />
                         </Route>
                     </Route>
+
+                    {/* Institution Protected Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={["VERIFIER"]} />}>
+                        <Route element={<VerifierLayout />}>
+                            <Route
+                                path="/verifier/dashboard"
+                                element={<VerifierDashboard />}
+                            />
+                            <Route
+                                path="/verifier/reports"
+                                element={<VerifierReports />}
+                            />
+                             <Route
+                                path="verifier/certificates/verify"
+                                element={<VerifierCertificates />}
+                            />
+                            <Route
+                                path="verifier/certificates/bulk-verification"
+                                element={<BulkVerification />}
+                            />
+                        </Route>
+                    </Route>
+
                 </Routes>
             </BrowserRouter>
         </ThemeProvider>

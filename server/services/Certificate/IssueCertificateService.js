@@ -58,16 +58,16 @@ const IssueCertificateService = async (Request) => {
   let txHash = null;
   try {
     const tx = await contract.issueCertificate(
-      walletAddressStudent,          // address
-      nameOfInstitution,             // string
-      nameOfCertificate,             // string
-      nameOfStudent,                  // string
-      college,                        // string
-      course,                         // string
-      major,                          // string
-      certStatus,                     // string
-      certHash,                       // string (hex)
-      imageOfCertificate              // string
+      walletAddressStudent,          
+      nameOfInstitution,             
+      nameOfCertificate,             
+      nameOfStudent,                  
+      college,                        
+      course,                         
+      major,                          
+      certStatus,                     
+      certHash,                       
+      imageOfCertificate              
     );
     await tx.wait();
     txHash = tx.hash;
