@@ -9,13 +9,30 @@ export const verifyCertificate = createAsyncThunk(
   async (certHash, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${API_BASE_URL}/certificate/VerifyCertificate`, // Change to your actual endpoint
+        `${API_BASE_URL}/Certificate/VerifyCertificate`, // Change to your actual endpoint
         { certHash }
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to verify certificate"
+      );
+    }
+  }
+);
+
+export const verifyBulkCertificates = createAsyncThunk(
+  "certificate/verifyBulkCertificates",
+  async (certHashes, { rejectWithValue }) => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/Certificate/BulkVerificationCertificate`, // Must match your backend route
+        { certHashes }
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to verify bulk certificates"
       );
     }
   }
@@ -28,7 +45,9 @@ const verifyCertificateSlice = createSlice({
     blockchainData: null,
     issuedTo: null,
     issuedBy: null,
+    bulkResults: [],
     loading: false,
+    bulkLoading: false,
     error: null,
     message: null,
   },
@@ -38,8 +57,11 @@ const verifyCertificateSlice = createSlice({
       state.blockchainData = null;
       state.issuedTo = null;
       state.issuedBy = null;
+      state.bulkResults = [];
       state.loading = false;
+      state.bulkLoading = false;
       state.error = null;
+      state.bulkError = null;
       state.message = null;
     },
   },
@@ -65,6 +87,20 @@ const verifyCertificateSlice = createSlice({
       .addCase(verifyCertificate.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      .addCase(verifyBulkCertificates.pending, (state) => {
+        state.bulkLoading = true;
+        state.bulkError = null;
+        state.bulkResults = [];
+      })
+      .addCase(verifyBulkCertificates.fulfilled, (state, action) => {
+        state.bulkLoading = false;
+        state.bulkResults = action.payload.results || [];
+      })
+      .addCase(verifyBulkCertificates.rejected, (state, action) => {
+        state.bulkLoading = false;
+        state.bulkError = action.payload;
       });
   },
 });

@@ -33,7 +33,7 @@ const VerifyCertificates = () => {
 
   return (
     <div className="flex flex-col items-center justify-center gap-6 p-6">
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-white text-center px-4 sm:px-0">
+      <h1 className="title">
         Verify Student Certificate
       </h1>
 

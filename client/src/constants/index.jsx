@@ -63,7 +63,7 @@ export const navbarAdminLinks = [
         title: "Certificates",
         links: [
             {
-                label: "Verify Certificates",
+                label: "Verify Certificate",
                 icon: Package,
                 path: "/certificates/verify",
             },

@@ -15,4 +15,6 @@ CertificateRoutes.get("/GetAllCertificate", CertificateControllers.GetAllCertifi
 
 CertificateRoutes.post("/VerifyCertificate", CertificateControllers.VerifyCertificate);
 
+CertificateRoutes.post("/BulkVerificationCertificate", CertificateControllers.BulkVerificationCertificate);
+
 module.exports = CertificateRoutes;
