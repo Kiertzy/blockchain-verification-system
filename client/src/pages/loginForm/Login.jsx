@@ -34,7 +34,10 @@
           navigate('/dashboard');
         } else if (user.role === "STUDENT") {
           navigate('/student-dashboard');
-        } else {
+        } else if (user.role === "INSTITUTION") {
+          navigate('/institution-dashboard');
+        }
+        else {
           navigate('/'); // fallback
         }
       }

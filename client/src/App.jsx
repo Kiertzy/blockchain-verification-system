@@ -21,6 +21,13 @@ import ForgotPassword from "./pages/recoveryPassword/ForgotPassword";
 import VerifyCertificates from "./pages/dashboard/adminDashboard/verifyCertificates";
 import BulkVerificationCertificate from "./pages/dashboard/adminDashboard/bulkVerificationCertificate";
 
+import InstitutionDashboard from "./pages/dashboard/institutionDashboard/institutionDashboard";
+import InstitutionCertificates from "./pages/dashboard/institutionDashboard/institutionCertificates";
+import InstitutionReports from "./pages/dashboard/institutionDashboard/reports";
+import InstitutionCertificateList from "./pages/dashboard/institutionDashboard/institutionCertificateList";
+import InstitutionCertificateStudentList from "./pages/dashboard/institutionDashboard/institutionCertificateStudentList";
+import LayoutInstitution from "./pages/dashboard/institutionDashboard/layout";
+
 function App() {
     return (
         <ThemeProvider storageKey="theme">
@@ -101,6 +108,32 @@ function App() {
                             <Route
                                 path="student-certificates"
                                 element={<StudentCertificates />}
+                            />
+                        </Route>
+                    </Route>
+
+                    {/* Institution Protected Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={["INSTITUTION"]} />}>
+                        <Route element={<LayoutInstitution />}>
+                            <Route
+                                path="institution-dashboard"
+                                element={<InstitutionDashboard />}
+                            />
+                            <Route
+                                path="certificates/reports"
+                                element={<InstitutionReports />}
+                            />
+                             <Route
+                                path="certificates/issue"
+                                element={<InstitutionCertificates />}
+                            />
+                            <Route
+                                path="certificates/list"
+                                element={<InstitutionCertificateList />}
+                            />
+                            <Route
+                                path="certificates/student/list"
+                                element={<InstitutionCertificateStudentList />}
                             />
                         </Route>
                     </Route>

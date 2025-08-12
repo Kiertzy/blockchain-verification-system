@@ -1,4 +1,4 @@
-import { ChartColumn, Home, NotepadText, Package, PackagePlus, Settings, ShoppingBag, UserCheck, UserPlus, Users } from "lucide-react";
+import { Home, NotepadText, Package, PackagePlus, UserCheck, UserPlus, Users, Award } from "lucide-react";
 
 import ProfileImage from "@/assets/profile-image.jpg";
 import ProductImage from "@/assets/product-image.jpg";
@@ -78,21 +78,62 @@ export const navbarAdminLinks = [
 
 export const navbarStudentLinks = [
     {
+        title: "Certificates",
+        links: [
+            {
+                label: "Verify Certificate",
+                icon: Package,
+                path: "/certificates/verify",
+            },
+            {
+                label: "Bulk Verification",
+                icon: PackagePlus,
+                path: "/certificates/bulk-verification",
+            },
+        ],
+    },
+];
+
+export const navbarInstitutionLinks = [
+    {
         title: "Dashboard",
         links: [
             {
                 label: "Dashboard",
                 icon: Home,
-                path: "/student-dashboard",
+                path: "/institution-dashboard",
             },
             {
-                label: "Certificates",
-                icon: ChartColumn,
-                path: "/student-certificates",
+                label: "Reports",
+                icon: NotepadText,
+                path: "/certificates/reports",
+            },
+        ],
+    },
+
+    {
+        title: "Certificates",
+        links: [
+            {
+                label: "Issue Certificate",
+                icon: Award,
+                path: "/certificates/issue",
+            },
+            {
+                label: "Certificate List",
+                icon: Package,
+                path: "/certificates/list",
+            },
+            {
+                label: "Student List",
+                icon: PackagePlus,
+                path: "/certificates/student/list",
             },
         ],
     },
 ];
+
+
 
 export const overviewData = [
     {

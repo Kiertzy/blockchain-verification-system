@@ -98,7 +98,7 @@ export const Header = ({ collapsed, setCollapsed }) => {
                             <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
                                 {user ? `${user.firstName} ${user.lastName}` : "User Name"}
                             </p>
-                            <p className="text-sm font-medium text-slate-900 dark:!text-blue-600">
+                            <p className="text-sm font-medium text-blue-600 dark:!text-blue-600">
                                 {user ? formatWalletAddress(user.walletAddress) : "Wallet Address"}<span>  </span>
                                 {user?.walletAddress && (
                                 <button
@@ -116,6 +116,9 @@ export const Header = ({ collapsed, setCollapsed }) => {
                                     )}
                                 </button>
                             )}
+                            </p>
+                            <p className="text-sm font-small text-slate-900 dark:text-slate-500">
+                                {user.role}
                             </p>
                         </div>
                         <button
