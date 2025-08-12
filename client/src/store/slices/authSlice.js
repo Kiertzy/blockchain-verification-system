@@ -2,15 +2,28 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const API_BASE_URL = 'http://localhost:5000/api/v1';
 
-// Safely parse response body
+/**
+ * Generate a unique ID for each tab.
+ * - window.name persists for this tab only
+ * - duplicated tabs will get a new random ID
+ */
+if (!window.name) {
+  window.name = 'tab_' + Math.random().toString(36).substring(2, 15);
+}
+
+const TAB_STORAGE_KEY = window.name;
+
+const getStorageKey = (type) => `${TAB_STORAGE_KEY}_${type}`;
+
+// Safe JSON parse
 const safeParseJson = async (response) => {
   const text = await response.text();
   return text ? JSON.parse(text) : {};
 };
 
-// Load persisted state
-const tokenFromStorage = localStorage.getItem('token');
-const userFromStorage = localStorage.getItem('user');
+// Load persisted state for this tab only
+const tokenFromStorage = sessionStorage.getItem(getStorageKey('token'));
+const userFromStorage = sessionStorage.getItem(getStorageKey('user'));
 const parsedUser = userFromStorage ? JSON.parse(userFromStorage) : null;
 
 // Async thunk: Login
@@ -53,7 +66,6 @@ export const verifyOTP = createAsyncThunk(
         return rejectWithValue(data.message || 'OTP verification failed');
       }
 
-      // Return data, localStorage will be updated inside slice reducer
       return data;
     } catch (error) {
       return rejectWithValue(error.message || 'Network error');
@@ -61,7 +73,6 @@ export const verifyOTP = createAsyncThunk(
   }
 );
 
-// Slice
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -86,9 +97,9 @@ const authSlice = createSlice({
       state.email = null;
       state.otpFailed = false;
 
-      // ✅ Clear from localStorage
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      // Clear only this tab's data
+      sessionStorage.removeItem(getStorageKey('token'));
+      sessionStorage.removeItem(getStorageKey('user'));
     },
     resetOtpState: (state) => {
       state.otpSent = false;
@@ -129,9 +140,9 @@ const authSlice = createSlice({
         state.error = null;
         state.otpFailed = false;
 
-        // ✅ Persist to localStorage here AFTER state update
-        if (token) localStorage.setItem('token', token);
-        if (user) localStorage.setItem('user', JSON.stringify(user));
+        // Save to per-tab storage
+        if (token) sessionStorage.setItem(getStorageKey('token'), token);
+        if (user) sessionStorage.setItem(getStorageKey('user'), JSON.stringify(user));
       })
       .addCase(verifyOTP.rejected, (state, action) => {
         state.isLoading = false;

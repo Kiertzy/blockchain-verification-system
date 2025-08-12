@@ -25,14 +25,6 @@
     );
 
     useEffect(() => {
-      if (otpFailed) {
-        setTimeout(() => {
-          window.location.reload(); // 🔁 Reload the page after 1 second
-        }, 1000);
-      }
-    }, [otpFailed]);
-
-    useEffect(() => {
       dispatch(clearError());
     }, []);
 
@@ -55,8 +47,6 @@
         }, 1000);
       }
     }, [otpFailed]);
-
-
 
     // Timer for OTP expiration
     useEffect(() => {
