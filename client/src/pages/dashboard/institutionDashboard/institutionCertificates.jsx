@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { message } from "antd";
-import { NFTStorage, File } from "nft.storage";  // npm install nft.storage
+import { NFTStorage } from "nft.storage"; // npm install nft.storage
 import {
     issueCertificate,
     clearIssueCertificateState,
 } from "../../../store/slices/issueCertificateSlice";
 import { getAllUsers } from "../../../store/slices/userSlice";
 
-// Put your nft.storage API key here or better, use env variables
-const NFT_STORAGE_KEY = "2049116d.a1949d4dc7ba4a09a66a44043a71cd8f";
+// Use env variables in production!
+const NFT_STORAGE_KEY = "2ec00a6a.babc3bcc18ef46cab8b973e6c31fb8c4";
 const client = new NFTStorage({ token: NFT_STORAGE_KEY });
 
 const InstitutionCertificate = () => {
@@ -31,10 +31,9 @@ const InstitutionCertificate = () => {
         blockchainData,
     } = useSelector((state) => state.issueCertificate);
 
-    // New state for selected image file
     const [selectedImageFile, setSelectedImageFile] = useState(null);
 
-    // Filter approved students only
+    // Filter approved students
     const filteredUsers = users
         ?.filter(
             (user) =>
@@ -66,6 +65,7 @@ const InstitutionCertificate = () => {
         issuedBy: institutionData.issuedBy,
         issuedTo: "",
         imageOfCertificate: "",
+        ipfsCID: "",
     });
 
     const handleStudentSelect = (student) => {
@@ -89,7 +89,6 @@ const InstitutionCertificate = () => {
         }
     };
 
-    // New handler for file input change
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -100,7 +99,7 @@ const InstitutionCertificate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validate required fields except imageOfCertificate because it's now a file upload
+        // Validate
         const requiredFields = [
             "nameOfInstitution",
             "nameOfCertificate",
@@ -129,25 +128,25 @@ const InstitutionCertificate = () => {
         }
 
         try {
-            // Upload image to IPFS via nft.storage
-            const metadata = await client.store({
-                name: formData.nameOfCertificate,
-                description: `Certificate for ${formData.nameOfStudent}`,
-                image: new File([selectedImageFile], selectedImageFile.name, { type: selectedImageFile.type }),
-            });
+            // 1️⃣ Upload image to IPFS and get CID
+            const cid = await client.storeBlob(selectedImageFile);
 
-            // Convert ipfs:// URI to HTTPS gateway URL
-            const ipfsImageUrl = metadata.data.image.href.replace("ipfs://", "https://ipfs.io/ipfs/");
+            // 2️⃣ Gateway link
+            const ipfsImageUrl = `https://ipfs.io/ipfs/${cid}`;
 
-            // Prepare final form data with IPFS image url
+            // 3️⃣ Merge into form data
             const finalFormData = {
                 ...formData,
                 imageOfCertificate: ipfsImageUrl,
+                ipfsCID: cid,
             };
 
+            console.log("✅ Certificate uploaded to IPFS:", ipfsImageUrl);
+
+            // 4️⃣ Dispatch to backend / blockchain
             dispatch(issueCertificate(finalFormData));
         } catch (error) {
-            console.error("IPFS upload failed:", error);
+            console.error("❌ IPFS upload failed:", error);
             message.error("Failed to upload image to IPFS");
         }
     };
@@ -181,11 +180,8 @@ const InstitutionCertificate = () => {
                 </div>
             )}
 
-            <form
-                onSubmit={handleSubmit}
-                className="flex w-full max-w-full flex-col gap-4 sm:max-w-2xl"
-            >
-                {[ 
+            <form onSubmit={handleSubmit} className="flex w-full max-w-full flex-col gap-4 sm:max-w-2xl">
+                {[
                     { name: "nameOfInstitution", label: "Institution Name", disabled: true },
                     { name: "nameOfStudent", label: "Student Name", disabled: true },
                     { name: "college", label: "College", disabled: true },
@@ -208,7 +204,6 @@ const InstitutionCertificate = () => {
                     />
                 ))}
 
-                {/* Replace imageOfCertificate text input with file input */}
                 <label className="text-sm font-semibold dark:text-white">Image of Certificate</label>
                 <input
                     type="file"
@@ -217,7 +212,6 @@ const InstitutionCertificate = () => {
                     className="w-full rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                 />
 
-                {/* Date */}
                 <input
                     type="datetime-local"
                     name="dateIssued"
@@ -251,6 +245,8 @@ const InstitutionCertificate = () => {
                     <p><strong>Message:</strong> {successMsg}</p>
                     <p><strong>Certificate Hash:</strong> {issuedCertificate.certHash}</p>
                     <p><strong>Transaction Hash:</strong> {blockchainData?.txHash}</p>
+                    <p><strong>IPFS CID:</strong> {issuedCertificate?.ipfsCID}</p>
+                    <p><strong>Certificate Link:</strong> <a href={issuedCertificate?.imageOfCertificate} target="_blank" rel="noreferrer">{issuedCertificate?.imageOfCertificate}</a></p>
                 </div>
             )}
         </div>
