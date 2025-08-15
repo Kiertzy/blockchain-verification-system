@@ -34,6 +34,7 @@ import VerifierReports from "./pages/dashboard/verifierDashboard/reports";
 import VerifierCertificates from "./pages/dashboard/verifierDashboard/verifyCertificates";
 import BulkVerification from "./pages/dashboard/verifierDashboard/bulkVerification";
 import VerifierLayout from "./pages/dashboard/verifierDashboard/layout";
+import RegistrationSuccess from "./components/registrationSuccess";
 
 
 function App() {
@@ -49,6 +50,11 @@ function App() {
                     <Route
                         path="/register"
                         element={<Register />}
+                    />
+
+                    <Route
+                        path="/registration-success"
+                        element={<RegistrationSuccess />}
                     />
 
                     <Route

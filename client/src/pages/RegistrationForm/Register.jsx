@@ -1,19 +1,16 @@
-import { Sun, Moon } from "lucide-react";
+import { Sun, Moon, Eye, EyeOff } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    registerUser,
-    clearRegistrationState
-} from "@/store/slices/registrationSlice";
+import { registerUser, clearRegistrationState } from "@/store/slices/registrationSlice";
 import { getAllColleges } from "../../store/slices/collegeSlice";
 import { getAllCourses } from "../../store/slices/courseSlice";
 import { getAllMajors } from "../../store/slices/majorSlice";
 
-
 const Register = () => {
     const { theme, setTheme } = useTheme();
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -50,7 +47,18 @@ const Register = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
+
+        // Capitalize each word for name fields
+        const capitalizeWords = (str) => str.replace(/\b\w/g, (char) => char.toUpperCase());
+
+        if (["firstName", "middleName", "lastName"].includes(name)) {
+            setFormData((prev) => ({
+                ...prev,
+                [name]: capitalizeWords(value),
+            }));
+        } else {
+            setFormData((prev) => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSubmit = (e) => {
@@ -61,9 +69,8 @@ const Register = () => {
     // After successful registration
     useEffect(() => {
         if (message) {
-            alert(message);
             dispatch(clearRegistrationState());
-            navigate("/"); // Redirect to login
+            navigate("/registration-success");
         }
     }, [message, dispatch, navigate]);
 
@@ -74,14 +81,18 @@ const Register = () => {
                 onClick={() => setTheme(theme === "light" ? "dark" : "light")}
                 className="absolute right-4 top-4 rounded-full p-2 transition hover:bg-gray-100 dark:hover:bg-slate-800"
             >
-                <Sun size={20} className="text-slate-700 dark:hidden" />
-                <Moon size={20} className="hidden text-slate-100 dark:block" />
+                <Sun
+                    size={20}
+                    className="text-slate-700 dark:hidden"
+                />
+                <Moon
+                    size={20}
+                    className="hidden text-slate-100 dark:block"
+                />
             </button>
 
             <div className="w-full max-w-4xl">
-                <h2 className="mt-6 text-center text-2xl font-bold text-gray-900 dark:text-white">
-                    Create a new account
-                </h2>
+                <h2 className="mt-6 text-center text-2xl font-bold text-gray-900 dark:text-white">Create a new account</h2>
 
                 {error && <p className="mt-2 text-center text-red-500">{error}</p>}
 
@@ -91,32 +102,126 @@ const Register = () => {
                 >
                     {/* Full Name Row */}
                     <div className="grid grid-cols-1 gap-4 md:col-span-2 md:grid-cols-3">
-                        <Input label="First Name" name="firstName" placeholder="Juan" value={formData.firstName} onChange={handleChange} />
-                        <Input label="Middle Name" name="middleName" placeholder="Dela" value={formData.middleName} onChange={handleChange} />
-                        <Input label="Last Name" name="lastName" placeholder="Cruz" value={formData.lastName} onChange={handleChange} />
+                        <Input
+                            label="First Name"
+                            name="firstName"
+                            placeholder="Juan"
+                            value={formData.firstName}
+                            onChange={handleChange}
+                        />
+                        <Input
+                            label="Middle Name"
+                            name="middleName"
+                            placeholder="Dela"
+                            value={formData.middleName}
+                            onChange={handleChange}
+                        />
+                        <Input
+                            label="Last Name"
+                            name="lastName"
+                            placeholder="Cruz"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                        />
                     </div>
 
-                    <SelectSex label="Sex" name="sex" value={formData.sex} onChange={handleChange} options={["Male", "Female"]} />
+                    <SelectSex
+                        label="Sex"
+                        name="sex"
+                        value={formData.sex}
+                        onChange={handleChange}
+                        options={["Male", "Female"]}
+                    />
 
-                    <Input label="Email Address" name="email" type="email" placeholder="juan@email.com" value={formData.email} onChange={handleChange} />
-                    <Input label="Password" name="password" type="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} />
+                    <Input
+                        label="Email Address"
+                        name="email"
+                        type="email"
+                        placeholder="juan@email.com"
+                        value={formData.email}
+                        onChange={handleChange}
+                    />
 
-                    <SelectRole label="Role" name="role" value={formData.role} onChange={handleChange} options={["ADMIN", "INSTITUTION", "VERIFIER", "STUDENT"]} />
+                    <div>
+                        <label
+                            htmlFor="password"
+                            className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                        >
+                            Password
+                        </label>
+                        <div className="relative">
+                            <input
+                                id="password"
+                                name="password"
+                                type={showPassword ? "text" : "password"}
+                                required
+                                value={formData.password}
+                                placeholder="Enter your password"
+                                onChange={handleChange}
+                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute inset-y-0 right-3 flex items-center text-gray-500 dark:text-gray-300"
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
+                    </div>
 
-                    <Input label="Wallet Address" name="walletAddress" placeholder="0x123abc... (Ethereum address)" value={formData.walletAddress} onChange={handleChange} />
+                    <SelectRole
+                        label="Role"
+                        name="role"
+                        value={formData.role}
+                        onChange={handleChange}
+                        options={["ADMIN", "INSTITUTION", "VERIFIER", "STUDENT"]}
+                    />
+
+                    <Input
+                        label="Wallet Address"
+                        name="walletAddress"
+                        placeholder="0x123abc... (Ethereum address)"
+                        value={formData.walletAddress}
+                        onChange={handleChange}
+                    />
 
                     {/* Conditional Fields */}
                     {formData.role === "INSTITUTION" && (
                         <>
-                            <Input label="Institution Name" name="institutionName" placeholder="Harvard University" value={formData.institutionName} onChange={handleChange} />
-                            <Input label="Position" name="institutionPosition" placeholder="Dean of Admissions" value={formData.institutionPosition} onChange={handleChange} />
-                            <Input label="Accreditation Info" name="accreditationInfo" placeholder="Accredited Level IV by CHED" value={formData.accreditationInfo} onChange={handleChange} />
+                            <Input
+                                label="Institution Name"
+                                name="institutionName"
+                                placeholder="Harvard University"
+                                value={formData.institutionName}
+                                onChange={handleChange}
+                            />
+                            <Input
+                                label="Position"
+                                name="institutionPosition"
+                                placeholder="Dean of Admissions"
+                                value={formData.institutionPosition}
+                                onChange={handleChange}
+                            />
+                            <Input
+                                label="Accreditation Info"
+                                name="accreditationInfo"
+                                placeholder="Accredited Level IV by CHED"
+                                value={formData.accreditationInfo}
+                                onChange={handleChange}
+                            />
                         </>
                     )}
 
                     {formData.role === "STUDENT" && (
                         <>
-                            <Input label="Student ID" name="studentId" placeholder="2022-00123" value={formData.studentId} onChange={handleChange} />
+                            <Input
+                                label="Student ID"
+                                name="studentId"
+                                placeholder="2022-00123"
+                                value={formData.studentId}
+                                onChange={handleChange}
+                            />
                             <Select
                                 label="College"
                                 name="college"
@@ -124,7 +229,7 @@ const Register = () => {
                                 onChange={handleChange}
                                 options={(colleges || []).map((c) => ({
                                     label: c.collegeName,
-                                    value: c.collegeName
+                                    value: c.collegeName,
                                 }))}
                             />
 
@@ -136,7 +241,7 @@ const Register = () => {
                                 onChange={handleChange}
                                 options={(courses || []).map((c) => ({
                                     label: c.courseName,
-                                    value: c.courseName
+                                    value: c.courseName,
                                 }))}
                             />
 
@@ -148,7 +253,7 @@ const Register = () => {
                                 onChange={handleChange}
                                 options={(majors || []).map((m) => ({
                                     label: m.majorName,
-                                    value: m.majorName
+                                    value: m.majorName,
                                 }))}
                             />
                         </>
@@ -185,7 +290,10 @@ const Register = () => {
 // eslint-disable-next-line react/prop-types
 const Input = ({ label, name, type = "text", value, onChange, placeholder = "", ...props }) => (
     <div>
-        <label htmlFor={name} className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label
+            htmlFor={name}
+            className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
             {label}
         </label>
         <input
@@ -205,7 +313,10 @@ const Input = ({ label, name, type = "text", value, onChange, placeholder = "", 
 // Select component
 const SelectRole = ({ label, name, value, onChange, options }) => (
     <div>
-        <label htmlFor={name} className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label
+            htmlFor={name}
+            className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
             {label}
         </label>
         <select
@@ -216,7 +327,10 @@ const SelectRole = ({ label, name, value, onChange, options }) => (
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm"
         >
             {options.map((opt) => (
-                <option key={opt} value={opt}>
+                <option
+                    key={opt}
+                    value={opt}
+                >
                     {opt}
                 </option>
             ))}
@@ -226,7 +340,10 @@ const SelectRole = ({ label, name, value, onChange, options }) => (
 
 const SelectSex = ({ label, name, value, onChange, options }) => (
     <div>
-        <label htmlFor={name} className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+        <label
+            htmlFor={name}
+            className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+        >
             {label}
         </label>
         <select
@@ -237,7 +354,10 @@ const SelectSex = ({ label, name, value, onChange, options }) => (
             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-600 focus:outline-none focus:ring-blue-600 dark:border-slate-600 dark:bg-slate-700 dark:text-white sm:text-sm"
         >
             {options.map((opt) => (
-                <option key={opt} value={opt}>
+                <option
+                    key={opt}
+                    value={opt}
+                >
                     {opt}
                 </option>
             ))}
@@ -264,13 +384,15 @@ const Select = ({ label, name, value, onChange, options }) => (
         >
             <option value="">Select {label}</option>
             {options.map((opt, idx) => (
-                <option key={idx} value={opt.value}>
+                <option
+                    key={idx}
+                    value={opt.value}
+                >
                     {opt.label}
                 </option>
             ))}
         </select>
     </div>
 );
-
 
 export default Register;
