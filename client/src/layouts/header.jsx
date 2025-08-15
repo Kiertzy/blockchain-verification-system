@@ -25,6 +25,17 @@ export const Header = ({ collapsed, setCollapsed }) => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        const syncLogout = (event) => {
+            if (event.key === 'logout') {
+                dispatch(logout());
+                navigate('/');
+            }
+        };
+        window.addEventListener('storage', syncLogout);
+        return () => window.removeEventListener('storage', syncLogout);
+    }, [dispatch, navigate]);
+    
     const handleLogout = () => {
         dispatch(logout());
         navigate("/");

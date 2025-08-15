@@ -14,6 +14,7 @@ import Students from "@/pages/dashboard/adminDashboard/students";
 import Colleges from "@/pages/dashboard/adminDashboard/colleges";
 import Courses from "@/pages/dashboard/adminDashboard/courses";
 import Majors from "@/pages/dashboard/adminDashboard/majors";
+import PendingDashboard from "./pages/dashboard/pendingDashboard";
 
 import StudentDashboardPage from "@/pages/dashboard/studentDashboard/studentDashboard";
 import StudentCertificates from "@/pages/dashboard/studentDashboard/studentCertificates";
@@ -53,6 +54,11 @@ function App() {
                     <Route
                         path="/forgot-password"
                         element={<ForgotPassword />}
+                    />
+
+                    <Route
+                        path="pending-dashboard"
+                        element={<PendingDashboard/>}
                     />
 
                     {/* Admin Protected Routes */}
@@ -142,6 +148,10 @@ function App() {
                                 path="certificates/student/list"
                                 element={<InstitutionCertificateStudentList />}
                             />
+                            {/* <Route
+                                path="pending-dashboard"
+                                element={<PendingDashboard/>}
+                            /> */}
                         </Route>
                     </Route>
 

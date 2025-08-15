@@ -28,23 +28,51 @@
       dispatch(clearError());
     }, []);
 
+    // useEffect(() => {
+    //   if (isAuthenticated && user) {
+    //     if (user.role === "ADMIN") {
+    //       navigate('/dashboard');
+    //     } else if (user.role === "STUDENT") {
+    //       navigate('/student-dashboard');
+    //     } else if (user.role === "INSTITUTION") {
+    //       navigate('/institution-dashboard');
+    //     }
+    //     else if (user.role === "VERIFIER") {
+    //       navigate('/verifier/dashboard');
+    //     }
+    //     else {
+    //       navigate('/');
+    //     }
+    //   }
+    // }, [isAuthenticated, user, navigate]);
+
     useEffect(() => {
       if (isAuthenticated && user) {
-        if (user.role === "ADMIN") {
-          navigate('/dashboard');
-        } else if (user.role === "STUDENT") {
-          navigate('/student-dashboard');
-        } else if (user.role === "INSTITUTION") {
-          navigate('/institution-dashboard');
+        if (user.accountStatus === "PENDING") {
+          navigate('/pending-dashboard');
+          return; // ⬅ Prevent further navigation checks
         }
-        else if (user.role === "VERIFIER") {
-          navigate('/verifier/dashboard');
-        }
-        else {
-          navigate('/'); // fallback
+
+        switch (user.role) {
+          case "ADMIN":
+            navigate('/dashboard');
+            break;
+          case "STUDENT":
+            navigate('/student-dashboard');
+            break;
+          case "INSTITUTION":
+            navigate('/institution-dashboard');
+            break;
+          case "VERIFIER":
+            navigate('/verifier/dashboard');
+            break;
+          default:
+            navigate('/');
+            break;
         }
       }
     }, [isAuthenticated, user, navigate]);
+
 
     useEffect(() => {
       if (otpFailed) {

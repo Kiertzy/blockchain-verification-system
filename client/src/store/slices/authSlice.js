@@ -96,10 +96,20 @@ const authSlice = createSlice({
       state.otpSent = false;
       state.email = null;
       state.otpFailed = false;
-
-      // Clear only this tab's data
+      
+      // Clear this tab’s sessionStorage keys
       sessionStorage.removeItem(getStorageKey('token'));
       sessionStorage.removeItem(getStorageKey('user'));
+
+      // Optional: clear *all* sessionStorage for this tab
+      sessionStorage.clear();
+
+      // Optional: clear all localStorage auth data
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      
+      // Trigger multi-tab logout event
+      localStorage.setItem('logout', Date.now());
     },
     resetOtpState: (state) => {
       state.otpSent = false;
