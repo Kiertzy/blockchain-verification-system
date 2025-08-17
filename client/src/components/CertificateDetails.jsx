@@ -24,7 +24,7 @@ const CertificateDetails = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center bg-gray-50 px-4 py-8 dark:bg-gray-900">
+    <div className="flex min-h-screen flex-col items-center px-4 py-8">
       <div className="w-full max-w-5xl">
         {/* Title */}
         <h1 className="text-center text-3xl font-bold text-gray-900 dark:text-white mb-6">
@@ -83,12 +83,24 @@ const CertificateDetails = () => {
   );
 };
 
-const Detail = ({ label, value, fullWidth, isHash }) => (
+const Detail = ({ label, value, fullWidth, isHash, isStatus }) => (
   <div className={`${fullWidth ? "col-span-2" : ""} flex flex-col`}>
     <span className="text-sm sm:text-base font-semibold text-gray-800 dark:text-gray-100">
       {label}:
     </span>
-    {isHash ? (
+    {isStatus ? (
+      <span
+        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold mt-1 ${
+          value === "CONFIRMED"
+            ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
+            : value === "REVOKED"
+            ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
+            : "bg-gray-100 text-gray-700 dark:bg-gray-900/40 dark:text-gray-300"
+        }`}
+      >
+        {value}
+      </span>
+    ) : isHash ? (
       <span className="mt-1 rounded-md bg-gray-100 px-2 py-1 text-xs sm:text-sm font-mono text-gray-700 break-all overflow-x-auto dark:bg-slate-700 dark:text-gray-200">
         {value || "N/A"}
       </span>

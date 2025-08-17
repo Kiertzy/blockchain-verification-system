@@ -28,6 +28,7 @@ import InstitutionReports from "./pages/dashboard/institutionDashboard/reports";
 import InstitutionCertificateList from "./pages/dashboard/institutionDashboard/institutionCertificateList";
 import InstitutionCertificateStudentList from "./pages/dashboard/institutionDashboard/institutionCertificateStudentList";
 import InstitutionStudentDetails from "./pages/dashboard/institutionDashboard/studentDetails";
+import InstitutionCertificateDetails from "./pages/dashboard/institutionDashboard/viewCertificateDetails";
 import LayoutInstitution from "./pages/dashboard/institutionDashboard/layout";
 
 import VerifierDashboard from "./pages/dashboard/verifierDashboard/verifierDashboard";
@@ -66,11 +67,6 @@ function App() {
                     <Route
                         path="pending-dashboard"
                         element={<PendingDashboard />}
-                    />
-
-                    <Route
-                        path="/certificate/:id"
-                        element={<CertificateDetails />}
                     />
 
                     {/* Admin Protected Routes */}
@@ -163,6 +159,16 @@ function App() {
                             <Route
                                 path="certificates/student/list"
                                 element={<InstitutionCertificateStudentList />}
+                            />
+
+                            <Route
+                                path="/certificate/details/:certId"
+                                element={<InstitutionCertificateDetails />}
+                            />
+
+                            <Route
+                                path="/certificate/:id"
+                                element={<CertificateDetails />}
                             />
                         </Route>
                     </Route>

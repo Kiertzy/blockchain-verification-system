@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Modal, message } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { getUserById, clearUserState } from "../../../store/slices/userSlice";
@@ -9,6 +9,7 @@ import { deleteCertificate, updateCertificateStatus } from "../../../store/slice
 const StudentDetails = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { selectedUser, loading, error } = useSelector((state) => state.users);
     const { loading: certLoading, error: certError, message: certMessage } = useSelector((state) => state.allCertificates);
 
@@ -224,7 +225,10 @@ const StudentDetails = () => {
                                             <div className="flex flex-wrap gap-2">
                                                 <button
                                                     className="rounded-lg bg-blue-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-blue-600"
-                                                    onClick={() => window.open(cert.imageOfCertificate, "_blank")}
+                                                    onClick={() => {
+                                                        console.log("Navigating to certificate", cert._id);
+                                                        navigate(`/certificate/details/${cert._id}`);
+                                                    }}
                                                 >
                                                     View
                                                 </button>

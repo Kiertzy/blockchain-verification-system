@@ -1,27 +1,42 @@
 const { CreateError } = require("../../helper/ErrorHandler");
 const CertificateIssuedModel = require("../../model/CertificateIssuedModel");
+const mongoose = require("mongoose");
 
-const GetAllCertificatesService = async () => {
+const GetCertificateByIdService = async (req) => {
   try {
-    // Fetch and populate related user info
-    const certificates = await CertificateIssuedModel.find()
-      .populate("issuedBy", "firstName lastName email walletAddress role institutionName")
-      .populate("issuedTo", "firstName lastName email walletAddress role studentId college department major")
-      .sort({ dateIssued: -1 }); // newest first
+    const certId = req.params.certId; // extract certId from request
 
-    if (!certificates || certificates.length === 0) {
-      throw CreateError("No certificates found", 404);
+    if (!certId) {
+      throw CreateError("Certificate ID is required", 400);
+    }
+
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(certId)) {
+      throw CreateError("Invalid certificate ID format", 400);
+    }
+
+    // Fetch the certificate by ID and populate related fields
+    const certificate = await CertificateIssuedModel.findById(certId)
+      .populate("issuedBy", "firstName lastName email walletAddress role institutionName")
+      .populate("issuedTo", "firstName lastName email walletAddress role studentId college department major");
+
+    if (!certificate) {
+      throw CreateError("Certificate not found", 404);
     }
 
     return {
-      message: "Certificates fetched successfully",
-      count: certificates.length,
-      certificates,
+      message: "Certificate fetched successfully",
+      certificate,
     };
   } catch (err) {
-    console.error("Error fetching certificates:", err);
-    throw CreateError("Failed to fetch certificates", 500);
+    console.error("Error fetching certificate by ID:", err);
+
+    // If it's already a custom error, rethrow
+    if (err.status) throw err;
+
+    // Otherwise, wrap as internal server error
+    throw CreateError(err.message || "Failed to fetch certificate", 500);
   }
 };
 
-module.exports = GetAllCertificatesService;
+module.exports = GetCertificateByIdService;
