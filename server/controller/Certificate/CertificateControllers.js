@@ -6,6 +6,7 @@ const CertificateIssuedModel = require("../../model/CertificateIssuedModel");
 const IssueCertificateService = require("../../services/Certificate/IssueCertificateService");
 const DeleteCertificateService = require("../../services/Certificate/DeleteCertificateService");
 const UpdateCertificateStatusService = require("../../services/Certificate/UpdateCertificateStatusService");
+const GetCertificateByIdService = require("../../services/Certificate/GetCertificateByIdService");
 const GetAllCertificateService = require("../../services/Certificate/GetAllCertificateService");
 const VerifyCertificateService = require("../../services/Certificate/VerifyCertificateService");
 const BulkVerificationCertificateService = require("../../services/Certificate/BulkVerificationCertificateService");
@@ -71,6 +72,15 @@ const GetAllCertificate = async (req, res, next) => {
   }
 };
 
+const GetCertificateById = async (req, res, next) => {
+  try {
+    const result = await GetCertificateByIdService(req, CertificateIssuedModel);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 /**
  * @desc Issue Certificate
  * @access public
@@ -109,5 +119,6 @@ module.exports = {
   GetAllCertificate,
   VerifyCertificate,
   BulkVerificationCertificate,
+  GetCertificateById,
 };
 

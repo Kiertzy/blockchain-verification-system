@@ -38,6 +38,20 @@ export const verifyBulkCertificates = createAsyncThunk(
   }
 );
 
+export const fetchAllCertificates = createAsyncThunk(
+  "certificates/fetchAll",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/Certificate/GetAllCertificates`);
+      return response.data; // { message, count, certificates }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to fetch certificates"
+      );
+    }
+  }
+);
+
 const verifyCertificateSlice = createSlice({
   name: "certificate",
   initialState: {

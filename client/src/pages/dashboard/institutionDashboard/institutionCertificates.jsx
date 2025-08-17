@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { message } from "antd";
-import { NFTStorage } from "nft.storage"; // npm install nft.storage
-import {
-    issueCertificate,
-    clearIssueCertificateState,
-} from "../../../store/slices/issueCertificateSlice";
+import { issueCertificate, clearIssueCertificateState } from "../../../store/slices/issueCertificateSlice";
 import { getAllUsers } from "../../../store/slices/userSlice";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // Use env variables in production!
-const NFT_STORAGE_KEY = "2ec00a6a.babc3bcc18ef46cab8b973e6c31fb8c4";
-const client = new NFTStorage({ token: NFT_STORAGE_KEY });
+const CLOUD_NAME = "duifaweje"; // 🔹 replace with your Cloudinary cloud name
+const UPLOAD_PRESET = "student_certificates"; // 🔹 replace with your unsigned upload preset
 
 const InstitutionCertificate = () => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { user: currentUser } = useSelector((state) => state.auth);
     const { users } = useSelector((state) => state.users);
@@ -23,23 +22,13 @@ const InstitutionCertificate = () => {
         dispatch(getAllUsers());
     }, [dispatch]);
 
-    const {
-        loading,
-        error,
-        message: successMsg,
-        issuedCertificate,
-        blockchainData,
-    } = useSelector((state) => state.issueCertificate);
+    const { loading, error, message: successMsg, issuedCertificate, blockchainData } = useSelector((state) => state.issueCertificate);
 
     const [selectedImageFile, setSelectedImageFile] = useState(null);
 
     // Filter approved students
     const filteredUsers = users
-        ?.filter(
-            (user) =>
-                user.accountStatus?.toUpperCase() === "APPROVED" &&
-                user.role?.toUpperCase() === "STUDENT"
-        )
+        ?.filter((user) => user.accountStatus?.toUpperCase() === "APPROVED" && user.role?.toUpperCase() === "STUDENT")
         ?.filter((user) => {
             const fullName = `${user.firstName} ${user.middleName || ""} ${user.lastName}`.toLowerCase();
             return fullName.includes(searchQuery.toLowerCase());
@@ -65,7 +54,7 @@ const InstitutionCertificate = () => {
         issuedBy: institutionData.issuedBy,
         issuedTo: "",
         imageOfCertificate: "",
-        ipfsCID: "",
+        ipfsCID: "", // (you can rename this to cloudinaryUrl if you want)
     });
 
     const handleStudentSelect = (student) => {
@@ -128,26 +117,29 @@ const InstitutionCertificate = () => {
         }
 
         try {
-            // 1️⃣ Upload image to IPFS and get CID
-            const cid = await client.storeBlob(selectedImageFile);
+            // 1️⃣ Upload image to Cloudinary
+            const formDataCloud = new FormData();
+            formDataCloud.append("file", selectedImageFile);
+            formDataCloud.append("upload_preset", UPLOAD_PRESET);
 
-            // 2️⃣ Gateway link
-            const ipfsImageUrl = `https://ipfs.io/ipfs/${cid}`;
+            const res = await axios.post(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, formDataCloud);
 
-            // 3️⃣ Merge into form data
+            const cloudinaryUrl = res.data.secure_url;
+
+            // 2️⃣ Merge into form data
             const finalFormData = {
                 ...formData,
-                imageOfCertificate: ipfsImageUrl,
-                ipfsCID: cid,
+                imageOfCertificate: cloudinaryUrl,
+                ipfsCID: res.data.public_id, // optional, you can rename this to cloudinaryId
             };
 
-            console.log("✅ Certificate uploaded to IPFS:", ipfsImageUrl);
+            console.log("✅ Certificate uploaded to Cloudinary:", cloudinaryUrl);
 
-            // 4️⃣ Dispatch to backend / blockchain
+            // 3️⃣ Dispatch to backend / blockchain
             dispatch(issueCertificate(finalFormData));
         } catch (error) {
-            console.error("❌ IPFS upload failed:", error);
-            message.error("Failed to upload image to IPFS");
+            console.error("❌ Cloudinary upload failed:", error);
+            message.error("Failed to upload image to Cloudinary");
         }
     };
 
@@ -160,15 +152,15 @@ const InstitutionCertificate = () => {
                 placeholder="Search student..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full sm:max-w-md rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500"
+                className="w-full rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 sm:max-w-md"
             />
             {searchQuery && (
-                <div className="w-full sm:max-w-md border border-slate-300 rounded-md bg-white shadow-md dark:border-slate-600 dark:bg-slate-800 max-h-60 overflow-auto">
+                <div className="max-h-60 w-full overflow-auto rounded-md border border-slate-300 bg-white shadow-md dark:border-slate-600 dark:bg-slate-800 sm:max-w-md">
                     {filteredUsers?.length > 0 ? (
                         filteredUsers.map((student) => (
                             <div
                                 key={student._id}
-                                className="px-4 py-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 text-slate-900 dark:text-white"
+                                className="cursor-pointer px-4 py-2 text-slate-900 hover:bg-blue-100 dark:text-white dark:hover:bg-blue-900"
                                 onClick={() => handleStudentSelect(student)}
                             >
                                 {student.firstName} {student.middleName} {student.lastName}
@@ -180,7 +172,10 @@ const InstitutionCertificate = () => {
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="flex w-full max-w-full flex-col gap-4 sm:max-w-2xl">
+            <form
+                onSubmit={handleSubmit}
+                className="flex w-full max-w-full flex-col gap-4 sm:max-w-2xl"
+            >
                 {[
                     { name: "nameOfInstitution", label: "Institution Name", disabled: true },
                     { name: "nameOfStudent", label: "Student Name", disabled: true },
@@ -242,11 +237,24 @@ const InstitutionCertificate = () => {
             {successMsg && issuedCertificate && (
                 <div className="mt-6 max-w-full break-words rounded border border-green-500 bg-green-50 p-4 text-green-800 dark:bg-green-900 dark:text-green-300 sm:max-w-2xl">
                     <h2 className="mb-2 text-lg font-semibold">Certificate Issued ✅</h2>
-                    <p><strong>Message:</strong> {successMsg}</p>
-                    <p><strong>Certificate Hash:</strong> {issuedCertificate.certHash}</p>
-                    <p><strong>Transaction Hash:</strong> {blockchainData?.txHash}</p>
-                    <p><strong>IPFS CID:</strong> {issuedCertificate?.ipfsCID}</p>
-                    <p><strong>Certificate Link:</strong> <a href={issuedCertificate?.imageOfCertificate} target="_blank" rel="noreferrer">{issuedCertificate?.imageOfCertificate}</a></p>
+                    <p>
+                        <strong>Message:</strong> {successMsg}
+                    </p>
+                    <p>
+                        <strong>Certificate Hash:</strong> {issuedCertificate.certHash}
+                    </p>
+                    <p>
+                        <strong>Transaction Hash:</strong> {blockchainData?.txHash}
+                    </p>
+
+                    <button
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => navigate(`/certificate/${issuedCertificate._id}`)}
+                        className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                    >
+                        View Certificate Details
+                    </button>
                 </div>
             )}
         </div>

@@ -27,6 +27,7 @@ import InstitutionCertificates from "./pages/dashboard/institutionDashboard/inst
 import InstitutionReports from "./pages/dashboard/institutionDashboard/reports";
 import InstitutionCertificateList from "./pages/dashboard/institutionDashboard/institutionCertificateList";
 import InstitutionCertificateStudentList from "./pages/dashboard/institutionDashboard/institutionCertificateStudentList";
+import InstitutionStudentDetails from "./pages/dashboard/institutionDashboard/studentDetails";
 import LayoutInstitution from "./pages/dashboard/institutionDashboard/layout";
 
 import VerifierDashboard from "./pages/dashboard/verifierDashboard/verifierDashboard";
@@ -35,7 +36,7 @@ import VerifierCertificates from "./pages/dashboard/verifierDashboard/verifyCert
 import BulkVerification from "./pages/dashboard/verifierDashboard/bulkVerification";
 import VerifierLayout from "./pages/dashboard/verifierDashboard/layout";
 import RegistrationSuccess from "./components/registrationSuccess";
-
+import CertificateDetails from "./components/CertificateDetails";
 
 function App() {
     return (
@@ -64,7 +65,12 @@ function App() {
 
                     <Route
                         path="pending-dashboard"
-                        element={<PendingDashboard/>}
+                        element={<PendingDashboard />}
+                    />
+
+                    <Route
+                        path="/certificate/:id"
+                        element={<CertificateDetails />}
                     />
 
                     {/* Admin Protected Routes */}
@@ -142,7 +148,7 @@ function App() {
                                 path="certificates/reports"
                                 element={<InstitutionReports />}
                             />
-                             <Route
+                            <Route
                                 path="certificates/issue"
                                 element={<InstitutionCertificates />}
                             />
@@ -151,13 +157,13 @@ function App() {
                                 element={<InstitutionCertificateList />}
                             />
                             <Route
+                                path="certificates/student/details/:id"
+                                element={<InstitutionStudentDetails />}
+                            />
+                            <Route
                                 path="certificates/student/list"
                                 element={<InstitutionCertificateStudentList />}
                             />
-                            {/* <Route
-                                path="pending-dashboard"
-                                element={<PendingDashboard/>}
-                            /> */}
                         </Route>
                     </Route>
 
@@ -172,7 +178,7 @@ function App() {
                                 path="/verifier/reports"
                                 element={<VerifierReports />}
                             />
-                             <Route
+                            <Route
                                 path="verifier/certificates/verify"
                                 element={<VerifierCertificates />}
                             />
@@ -182,7 +188,6 @@ function App() {
                             />
                         </Route>
                     </Route>
-
                 </Routes>
             </BrowserRouter>
         </ThemeProvider>

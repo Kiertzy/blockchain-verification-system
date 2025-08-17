@@ -3,14 +3,14 @@ const CertificateIssuedModel = require("../../model/CertificateIssuedModel");
 const UsersModel = require("../../model/UserModel");
 
 const DeleteCertificateService = async (Request) => {
-  const { certId } = Request.params; // certificate ID from URL
+  const { certId } = Request.params; 
 
   if (!certId) throw CreateError("Certificate ID is required", 400);
 
   // Find the certificate
   const certificate = await CertificateIssuedModel.findById(certId)
-    .populate("issuedBy", "name email role") // Include issuer details
-    .populate("issuedTo", "name email role"); // Include receiver details
+    .populate("issuedBy", "name email role") 
+    .populate("issuedTo", "name email role"); 
 
   if (!certificate) throw CreateError("Certificate not found", 404);
 

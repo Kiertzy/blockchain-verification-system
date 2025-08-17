@@ -17,11 +17,26 @@ export const getAllUsers = createAsyncThunk(
   }
 );
 
+// Async thunk for fetching a single user by ID
+export const getUserById = createAsyncThunk(
+  "users/getUserById",
+  async (id, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/User/GetUser/${id}`);
+      // Assuming backend returns a single user object
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to fetch user by ID");
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "users",
   initialState: {
     users: [],
     totalUsers: 0,
+    selectedUser: null, // 👈 new state for single user
     loading: false,
     error: null,
   },
@@ -31,10 +46,12 @@ const userSlice = createSlice({
       state.error = null;
       state.totalUsers = 0;
       state.users = [];
+      state.selectedUser = null;
     },
   },
   extraReducers: (builder) => {
     builder
+      // Get All Users
       .addCase(getAllUsers.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -47,10 +64,24 @@ const userSlice = createSlice({
       .addCase(getAllUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // Get User By ID
+      .addCase(getUserById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.selectedUser = null;
+      })
+      .addCase(getUserById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedUser = action.payload; // single user
+      })
+      .addCase(getUserById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
 export const { clearUserState } = userSlice.actions;
-
 export default userSlice.reducer;

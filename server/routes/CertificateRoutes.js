@@ -13,6 +13,8 @@ CertificateRoutes.put("/UpdateCertificate/:certId/Status", CertificateController
 
 CertificateRoutes.get("/GetAllCertificate", CertificateControllers.GetAllCertificate);
 
+CertificateRoutes.get("/GetCertificate/:id", CertificateControllers.GetCertificateById);
+
 CertificateRoutes.post("/VerifyCertificate", CertificateControllers.VerifyCertificate);
 
 CertificateRoutes.post("/BulkVerificationCertificate", CertificateControllers.BulkVerificationCertificate);
