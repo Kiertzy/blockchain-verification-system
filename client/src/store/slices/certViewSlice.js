@@ -45,6 +45,23 @@ export const deleteCertificate = createAsyncThunk(
   }
 );
 
+export const updateCertificateStatus = createAsyncThunk(
+  "certificates/updateStatus",
+  async ({ certId, certStatus }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/Certificate/UpdateCertificateStatus/${certId}`,
+        { certStatus }
+      );
+      return { certId, ...response.data }; // returns { message, certificate }
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update certificate status"
+      );
+    }
+  }
+);
+
 const allCertificatesSlice = createSlice({
   name: "allCertificates",
   initialState: {
@@ -116,6 +133,31 @@ const allCertificatesSlice = createSlice({
         state.count = state.certificates.length;
       })
       .addCase(deleteCertificate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // ✅ UPDATE STATUS
+      .addCase(updateCertificateStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateCertificateStatus.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message =
+          action.payload.message || "Certificate status updated successfully";
+
+        state.certificates = state.certificates.map((cert) =>
+          cert._id === action.payload.certId
+            ? { ...cert, certStatus: action.payload.certificate.certStatus }
+            : cert
+        );
+
+        if (state.certificate && state.certificate._id === action.payload.certId) {
+          state.certificate.certStatus = action.payload.certificate.certStatus;
+        }
+      })
+      .addCase(updateCertificateStatus.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

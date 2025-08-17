@@ -2,8 +2,8 @@ const { CreateError } = require("../../helper/ErrorHandler");
 const CertificateIssuedModel = require("../../model/CertificateIssuedModel");
 
 const UpdateCertificateStatusService = async (Request) => {
-  const { certId } = Request.params; // Certificate ID from URL
-  const { certStatus } = Request.body; // New status from request body
+  const { certId } = Request.params; 
+  const { certStatus } = Request.body; 
 
   if (!certId) throw CreateError("Certificate ID is required", 400);
   if (!certStatus) throw CreateError("New certificate status is required", 400);
