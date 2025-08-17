@@ -150,9 +150,9 @@ const StudentDetails = () => {
                         <p className="text-sm text-slate-500 dark:text-slate-400">Major</p>
                         <p className="font-medium text-slate-900 dark:text-white">{selectedUser.major || "—"}</p>
                     </div>
-                    <div>
+                    <div className="max-w-full">
                         <p className="text-sm text-slate-500 dark:text-slate-400">Wallet Address</p>
-                        <p className="font-medium text-slate-900 dark:text-white">{selectedUser.walletAddress || "—"}</p>
+                        <p className="break-words font-medium text-slate-900 dark:text-white">{selectedUser.walletAddress || "—"}</p>
                     </div>
                 </div>
             </div>
@@ -221,26 +221,29 @@ const StudentDetails = () => {
                                         </td>
 
                                         <td className="border-b px-4 py-2 dark:border-slate-700">
-                                            <button
-                                                className="rounded-lg bg-blue-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-blue-600"
-                                                onClick={() => window.open(cert.imageOfCertificate, "_blank")}
-                                            >
-                                                View
-                                            </button>
+                                            <div className="flex flex-wrap gap-2">
+                                                <button
+                                                    className="rounded-lg bg-blue-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-blue-600"
+                                                    onClick={() => window.open(cert.imageOfCertificate, "_blank")}
+                                                >
+                                                    View
+                                                </button>
 
-                                            <button
-                                                className="rounded-lg bg-yellow-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-yellow-600"
-                                                onClick={() => handleUpdateStatus(cert._id, cert.certStatus)}
-                                            >
-                                                Update Status
-                                            </button>
+                                                <button
+                                                    className="rounded-lg bg-yellow-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-yellow-600"
+                                                    onClick={() => handleUpdateStatus(cert._id, cert.certStatus)}
+                                                >
+                                                    Update Status
+                                                </button>
 
-                                            <button
-                                                className="rounded-lg bg-red-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-red-600"
-                                                onClick={() => handleDelete(cert._id)}
-                                            >
-                                                {certLoading ? "Deleting..." : "Delete"}
-                                            </button>
+                                                <button
+                                                    className="rounded-lg bg-red-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-red-600"
+                                                    onClick={() => handleDelete(cert._id)}
+                                                    disabled={certLoading} // disables while loading
+                                                >
+                                                    {certLoading ? "Deleting..." : "Delete"}
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
