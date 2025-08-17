@@ -8,7 +8,7 @@ export const fetchAllCertificates = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(`${API_BASE_URL}/Certificate/GetAllCertificate`);
-      return response.data; // { message, count, certificates }
+      return response.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch certificates"
@@ -50,7 +50,7 @@ export const updateCertificateStatus = createAsyncThunk(
   async ({ certId, certStatus }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `${API_BASE_URL}/Certificate/UpdateCertificateStatus/${certId}`,
+        `${API_BASE_URL}/Certificate/UpdateCertificate/${certId}/Status`,
         { certStatus }
       );
       return { certId, ...response.data }; // returns { message, certificate }
@@ -142,6 +142,7 @@ const allCertificatesSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
+
       .addCase(updateCertificateStatus.fulfilled, (state, action) => {
         state.loading = false;
         state.message =

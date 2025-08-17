@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import { Modal, message } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { getUserById, clearUserState } from "../../../store/slices/userSlice";
-import { deleteCertificate } from "../../../store/slices/certViewSlice";
+import { deleteCertificate, updateCertificateStatus } from "../../../store/slices/certViewSlice";
 
 const StudentDetails = () => {
     const { id } = useParams();
@@ -41,6 +41,47 @@ const StudentDetails = () => {
                         dispatch(getUserById(id));
                     } else {
                         message.error(resultAction.payload || "Failed to delete certificate");
+                    }
+                } catch (err) {
+                    message.error("Something went wrong");
+                }
+            },
+        });
+    };
+
+    const handleUpdateStatus = (certId, currentStatus) => {
+        const action = currentStatus === "CONFIRMED" ? "REVOKE" : "CONFIRM";
+
+        confirm({
+            title: "Update Certificate Status",
+            icon: <ExclamationCircleOutlined />,
+            content: (
+                <span>
+                    Do you want to{" "}
+                    <span
+                        className={`inline-flex items-center rounded-full text-xs font-semibold ${
+                            action === "CONFIRM" ? "text-green-700" : "text-red-700"
+                        }`}
+                    >
+                        {action}
+                    </span>{" "}
+                    this certificate?
+                </span>
+            ),
+            okText: "Yes",
+            cancelText: "Cancel",
+            async onOk() {
+                try {
+                    const newStatus = currentStatus === "CONFIRMED" ? "REVOKED" : "CONFIRMED";
+
+                    const resultAction = await dispatch(updateCertificateStatus({ certId, certStatus: newStatus }));
+
+                    if (updateCertificateStatus.fulfilled.match(resultAction)) {
+                        message.success("Certificate status updated successfully");
+                        // refresh student details
+                        dispatch(getUserById(id));
+                    } else {
+                        message.error(resultAction.payload || "Failed to update certificate status");
                     }
                 } catch (err) {
                     message.error("Something went wrong");
@@ -187,7 +228,10 @@ const StudentDetails = () => {
                                                 View
                                             </button>
 
-                                            <button className="rounded-lg bg-yellow-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-yellow-600">
+                                            <button
+                                                className="rounded-lg bg-yellow-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-yellow-600"
+                                                onClick={() => handleUpdateStatus(cert._id, cert.certStatus)}
+                                            >
                                                 Update Status
                                             </button>
 
