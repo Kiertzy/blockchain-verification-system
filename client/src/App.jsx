@@ -15,6 +15,8 @@ import Colleges from "@/pages/dashboard/adminDashboard/colleges";
 import Courses from "@/pages/dashboard/adminDashboard/courses";
 import Majors from "@/pages/dashboard/adminDashboard/majors";
 import PendingDashboard from "./pages/dashboard/pendingDashboard";
+import AdminStudentDetails from "./pages/dashboard/adminDashboard/AdminStudentDetails";
+import AdminViewCertificateDetails from "./pages/dashboard/adminDashboard/adminViewCertificateDetails";
 
 import StudentDashboardPage from "@/pages/dashboard/studentDashboard/studentDashboard";
 import StudentCertificates from "@/pages/dashboard/studentDashboard/studentCertificates";
@@ -113,6 +115,14 @@ function App() {
                                 element={<BulkVerificationCertificate />}
                             />
                             <Route
+                                path="certificates/admin/student-details/:id"
+                                element={<AdminStudentDetails />}
+                            />
+                            <Route
+                                path="certificates/admin/student/certificate/:certId"
+                                element={<AdminViewCertificateDetails />}
+                            />
+                            <Route
                                 path="*"
                                 element={<h1 className="text-red-500">404 - Page Not Found</h1>}
                             />
@@ -165,7 +175,7 @@ function App() {
                                 path="/certificate/details/:certId"
                                 element={<InstitutionCertificateDetails />}
                             />
-
+    
                             <Route
                                 path="/certificate/:id"
                                 element={<CertificateDetails />}

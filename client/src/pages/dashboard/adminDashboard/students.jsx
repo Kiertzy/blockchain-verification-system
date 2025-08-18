@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, clearUserState } from "../../../store/slices/userSlice";
 import { clearUpdateAccountStatusState } from "../../../store/slices/updateUserAccountStatusSlice";
 import { message } from "antd";
 
 const Students = () => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { users, loading, error } = useSelector((state) => state.users);
     const { loading: updating, success, error: updateError, message: updateMsg } = useSelector((state) => state.updateUserAccountStatus);
@@ -147,6 +149,7 @@ const Students = () => {
                                                 <td className="flex gap-2 whitespace-nowrap border-b px-4 py-2 font-bold text-yellow-500 dark:border-slate-700">
                                                     <button
                                                         className="rounded bg-green-500 px-3 py-1 text-white hover:bg-green-600"
+                                                        onClick={() => navigate(`/certificates/admin/student-details/${user._id}`)}
                                                         disabled={updating}
                                                     >
                                                         View
