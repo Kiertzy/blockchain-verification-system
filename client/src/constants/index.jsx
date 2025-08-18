@@ -85,11 +85,6 @@ export const navbarStudentLinks = [
                 icon: Package,
                 path: "/student-dashboard",
             },
-            {
-                label: "Certificates",
-                icon: PackagePlus,
-                path: "/student-certificates",
-            },
         ],
     },
 ];

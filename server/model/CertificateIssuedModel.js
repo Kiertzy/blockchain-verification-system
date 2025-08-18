@@ -30,7 +30,7 @@ const CertificateIssuedSchema = new mongoose.Schema(
 
     issuedTo: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Refers to the student
+      ref: "User", 
       required: true,
     },
   },

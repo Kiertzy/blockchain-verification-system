@@ -11,7 +11,8 @@ const LoginService = async (Request, DataModel) => {
     throw CreateError("Email and password are required", 400);
   }
 
-  const users = await DataModel.aggregate([{ $match: { email } }]);
+  const users = await DataModel.aggregate([{ $match: { email } }])
+  
   if (!users.length) throw CreateError("Invalid credentials", 404);
 
   const user = users[0];

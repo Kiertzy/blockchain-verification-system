@@ -19,7 +19,6 @@ import AdminStudentDetails from "./pages/dashboard/adminDashboard/AdminStudentDe
 import AdminViewCertificateDetails from "./pages/dashboard/adminDashboard/adminViewCertificateDetails";
 
 import StudentDashboardPage from "@/pages/dashboard/studentDashboard/studentDashboard";
-import StudentCertificates from "@/pages/dashboard/studentDashboard/studentCertificates";
 import ForgotPassword from "./pages/recoveryPassword/ForgotPassword";
 import VerifyCertificates from "./pages/dashboard/adminDashboard/verifyCertificates";
 import BulkVerificationCertificate from "./pages/dashboard/adminDashboard/bulkVerificationCertificate";
@@ -135,10 +134,6 @@ function App() {
                             <Route
                                 path="student-dashboard"
                                 element={<StudentDashboardPage />}
-                            />
-                            <Route
-                                path="student-certificates"
-                                element={<StudentCertificates />}
                             />
                         </Route>
                     </Route>
