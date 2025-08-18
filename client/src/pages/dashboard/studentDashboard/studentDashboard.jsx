@@ -154,7 +154,7 @@ const DashboardPage = () => {
                                             <div className="flex flex-wrap gap-2">
                                                 <button
                                                     className="rounded-lg bg-blue-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-blue-600"
-                                                    onClick={() => navigate(`/certificates/admin/student/certificate/${cert._id}`)}
+                                                    onClick={() => window.open(`/certificates/student/certificate/view/${cert._id}`)}
                                                 >
                                                     View
                                                 </button>

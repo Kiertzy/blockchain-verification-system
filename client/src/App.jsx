@@ -19,6 +19,8 @@ import AdminStudentDetails from "./pages/dashboard/adminDashboard/AdminStudentDe
 import AdminViewCertificateDetails from "./pages/dashboard/adminDashboard/adminViewCertificateDetails";
 
 import StudentDashboardPage from "@/pages/dashboard/studentDashboard/studentDashboard";
+import StudentViewCertificateDetails from "@/pages/dashboard/studentDashboard/studentViewCertificateDetails.jsx";
+
 import ForgotPassword from "./pages/recoveryPassword/ForgotPassword";
 import VerifyCertificates from "./pages/dashboard/adminDashboard/verifyCertificates";
 import BulkVerificationCertificate from "./pages/dashboard/adminDashboard/bulkVerificationCertificate";
@@ -68,6 +70,11 @@ function App() {
                     <Route
                         path="pending-dashboard"
                         element={<PendingDashboard />}
+                    />
+
+                    <Route
+                        path="/certificates/student/certificate/view/:certId"
+                        element={<StudentViewCertificateDetails />}
                     />
 
                     {/* Admin Protected Routes */}
