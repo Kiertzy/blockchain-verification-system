@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, clearUserState } from "../../../store/slices/userSlice";
 import { clearUpdateAccountStatusState } from "../../../store/slices/updateUserAccountStatusSlice";
 import { message } from "antd";
 
 const Institutions = () => {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const { users, loading, error } = useSelector((state) => state.users);
     const { loading: updating, success, error: updateError, message: updateMsg } = useSelector((state) => state.updateUserAccountStatus);
@@ -48,7 +50,7 @@ const Institutions = () => {
 
     return (
         <div className="flex flex-col gap-y-4">
-            <h1 className="title">Students</h1>
+            <h1 className="title">Institutions</h1>
 
             {/* Search & Role Filters */}
             <div className="flex flex-col gap-3">
@@ -68,7 +70,7 @@ const Institutions = () => {
             {/* Table */}
             <div className="rounded border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
                 <div className="border-b border-gray-200 p-4 dark:border-slate-700">
-                    <p className="text-lg font-medium text-slate-900 dark:text-white">List of Students</p>
+                    <p className="text-lg font-medium text-slate-900 dark:text-white">List of Institutions</p>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -82,16 +84,12 @@ const Institutions = () => {
                                 <thead className="bg-gray-100 text-gray-700 dark:bg-slate-800 dark:text-gray-300">
                                     <tr>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">#</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">School ID</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">First Name</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Middle Name</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Last Name</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Sex</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Email</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Role</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">College</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Department</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Major</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Institution</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Institution Position</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Accreditation Info</th>
@@ -115,9 +113,6 @@ const Institutions = () => {
                                                     {indexOfFirstUser + index + 1}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                                    {user.studentId || "—"}
-                                                </td>
-                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.firstName}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
@@ -136,15 +131,6 @@ const Institutions = () => {
                                                     {user.role}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                                    {user.college || "—"}
-                                                </td>
-                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                                    {user.department || "—"}
-                                                </td>
-                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                                    {user.major || "—"}
-                                                </td>
-                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.institutionName || "—"}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
@@ -159,6 +145,7 @@ const Institutions = () => {
                                                 <td className="flex gap-2 whitespace-nowrap border-b px-4 py-2 font-bold text-yellow-500 dark:border-slate-700">
                                                     <button
                                                         className="rounded bg-green-500 px-3 py-1 text-white hover:bg-green-600"
+                                                        onClick={() => navigate(`/certificates/admin/institution-details/${user._id}`)}
                                                         disabled={updating}
                                                     >
                                                         View

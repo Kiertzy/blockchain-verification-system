@@ -12,11 +12,6 @@ export const navbarAdminLinks = [
                 icon: Home,
                 path: "/dashboard",
             },
-            {
-                label: "Reports",
-                icon: NotepadText,
-                path: "/reports",
-            },
         ],
     },
     {

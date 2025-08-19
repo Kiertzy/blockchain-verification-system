@@ -6,6 +6,7 @@ const GetUserByIDService = async (UsersModel, userId) => {
     .select("-password")
     .populate({
       path: "certIssued", // matches your User schema field
+      path: "certificateIssued",
       model: "CertificateIssued", // your certificate model name
       populate: [
         { path: "issuedBy", select: "firstName lastName email institutionName" },

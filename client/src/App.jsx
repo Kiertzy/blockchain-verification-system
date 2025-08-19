@@ -7,7 +7,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./pages/dashboard/adminDashboard/layout";
 import LayoutStudent from "./pages/dashboard/studentDashboard/layout";
 import DashboardPage from "./pages/dashboard/adminDashboard/adminDashboard";
-import Reports from "@/pages/dashboard/adminDashboard/reports";
 import Institutions from "@/pages/dashboard/adminDashboard/institution";
 import PendingUsers from "@/pages/dashboard/adminDashboard/pendingUsers";
 import Students from "@/pages/dashboard/adminDashboard/students";
@@ -17,6 +16,7 @@ import Majors from "@/pages/dashboard/adminDashboard/majors";
 import PendingDashboard from "./pages/dashboard/pendingDashboard";
 import AdminStudentDetails from "./pages/dashboard/adminDashboard/AdminStudentDetails";
 import AdminViewCertificateDetails from "./pages/dashboard/adminDashboard/adminViewCertificateDetails";
+import AdminInstitutionDetails from "./pages/dashboard/adminDashboard/AdminInstitutionDetails";
 
 import StudentDashboardPage from "@/pages/dashboard/studentDashboard/studentDashboard";
 import StudentViewCertificateDetails from "@/pages/dashboard/studentDashboard/studentViewCertificateDetails.jsx";
@@ -85,10 +85,6 @@ function App() {
                                 element={<DashboardPage />}
                             />
                             <Route
-                                path="reports"
-                                element={<Reports />}
-                            />
-                            <Route
                                 path="pending-users"
                                 element={<PendingUsers />}
                             />
@@ -123,6 +119,10 @@ function App() {
                             <Route
                                 path="certificates/admin/student-details/:id"
                                 element={<AdminStudentDetails />}
+                            />
+                             <Route
+                                path="certificates/admin/institution-details/:id"
+                                element={<AdminInstitutionDetails />}
                             />
                             <Route
                                 path="certificates/admin/student/certificate/:certId"
