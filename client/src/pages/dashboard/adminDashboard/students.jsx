@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FileDown } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, clearUserState } from "../../../store/slices/userSlice";
 import { clearUpdateAccountStatusState } from "../../../store/slices/updateUserAccountStatusSlice";
@@ -48,12 +49,65 @@ const Students = () => {
     const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
+    // ✅ Export CSV without any dependency
+    const exportInstitutionsCSV = () => {
+        if (filteredUsers.length === 0) {
+            alert("No approved institutions found.");
+            return;
+        }
+
+        const csvHeader = [
+            "#",
+            "Student ID",
+            "First Name",
+            "Middle Name",
+            "Last Name",
+            "Sex",
+            "Email",
+            "Role",
+            "College",
+            "Department",
+            "Major",
+            "Status",
+            "Wallet Address",
+        ];
+
+        const csvRows = filteredUsers.map((user, index) => [
+            index + 1,
+            user.studentId,
+            user.firstName,
+            user.middleName || "",
+            user.lastName,
+            user.sex,
+            user.email,
+            user.role,
+            user.college,
+            user.department,
+            user.major,
+            user.accountStatus,
+            user.walletAddress,
+        ]);
+
+        const csvContent = [csvHeader, ...csvRows]
+            .map((row) => row.map((val) => `"${val}"`).join(",")) // quote values safely
+            .join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "approved_students.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="flex flex-col gap-y-4">
             <h1 className="title">Students</h1>
 
-            {/* Search & Role Filters */}
-            <div className="flex flex-col gap-3">
+            <div className="mb-4 flex items-center justify-between gap-4">
                 {/* Search */}
                 <input
                     type="text"
@@ -65,6 +119,15 @@ const Students = () => {
                     }}
                     className="w-full max-w-md rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                 />
+
+                {/* Export Button */}
+                <button
+                    onClick={exportInstitutionsCSV}
+                    className="flex items-center gap-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                >
+                    <FileDown size={16} />
+                    Export
+                </button>
             </div>
 
             {/* Table */}
