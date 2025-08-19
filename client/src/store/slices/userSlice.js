@@ -31,14 +31,34 @@ export const getUserById = createAsyncThunk(
   }
 );
 
+// Update user details
+export const updateUserDetails = createAsyncThunk(
+  "users/updateUserDetails",
+  async ({ userId, userData }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/User/UpdateUserDetails/${userId}`,
+        userData
+      );
+      // returns { message, user }
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to update user");
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "users",
   initialState: {
     users: [],
     totalUsers: 0,
-    selectedUser: null, // 👈 new state for single user
+    selectedUser: null, 
     loading: false,
     error: null,
+    updateLoading: false,
+    updateError: null,
+    updateMessage: null,
   },
   reducers: {
     clearUserState: (state) => {
@@ -47,6 +67,14 @@ const userSlice = createSlice({
       state.totalUsers = 0;
       state.users = [];
       state.selectedUser = null;
+      state.updateLoading = false;
+      state.updateError = null;
+      state.updateMessage = null;
+    },
+    clearUpdateState: (state) => {
+      state.updateLoading = false;
+      state.updateError = null;
+      state.updateMessage = null;
     },
   },
   extraReducers: (builder) => {
@@ -79,9 +107,25 @@ const userSlice = createSlice({
       .addCase(getUserById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      // Update user details
+      .addCase(updateUserDetails.pending, (state) => {
+        state.updateLoading = true;
+        state.updateError = null;
+        state.updateMessage = null;
+      })
+      .addCase(updateUserDetails.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        state.updateMessage = action.payload.message;
+        state.selectedUser = action.payload.user;
+      })
+      .addCase(updateUserDetails.rejected, (state, action) => {
+        state.updateLoading = false;
+        state.updateError = action.payload;
       });
   },
 });
 
-export const { clearUserState } = userSlice.actions;
+export const { clearUserState, clearUpdateState } = userSlice.actions;
 export default userSlice.reducer;

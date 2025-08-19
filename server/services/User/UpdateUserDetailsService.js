@@ -44,6 +44,13 @@ const UpdateUserDetailsService = async (Request, UsersModel) => {
   if (walletAddress) updates.walletAddress = walletAddress;
   if (role) updates.role = role;
   if (accountStatus) updates.accountStatus = accountStatus;
+  if (studentId) updates.studentId = studentId;
+  if (college) updates.college = college;
+  if (department) updates.department = department;
+  if (major) updates.major = major;
+  if (institutionName) updates.institutionName = institutionName;
+  if (institutionPosition) updates.institutionPosition = institutionPosition;
+  if (accreditationInfo) updates.accreditationInfo = accreditationInfo;
 
   if (role === "INSTITUTION") {
     if (institutionName) updates.institutionName = institutionName;

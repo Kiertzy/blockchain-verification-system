@@ -1,14 +1,27 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { getUserById, clearUserState } from "../../../store/slices/userSlice";
+import { Modal, Form, Input, Select, Button, message, Col, Row } from "antd";
+import { getUserById, clearUserState, updateUserDetails, clearUpdateState } from "../../../store/slices/userSlice";
+import { getAllColleges } from "../../../store/slices/collegeSlice";
+import { getAllCourses } from "../../../store/slices/courseSlice";
+import { getAllMajors } from "../../../store/slices/majorSlice";
+
+const { Option } = Select;
 
 const AdminStudentDetails = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { selectedUser, loading, error } = useSelector((state) => state.users);
-    const { loading: certLoading, error: certError, message: certMessage } = useSelector((state) => state.allCertificates);
+
+    const { colleges } = useSelector((state) => state.college);
+    const { courses } = useSelector((state) => state.course);
+    const { majors } = useSelector((state) => state.major);
+
+    const { selectedUser, loading, error, updateLoading, updateError, updateMessage } = useSelector((state) => state.users);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [form] = Form.useForm();
 
     useEffect(() => {
         if (id) {
@@ -18,7 +31,48 @@ const AdminStudentDetails = () => {
             dispatch(clearUserState());
         };
     }, [id, dispatch]);
-    
+
+    useEffect(() => {
+        dispatch(getAllColleges());
+        dispatch(getAllCourses());
+        dispatch(getAllMajors());
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (selectedUser) {
+            form.setFieldsValue({
+                firstName: selectedUser.firstName,
+                middleName: selectedUser.middleName,
+                lastName: selectedUser.lastName,
+                email: selectedUser.email,
+                sex: selectedUser.sex,
+                studentId: selectedUser.studentId,
+                college: selectedUser.college,
+                department: selectedUser.department,
+                major: selectedUser.major,
+                walletAddress: selectedUser.walletAddress,
+                accountStatus: selectedUser.accountStatus,
+            });
+        }
+    }, [selectedUser, form]);
+
+    useEffect(() => {
+        if (updateMessage) {
+            message.success(updateMessage);
+            setIsModalOpen(false);
+            dispatch(clearUpdateState());
+            dispatch(getUserById(id));
+        }
+        if (updateError) {
+            message.error(updateError);
+            dispatch(clearUpdateState());
+        }
+    }, [updateMessage, updateError, dispatch, id]);
+
+    const handleUpdateUser = (values) => {
+        dispatch(updateUserDetails({ userId: id, userData: values }));
+    };
+
     if (loading) return <div className="p-6 text-slate-700 dark:text-slate-200">Loading...</div>;
     if (error) return <div className="p-6 text-red-500">{error}</div>;
     if (!selectedUser) return <div className="p-6 text-gray-500 dark:text-gray-400">No student found.</div>;
@@ -26,9 +80,17 @@ const AdminStudentDetails = () => {
     return (
         <div className="flex flex-col gap-y-8">
             {/* Page Title */}
-            <div>
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Student Profile</h1>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Detailed information and issued certificates</p>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Student Profile</h1>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Detailed information and issued certificates</p>
+                </div>
+                <Button
+                    type="primary"
+                    onClick={() => setIsModalOpen(true)}
+                >
+                    Update User Details
+                </Button>
             </div>
 
             {/* User Info Card */}
@@ -36,6 +98,7 @@ const AdminStudentDetails = () => {
                 <div className="border-b px-6 py-4 dark:border-slate-700">
                     <h2 className="text-xl font-semibold text-slate-800 dark:text-white">Personal Information</h2>
                 </div>
+
                 <div className="grid grid-cols-1 gap-6 p-6 sm:grid-cols-2">
                     <div>
                         <p className="text-sm text-slate-500 dark:text-slate-400">Student ID</p>
@@ -170,6 +233,199 @@ const AdminStudentDetails = () => {
                     )}
                 </div>
             </div>
+
+            {/* Modal for updating user */}
+            <Modal
+                title="Update Student Details"
+                open={isModalOpen}
+                onCancel={() => setIsModalOpen(false)}
+                footer={null}
+            >
+                <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={handleUpdateUser}
+                >
+                    <Row gutter={16}>
+                        <Col
+                            xs={24}
+                            sm={12}
+                        >
+                            <Form.Item
+                                name="firstName"
+                                label="First Name"
+                                rules={[{ required: true, message: "First Name is required" }]}
+                            >
+                                <Input />
+                            </Form.Item>
+                        </Col>
+
+                        <Col
+                            xs={24}
+                            sm={12}
+                        >
+                            <Form.Item
+                                name="middleName"
+                                label="Middle Name"
+                            >
+                                <Input />
+                            </Form.Item>
+                        </Col>
+
+                        <Col
+                            xs={24}
+                            sm={12}
+                        >
+                            <Form.Item
+                                name="lastName"
+                                label="Last Name"
+                                rules={[{ required: true, message: "Last Name is required" }]}
+                            >
+                                <Input />
+                            </Form.Item>
+                        </Col>
+
+                        <Col
+                            xs={24}
+                            sm={12}
+                        >
+                            <Form.Item
+                                name="email"
+                                label="Email"
+                                rules={[{ required: true, type: "email", message: "Valid Email is required" }]}
+                            >
+                                <Input />
+                            </Form.Item>
+                        </Col>
+
+                        <Col
+                            xs={24}
+                            sm={12}
+                        >
+                            <Form.Item
+                                name="sex"
+                                label="Sex"
+                                rules={[{ required: true, message: "Sex is required" }]}
+                            >
+                                <Select>
+                                    <Option value="Male">Male</Option>
+                                    <Option value="Female">Female</Option>
+                                </Select>
+                            </Form.Item>
+                        </Col>
+
+                        <Col
+                            xs={24}
+                            sm={12}
+                        >
+                            <Form.Item
+                                name="studentId"
+                                label="Student ID"
+                                rules={[{ required: true, message: "Student ID is required" }]}
+                            >
+                                <Input />
+                            </Form.Item>
+                        </Col>
+
+                        <Col
+                            xs={24}
+                            sm={12}
+                        >
+                            <Form.Item
+                                name="college"
+                                label="College"
+                            >
+                                <Select placeholder="Select College">
+                                    {colleges.map((college) => (
+                                        <Option
+                                            key={college._id}
+                                            value={college.collegeName}
+                                        >
+                                            {college.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+
+                        <Col
+                            xs={24}
+                            sm={12}
+                        >
+                            <Form.Item
+                                name="department"
+                                label="Department"
+                            >
+                                <Select placeholder="Select Department">
+                                    {courses.map((department) => (
+                                        <Option
+                                            key={department._id}
+                                            value={department.courseName}
+                                        >
+                                            {department.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+
+                        <Col
+                            xs={24}
+                            sm={12}
+                        >
+                            <Form.Item
+                                name="major"
+                                label="Major"
+                            >
+                                <Select placeholder="Select Major">
+                                    {majors.map((major) => (
+                                        <Option
+                                            key={major._id}
+                                            value={major.majorName}
+                                        >
+                                            {major.name}
+                                        </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                        <Col
+                            xs={24}
+                            sm={12}
+                        >
+                            <Form.Item
+                                name="accountStatus"
+                                label="Account Status"
+                            >
+                                <Select>
+                                    <Option value="APPROVED">APPROVED</Option>
+                                    <Option value="PENDING">PENDING</Option>
+                                    <Option value="DISAPPROVED">DISAPPROVED</Option>
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+
+                    <Col>
+                        <Form.Item
+                            name="walletAddress"
+                            label="Wallet Address"
+                        >
+                            <Input disabled />
+                        </Form.Item>
+                    </Col>
+
+                    <Form.Item>
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            loading={updateLoading}
+                        >
+                            Update
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Modal>
         </div>
     );
 };
