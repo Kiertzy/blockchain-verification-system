@@ -149,7 +149,7 @@ const AdminInstitutionDetails = () => {
             {/* Page Title */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Student Profile</h1>
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Institution Profile</h1>
                     <p className="text-sm text-slate-600 dark:text-slate-400">Detailed information and issued certificates</p>
                 </div>
                 <Button
@@ -289,6 +289,16 @@ const AdminInstitutionDetails = () => {
                     layout="vertical"
                     onFinish={handleUpdateUser}
                 >
+                    <Col>
+                        <Form.Item
+                            name="institutionName"
+                            label="Institution Name"
+                            rules={[{ required: true, message: "Institution Name is required" }]}
+                        >
+                            <Input />
+                        </Form.Item>
+                    </Col>
+
                     <Row gutter={16}>
                         <Col
                             xs={24}
@@ -310,6 +320,7 @@ const AdminInstitutionDetails = () => {
                             <Form.Item
                                 name="middleName"
                                 label="Middle Name"
+                                rules={[{ required: true, message: "Middle Name is required" }]}
                             >
                                 <Input />
                             </Form.Item>
@@ -362,14 +373,14 @@ const AdminInstitutionDetails = () => {
                             sm={12}
                         >
                             <Form.Item
-                                name="studentId"
-                                label="Student ID"
-                                rules={[{ required: true, message: "Student ID is required" }]}
+                                name="institutionPosition"
+                                label="Institution Position"
+                                rules={[{ required: true, message: "Position is required" }]}
                             >
                                 <Input />
                             </Form.Item>
                         </Col>
-                        
+
                         <Col
                             xs={24}
                             sm={12}
@@ -385,6 +396,20 @@ const AdminInstitutionDetails = () => {
                                 </Select>
                             </Form.Item>
                         </Col>
+
+                         <Col
+                            xs={24}
+                            sm={12}
+                        >
+                            <Form.Item
+                                name="accreditationInfo"
+                                label="Accreditation Info"
+                                rules={[{ required: true, message: "Accreditation Info is required" }]}
+                            >
+                                <Input />
+                            </Form.Item>
+                        </Col>
+
                     </Row>
 
                     <Col>
