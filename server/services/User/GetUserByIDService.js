@@ -1,13 +1,20 @@
 const { CreateError } = require("../../helper/ErrorHandler");
 
 const GetUserByIDService = async (UsersModel, userId) => {
-  // Fetch user and populate certIssued
+  // Fetch user and populate both certIssued and certificateIssued
   const user = await UsersModel.findById(userId)
     .select("-password")
     .populate({
-      path: "certIssued", // matches your User schema field
+      path: "certIssued",
+      model: "CertificateIssued",
+      populate: [
+        { path: "issuedBy", select: "firstName lastName email institutionName" },
+        { path: "issuedTo", select: "firstName lastName email studentId college department major" },
+      ],
+    })
+    .populate({
       path: "certificateIssued",
-      model: "CertificateIssued", // your certificate model name
+      model: "CertificateIssued",
       populate: [
         { path: "issuedBy", select: "firstName lastName email institutionName" },
         { path: "issuedTo", select: "firstName lastName email studentId college department major" },
