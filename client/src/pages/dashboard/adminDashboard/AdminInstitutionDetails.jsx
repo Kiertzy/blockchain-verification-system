@@ -27,7 +27,83 @@ const AdminInstitutionDetails = () => {
 
     // Helper function to count number of students per certificate name
     const countByCertificateName = (name) => {
-        return certificates.filter(cert => cert.nameOfCertificate === name).length;
+        return certificates.filter((cert) => cert.nameOfCertificate === name).length;
+    };
+
+    // Helper function to export CSV
+    const exportStudentsCSV = (certificateName) => {
+        const students = certificates.filter((cert) => cert.nameOfCertificate === certificateName).map((cert) => cert.issuedTo || []);
+
+        if (students.length === 0) {
+            alert("No students found for this certificate.");
+            return;
+        }
+
+        const csvHeader = [
+            "Student ID",
+            "First Name",
+            "Middle Name",
+            "Last Name",
+            "Email",
+            "College",
+            "Department",
+            "Major",
+            "Certificate Name",
+            "Institution Name",
+            "Image URL",
+            "Certificate Hash",
+            "Transaction Hash",
+            "Wallet Address Student",
+            "Wallet Address Institution",
+            "Date Issued",
+            "Certificate Status",
+            "Issued By Name",
+            "Issued By Email",
+        ];
+
+        const csvRows = students
+            .map((student) => {
+                // Find all certificates this student has with this name
+                const certs = certificates.filter((c) => c.nameOfCertificate === certificateName && c.issuedTo._id === student._id);
+
+                return certs.map((cert) => {
+                    const issuer = cert.issuedBy;
+                    return [
+                        student.studentId,
+                        student.firstName,
+                        student.middleName || "",
+                        student.lastName,
+                        student.email,
+                        student.college,
+                        student.department,
+                        student.major,
+                        cert.nameOfCertificate,
+                        cert.nameOfInstitution,
+                        cert.imageOfCertificate,
+                        cert.certHash,
+                        cert.txHash,
+                        cert.walletAddressStudent,
+                        cert.walletAddressInstitution,
+                        new Date(cert.dateIssued).toLocaleString(),
+                        cert.certStatus,
+                        issuer.firstName + " " + issuer.lastName,
+                        issuer.email,
+                    ];
+                });
+            })
+            .flat();
+
+        const csvContent = [csvHeader, ...csvRows].map((e) => e.join(",")).join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `${certificateName}_students.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     return (
@@ -111,6 +187,10 @@ const AdminInstitutionDetails = () => {
                                     <th className="border-b px-4 py-2 text-left font-medium text-slate-600 dark:border-slate-700 dark:text-slate-300">
                                         No. of Certificate issued to Students
                                     </th>
+
+                                    <th className="border-b px-4 py-2 text-left font-medium text-slate-600 dark:border-slate-700 dark:text-slate-300">
+                                        Report
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -132,6 +212,15 @@ const AdminInstitutionDetails = () => {
                                         <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                             {countByCertificateName(cert.nameOfCertificate)}
                                         </td>
+
+                                        <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
+                                            <button
+                                                onClick={() => exportStudentsCSV(cert.nameOfCertificate)}
+                                                className="rounded-md bg-blue-600 px-3 py-1 text-white hover:bg-blue-700"
+                                            >
+                                                Export
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -146,4 +235,3 @@ const AdminInstitutionDetails = () => {
 };
 
 export default AdminInstitutionDetails;
-
