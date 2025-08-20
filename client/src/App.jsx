@@ -20,6 +20,7 @@ import AdminInstitutionDetails from "./pages/dashboard/adminDashboard/AdminInsti
 import Admin from "./pages/dashboard/adminDashboard/admin";
 import AdminDetails from "./pages/dashboard/adminDashboard/AdminDetails";
 import Verifier from "./pages/dashboard/adminDashboard/verifier";
+import AdminVerifierDetails from "./pages/dashboard/adminDashboard/AdminVerifierDetails";
 
 import StudentDashboardPage from "@/pages/dashboard/studentDashboard/studentDashboard";
 import StudentViewCertificateDetails from "@/pages/dashboard/studentDashboard/studentViewCertificateDetails.jsx";
@@ -138,6 +139,10 @@ function App() {
                             <Route
                                 path="admin/details/:id"
                                 element={<AdminDetails />}
+                            />
+                            <Route
+                                path="admin/verifier/details/:id"
+                                element={<AdminVerifierDetails />}
                             />
                             <Route
                                 path="certificates/admin/student/certificate/:certId"

@@ -56,14 +56,14 @@ const AdminDetails = () => {
 
     if (loading) return <div className="p-6 text-slate-700 dark:text-slate-200">Loading...</div>;
     if (error) return <div className="p-6 text-red-500">{error}</div>;
-    if (!selectedUser) return <div className="p-6 text-gray-500 dark:text-gray-400">No admin found.</div>;
+    if (!selectedUser) return <div className="p-6 text-gray-500 dark:text-gray-400">No verifier found.</div>;
 
     return (
         <div className="flex flex-col gap-y-8">
             {/* Page Title */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Admin Profile</h1>
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Verifier Profile</h1>
                     <p className="text-sm text-slate-600 dark:text-slate-400">Detailed information</p>
                 </div>
                 <Button
@@ -116,7 +116,7 @@ const AdminDetails = () => {
 
             {/* Modal for updating user */}
             <Modal
-                title="Update Admin Details"
+                title="Update Verifier Details"
                 open={isModalOpen}
                 onCancel={() => setIsModalOpen(false)}
                 footer={null}
