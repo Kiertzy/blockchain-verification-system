@@ -8,16 +8,16 @@ const GetUserByIDService = async (UsersModel, userId) => {
       path: "certIssued",
       model: "CertificateIssued",
       populate: [
-        { path: "issuedBy", select: "firstName lastName email institutionName" },
-        { path: "issuedTo", select: "firstName lastName email studentId college department major" },
+        { path: "issuedBy", select: "firstName middleName lastName email institutionName" },
+        { path: "issuedTo", select: "firstName middleName lastName email studentId college department major" },
       ],
     })
     .populate({
       path: "certificateIssued",
       model: "CertificateIssued",
       populate: [
-        { path: "issuedBy", select: "firstName lastName email institutionName" },
-        { path: "issuedTo", select: "firstName lastName email studentId college department major" },
+        { path: "issuedBy", select: "firstName middleName lastName email institutionName" },
+        { path: "issuedTo", select: "firstName middleName lastName email studentId college department major" },
       ],
     });
 

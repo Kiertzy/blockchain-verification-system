@@ -20,8 +20,8 @@ const UpdateCertificateStatusService = async (Request) => {
     { certStatus },
     { new: true }
   )
-    .populate("issuedBy", "firstName lastName email walletAddress role institutionName")
-    .populate("issuedTo", "firstName lastName email walletAddress role studentId college department major");
+    .populate("issuedBy", "firstName middleName lastName email walletAddress role institutionName")
+    .populate("issuedTo", "firstName middleName lastName email walletAddress role studentId college department major");
 
   if (!updatedCertificate) throw CreateError("Certificate not found", 404);
 

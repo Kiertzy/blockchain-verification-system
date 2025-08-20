@@ -105,8 +105,8 @@ const IssueCertificateService = async (Request) => {
 
   // Populate issuer & receiver details
   const populatedCertificate = await CertificateIssuedModel.findById(certificate._id)
-    .populate("issuedBy", "firstName lastName email walletAddress role institutionName")
-    .populate("issuedTo", "firstName lastName email walletAddress role studentId college department major");
+    .populate("issuedBy", "firstName middleName lastName email walletAddress role institutionName")
+    .populate("issuedTo", "firstName middleName lastName email walletAddress role studentId college department major");
 
   return {
     message: "Certificate issued successfully",

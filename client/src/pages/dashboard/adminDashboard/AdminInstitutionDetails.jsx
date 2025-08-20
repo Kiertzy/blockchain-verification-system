@@ -109,7 +109,7 @@ const AdminInstitutionDetails = () => {
                     return [
                         student.studentId,
                         student.firstName,
-                        student.middleName || "",
+                        student.middleName,
                         student.lastName,
                         student.email,
                         student.college,
@@ -122,9 +122,9 @@ const AdminInstitutionDetails = () => {
                         cert.txHash,
                         cert.walletAddressStudent,
                         cert.walletAddressInstitution,
-                        new Date(cert.dateIssued).toLocaleString(),
+                        cert.dateIssued,
                         cert.certStatus,
-                        issuer.firstName + " " + issuer.lastName,
+                        issuer.firstName + issuer.middleName + issuer.lastName,
                         issuer.email,
                     ];
                 });

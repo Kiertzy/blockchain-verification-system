@@ -6,8 +6,8 @@ const GetAllCertificatesService = async () => {
   try {
     // Fetch and populate related user info
     const certificates = await CertificateIssuedModel.find()
-      .populate("issuedBy", "firstName lastName email walletAddress role institutionName")
-      .populate("issuedTo", "firstName lastName email walletAddress role studentId college department major")
+      .populate("issuedBy", "firstName middleName lastName email walletAddress role institutionName")
+      .populate("issuedTo", "firstName middleName lastName email walletAddress role studentId college department major")
       .sort({ dateIssued: -1 }); // newest first
 
     if (!certificates || certificates.length === 0) {

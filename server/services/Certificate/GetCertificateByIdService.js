@@ -17,8 +17,8 @@ const GetCertificateByIdService = async (req) => {
 
     // Fetch the certificate by ID and populate related fields
     const certificate = await CertificateIssuedModel.findById(certId)
-      .populate("issuedBy", "firstName lastName email walletAddress role institutionName")
-      .populate("issuedTo", "firstName lastName email walletAddress role studentId college department major");
+      .populate("issuedBy", "firstName middleName lastName email walletAddress role institutionName")
+      .populate("issuedTo", "firstName middleName lastName email walletAddress role studentId college department major");
 
     if (!certificate) {
       throw CreateError("Certificate not found", 404);
