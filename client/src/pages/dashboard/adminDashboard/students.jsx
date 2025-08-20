@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileDown } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllUsers, clearUserState } from "../../../store/slices/userSlice";
+import { getAllUsers, clearUserState, deleteUser, clearDeleteState } from "../../../store/slices/userSlice";
 import { clearUpdateAccountStatusState } from "../../../store/slices/updateUserAccountStatusSlice";
-import { message } from "antd";
+import { message, Modal } from "antd";
+
+const { confirm } = Modal;
 
 const Students = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { users, loading, error } = useSelector((state) => state.users);
+    const { users, loading, error, deleteLoading, deleteError, deleteMessage } = useSelector((state) => state.users);
     const { loading: updating, success, error: updateError, message: updateMsg } = useSelector((state) => state.updateUserAccountStatus);
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -34,6 +36,18 @@ const Students = () => {
             dispatch(clearUpdateAccountStatusState());
         }
     }, [success, updateError, updateMsg, dispatch]);
+
+    useEffect(() => {
+        if (deleteMessage) {
+            message.success(deleteMessage);
+            dispatch(getAllUsers());
+            dispatch(clearDeleteState());
+        }
+        if (deleteError) {
+            message.error(deleteError);
+            dispatch(clearDeleteState());
+        }
+    }, [deleteMessage, deleteError, dispatch]);
 
     // Filter pending users, role filter, and search
     const filteredUsers = users
@@ -101,6 +115,19 @@ const Students = () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    };
+
+    const showDeleteConfirm = (userId) => {
+        confirm({
+            title: "Are you sure you want to delete this user?",
+            content: "This action cannot be undone.",
+            okText: "Yes, Delete",
+            okType: "danger",
+            cancelText: "Cancel",
+            onOk() {
+                dispatch(deleteUser(userId));
+            },
+        });
     };
 
     return (
@@ -216,6 +243,13 @@ const Students = () => {
                                                         disabled={updating}
                                                     >
                                                         View
+                                                    </button>
+                                                    <button
+                                                        className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
+                                                        onClick={() => showDeleteConfirm(user._id)}
+                                                        disabled={updating}
+                                                    >
+                                                      Delete
                                                     </button>
                                                 </td>
                                             </tr>
