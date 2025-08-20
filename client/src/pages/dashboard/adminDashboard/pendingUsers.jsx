@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { FileDown } from "lucide-react";
 import { getAllUsers, clearUserState } from "../../../store/slices/userSlice";
 import { updateUserAccountStatus, clearUpdateAccountStatusState } from "../../../store/slices/updateUserAccountStatusSlice";
 import { message, Modal, Input } from "antd";
@@ -92,9 +93,69 @@ const PendingUsers = () => {
                 userId: selectedUser._id,
                 accountStatus: "DISAPPROVED",
                 reason: disapproveReason.trim(),
-            })
+            }),
         );
         setIsReasonModalOpen(false);
+    };
+
+    // ✅ Export CSV without any dependency
+    const exportInstitutionsCSV = () => {
+        if (filteredUsers.length === 0) {
+            message.warning("No pending user found.");
+            return;
+        }
+
+        const csvHeader = [
+            "#",
+            "Student ID",
+            "First Name",
+            "Middle Name",
+            "Last Name",
+            "Sex",
+            "Email",
+            "Role",
+            "College",
+            "Department",
+            "Major",
+            "Institution",
+            "Institution Position",
+            "Accreditation Info",
+            "Status",
+            "Wallet Address",
+        ];
+
+        const csvRows = filteredUsers.map((user, index) => [
+            index + 1,
+            user.studentId,
+            user.firstName,
+            user.middleName || "",
+            user.lastName,
+            user.sex,
+            user.email,
+            user.role,
+            user.college,
+            user.department,
+            user.major,
+            user.institutionName,
+            user.institutionPosition,
+            user.accreditationInfo,
+            user.accountStatus,
+            user.walletAddress,
+        ]);
+
+        const csvContent = [csvHeader, ...csvRows]
+            .map((row) => row.map((val) => `"${val}"`).join(",")) 
+            .join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "pending_users.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     return (
@@ -102,57 +163,67 @@ const PendingUsers = () => {
             <h1 className="title">Pending Users</h1>
 
             {/* Search & Role Filters */}
-            <div className="flex flex-col gap-3">
-                {/* Search */}
-                <input
-                    type="text"
-                    placeholder="Search by name..."
-                    value={searchQuery}
-                    onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        setCurrentPage(1);
-                    }}
-                    className="w-full max-w-md rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
-                />
+            <div className="mb-4 flex items-center justify-between gap-4">
+                <div className="flex flex-col gap-3">
+                    {/* Search */}
+                    <input
+                        type="text"
+                        placeholder="Search by name..."
+                        value={searchQuery}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setCurrentPage(1);
+                        }}
+                        className="w-full max-w-md rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                    />
 
-                {/* Role Checkboxes */}
-                <div className="flex flex-wrap gap-4">
-                    {availableRoles.map((role) => {
-                        const isChecked = selectedRoles.includes(role);
-                        return (
-                            <label
-                                key={role}
-                                className="flex cursor-pointer select-none items-center gap-2 text-sm text-slate-800 dark:text-gray-200"
-                            >
-                                <span
-                                    onClick={() => handleRoleChange(role)}
-                                    className={`flex h-5 w-5 items-center justify-center rounded-md border transition-all ${
-                                        isChecked
-                                            ? "border-blue-500 bg-blue-500"
-                                            : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800"
-                                    }`}
+                    {/* Role Checkboxes */}
+                    <div className="flex flex-wrap gap-4">
+                        {availableRoles.map((role) => {
+                            const isChecked = selectedRoles.includes(role);
+                            return (
+                                <label
+                                    key={role}
+                                    className="flex cursor-pointer select-none items-center gap-2 text-sm text-slate-800 dark:text-gray-200"
                                 >
-                                    {isChecked && (
-                                        <svg
-                                            className="h-3 w-3 text-white"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth={3}
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                d="M5 13l4 4L19 7"
-                                            />
-                                        </svg>
-                                    )}
-                                </span>
-                                {role}
-                            </label>
-                        );
-                    })}
+                                    <span
+                                        onClick={() => handleRoleChange(role)}
+                                        className={`flex h-5 w-5 items-center justify-center rounded-md border transition-all ${
+                                            isChecked
+                                                ? "border-blue-500 bg-blue-500"
+                                                : "border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800"
+                                        }`}
+                                    >
+                                        {isChecked && (
+                                            <svg
+                                                className="h-3 w-3 text-white"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth={3}
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M5 13l4 4L19 7"
+                                                />
+                                            </svg>
+                                        )}
+                                    </span>
+                                    {role}
+                                </label>
+                            );
+                        })}
+                    </div>
                 </div>
+                {/* Export Button */}
+                <button
+                    onClick={exportInstitutionsCSV}
+                    className="flex items-center gap-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                >
+                    <FileDown size={16} />
+                    Export
+                </button>
             </div>
 
             {/* Table */}
@@ -171,23 +242,27 @@ const PendingUsers = () => {
                             <table className="min-w-full text-left text-sm">
                                 <thead className="bg-gray-100 text-gray-700 dark:bg-slate-800 dark:text-gray-300">
                                     <tr>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">#</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">School ID</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">First Name</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">Middle Name</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">Last Name</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">Sex</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">Email</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">Role</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">College</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">Department</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">Major</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">Institution</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">Institution Position</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">Accreditation Info</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap">Status</th>
-                                        <th className="border-b px-4 py-2 dark:border-slate-700 whitespace-nowrap"  style={{ width: "200px" }}>Actions</th>
-
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">#</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">School ID</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">First Name</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Middle Name</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Last Name</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Sex</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Email</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Role</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">College</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Department</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Major</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Institution</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Institution Position</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Accreditation Info</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Status</th>
+                                        <th
+                                            className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700"
+                                            style={{ width: "200px" }}
+                                        >
+                                            Actions
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -197,52 +272,52 @@ const PendingUsers = () => {
                                                 key={user._id}
                                                 className="hover:bg-gray-50 dark:hover:bg-slate-800"
                                             >
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {indexOfFirstUser + index + 1}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.studentId || "—"}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.firstName}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.middleName}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.lastName}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.sex}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.email}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.role}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.college || "—"}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.department || "—"}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.major || "—"}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.institutionName || "—"}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.institutionPosition || "—"}
                                                 </td>
-                                                <td className="border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.accreditationInfo || "—"}
                                                 </td>
-                                                <td className="border-b px-4 py-2 font-bold text-yellow-500 dark:border-slate-700 whitespace-nowrap">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 font-bold text-yellow-500 dark:border-slate-700">
                                                     {user.accountStatus}
                                                 </td>
-                                                <td className="border-b px-4 py-2 font-bold text-yellow-500 dark:border-slate-700 flex gap-2 whitespace-nowrap">
+                                                <td className="flex gap-2 whitespace-nowrap border-b px-4 py-2 font-bold text-yellow-500 dark:border-slate-700">
                                                     <button
                                                         className="rounded bg-green-500 px-3 py-1 text-white hover:bg-green-600"
                                                         onClick={() => confirmApprove(user._id)}
@@ -318,4 +393,3 @@ const PendingUsers = () => {
 };
 
 export default PendingUsers;
-

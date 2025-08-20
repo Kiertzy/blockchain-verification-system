@@ -52,7 +52,7 @@ const Institutions = () => {
     // ✅ Export CSV without any dependency
     const exportInstitutionsCSV = () => {
         if (filteredUsers.length === 0) {
-            alert("No approved institutions found.");
+            message.warning("No approved institutions found.");
             return;
         }
 
