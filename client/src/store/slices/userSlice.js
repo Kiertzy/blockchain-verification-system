@@ -48,6 +48,19 @@ export const updateUserDetails = createAsyncThunk(
   }
 );
 
+// ✅ Delete user
+export const deleteUser = createAsyncThunk(
+  "users/deleteUser",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/User/DeleteUser/${userId}`);
+      return { message: response.data.message, userId };
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Failed to delete user");
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: "users",
   initialState: {
@@ -59,6 +72,9 @@ const userSlice = createSlice({
     updateLoading: false,
     updateError: null,
     updateMessage: null,
+    deleteLoading: false,
+    deleteError: null,
+    deleteMessage: null,
   },
   reducers: {
     clearUserState: (state) => {
@@ -70,11 +86,19 @@ const userSlice = createSlice({
       state.updateLoading = false;
       state.updateError = null;
       state.updateMessage = null;
+      state.deleteLoading = false;
+      state.deleteError = null;
+      state.deleteMessage = null;
     },
     clearUpdateState: (state) => {
       state.updateLoading = false;
       state.updateError = null;
       state.updateMessage = null;
+    },
+     clearDeleteState: (state) => {
+      state.deleteLoading = false;
+      state.deleteError = null;
+      state.deleteMessage = null;
     },
   },
   extraReducers: (builder) => {
@@ -123,9 +147,26 @@ const userSlice = createSlice({
       .addCase(updateUserDetails.rejected, (state, action) => {
         state.updateLoading = false;
         state.updateError = action.payload;
+      })
+
+      //Delete user
+      .addCase(deleteUser.pending, (state) => {
+        state.deleteLoading = true;
+        state.deleteError = null;
+        state.deleteMessage = null;
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        state.deleteLoading = false;
+        state.deleteMessage = action.payload.message;
+        state.users = state.users.filter((u) => u._id !== action.payload.userId);
+        state.totalUsers -= 1;
+      })
+      .addCase(deleteUser.rejected, (state, action) => {
+        state.deleteLoading = false;
+        state.deleteError = action.payload;
       });
   },
 });
 
-export const { clearUserState, clearUpdateState } = userSlice.actions;
+export const { clearUserState, clearUpdateState, clearDeleteState } = userSlice.actions;
 export default userSlice.reducer;

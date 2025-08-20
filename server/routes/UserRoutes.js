@@ -44,10 +44,16 @@ UserRoutes.get(
   UserControllers.GetAllUsers,
 );
 
-//Get All Users 
+//Get Users by ID
 UserRoutes.get(
   "/GetUser/:id",
   UserControllers.GetUserByID,
+);
+
+//Delete User
+UserRoutes.delete(
+  "/DeleteUser/:userId",
+  UserControllers.DeleteUserByID,
 );
 
 module.exports = UserRoutes;

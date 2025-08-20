@@ -279,7 +279,7 @@ const AdminInstitutionDetails = () => {
 
             {/* Modal for updating user */}
             <Modal
-                title="Update Student Details"
+                title="Update Institution Details"
                 open={isModalOpen}
                 onCancel={() => setIsModalOpen(false)}
                 footer={null}

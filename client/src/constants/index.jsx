@@ -1,4 +1,4 @@
-import { Home, NotepadText, Package, PackagePlus, UserCheck, UserPlus, Users, Award } from "lucide-react";
+import { Home, NotepadText, Package, PackagePlus, UserCheck, UserPlus, Users, Award, UserCog, UserPen  } from "lucide-react";
 
 import ProfileImage from "@/assets/profile-image.jpg";
 import ProductImage from "@/assets/product-image.jpg";
@@ -31,6 +31,16 @@ export const navbarAdminLinks = [
                 label: "Verified Students",
                 icon: UserCheck,
                 path: "/students",
+            },
+            {
+                label: "Admin",
+                icon: UserCog,
+                path: "/admin",
+            },
+            {
+                label: "Verifier",
+                icon: UserPen,
+                path: "/verifier",
             },
         ],
     },

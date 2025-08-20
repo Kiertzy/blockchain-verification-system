@@ -17,6 +17,9 @@ import PendingDashboard from "./pages/dashboard/pendingDashboard";
 import AdminStudentDetails from "./pages/dashboard/adminDashboard/AdminStudentDetails";
 import AdminViewCertificateDetails from "./pages/dashboard/adminDashboard/adminViewCertificateDetails";
 import AdminInstitutionDetails from "./pages/dashboard/adminDashboard/AdminInstitutionDetails";
+import Admin from "./pages/dashboard/adminDashboard/admin";
+import AdminDetails from "./pages/dashboard/adminDashboard/AdminDetails";
+import Verifier from "./pages/dashboard/adminDashboard/verifier";
 
 import StudentDashboardPage from "@/pages/dashboard/studentDashboard/studentDashboard";
 import StudentViewCertificateDetails from "@/pages/dashboard/studentDashboard/studentViewCertificateDetails.jsx";
@@ -97,6 +100,14 @@ function App() {
                                 element={<Students />}
                             />
                             <Route
+                                path="admin"
+                                element={<Admin />}
+                            />
+                            <Route
+                                path="verifier"
+                                element={<Verifier />}
+                            />
+                            <Route
                                 path="colleges"
                                 element={<Colleges />}
                             />
@@ -120,9 +131,13 @@ function App() {
                                 path="certificates/admin/student-details/:id"
                                 element={<AdminStudentDetails />}
                             />
-                             <Route
+                            <Route
                                 path="certificates/admin/institution-details/:id"
                                 element={<AdminInstitutionDetails />}
+                            />
+                            <Route
+                                path="admin/details/:id"
+                                element={<AdminDetails />}
                             />
                             <Route
                                 path="certificates/admin/student/certificate/:certId"

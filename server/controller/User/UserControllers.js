@@ -12,6 +12,7 @@ const UpdateUserDetailsService = require("../../services/User/UpdateUserDetailsS
 const UpdateUserAccountStatusService = require("../../services/User/UpdateUserAccountStatusService");
 const GetAllUsersService = require("../../services/User/GetAllUsersService");
 const GetUserByIDService = require("../../services/User/GetUserByIDService");
+const DeleteUserService = require("../../services/User/DeleteUserService");
 
 /**
  * @desc Employee Change Password
@@ -28,7 +29,6 @@ const UserChangePassword = async (req, res, next) => {
   }
 };
 
-
 /**
  * @desc Send Recovery Otp
  * @access public
@@ -43,7 +43,6 @@ const SendRecoveryOtp = async (req, res, next) => {
     next(error);
   }
 };
-
 
 /**
  * @desc Verify Recovery Otp
@@ -60,7 +59,6 @@ const VerifyRecoveryOtp = async (req, res, next) => {
     next(error);
   }
 };
-
 
 /**
  * @desc Recovery Reset Password
@@ -139,6 +137,23 @@ const GetUserByID = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc Delete User by ID
+ * @access public
+ * @route /api/v1/User/DeleteUser/:userId
+ * 
+ * @methud DELETE
+ */
+const DeleteUserByID = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const user = await DeleteUserService(UserModel, userId);
+    res.json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   UserChangePassword,
   SendRecoveryOtp,
@@ -148,6 +163,7 @@ module.exports = {
   UpdateUserAccountStatus,
   GetAllUsers,
   GetUserByID,
+  DeleteUserByID,
 };
 
 
