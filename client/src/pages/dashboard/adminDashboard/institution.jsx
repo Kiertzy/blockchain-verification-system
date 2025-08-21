@@ -38,16 +38,16 @@ const Institutions = () => {
     }, [success, updateError, updateMsg, dispatch]);
 
     useEffect(() => {
-            if (deleteMessage) {
-                message.success(deleteMessage);
-                dispatch(getAllUsers());
-                dispatch(clearDeleteState());
-            }
-            if (deleteError) {
-                message.error(deleteError);
-                dispatch(clearDeleteState());
-            }
-        }, [deleteMessage, deleteError, dispatch]);
+        if (deleteMessage) {
+            message.success(deleteMessage);
+            dispatch(getAllUsers());
+            dispatch(clearDeleteState());
+        }
+        if (deleteError) {
+            message.error(deleteError);
+            dispatch(clearDeleteState());
+        }
+    }, [deleteMessage, deleteError, dispatch]);
 
     // Filter pending users, role filter, and search
     const filteredUsers = users
@@ -223,7 +223,18 @@ const Institutions = () => {
                                                     {user.institutionPosition || "—"}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                                    {user.accreditationInfo || "—"}
+                                                    {user.accreditationInfo ? (
+                                                        <a
+                                                            href={user.accreditationInfo}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="inline-block rounded-lg bg-blue-600 px-3 py-1 text-sm font-medium text-white shadow transition hover:bg-blue-700"
+                                                        >
+                                                            📂 View File
+                                                        </a>
+                                                    ) : (
+                                                        <span className="text-gray-400">—</span>
+                                                    )}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 font-bold text-green-500 dark:border-slate-700">
                                                     {user.accountStatus}
@@ -236,12 +247,12 @@ const Institutions = () => {
                                                     >
                                                         View
                                                     </button>
-                                                     <button
+                                                    <button
                                                         className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                                                         onClick={() => showDeleteConfirm(user._id)}
                                                         disabled={updating}
                                                     >
-                                                      Delete
+                                                        Delete
                                                     </button>
                                                 </td>
                                             </tr>

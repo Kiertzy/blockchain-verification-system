@@ -51,7 +51,7 @@ const Register = () => {
         // Capitalize each word for name fields
         const capitalizeWords = (str) => str.replace(/\b\w/g, (char) => char.toUpperCase());
 
-        if (["firstName", "middleName", "lastName"].includes(name)) {
+        if (["firstName", "middleName", "lastName", "institutionName", "institutionPosition"].includes(name)) {
             setFormData((prev) => ({
                 ...prev,
                 [name]: capitalizeWords(value),
@@ -192,7 +192,7 @@ const Register = () => {
                             <Input
                                 label="Institution Name"
                                 name="institutionName"
-                                placeholder="Harvard University"
+                                placeholder="Name of Institution"
                                 value={formData.institutionName}
                                 onChange={handleChange}
                             />
@@ -206,7 +206,7 @@ const Register = () => {
                             <Input
                                 label="Accreditation Info"
                                 name="accreditationInfo"
-                                placeholder="Accredited Level IV by CHED"
+                                placeholder="Paste google drive link"
                                 value={formData.accreditationInfo}
                                 onChange={handleChange}
                             />
@@ -216,11 +216,17 @@ const Register = () => {
                     {formData.role === "STUDENT" && (
                         <>
                             <Input
-                                label="Student ID"
+                                label="Student Number"
                                 name="studentId"
-                                placeholder="2022-00123"
+                                placeholder="0000000000"
                                 value={formData.studentId}
-                                onChange={handleChange}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (/^\d{0,10}$/.test(value)) {
+                                        handleChange(e);
+                                    }
+                                }}
+                                maxLength={10}
                             />
                             <Select
                                 label="College"

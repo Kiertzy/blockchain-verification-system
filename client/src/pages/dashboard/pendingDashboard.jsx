@@ -58,7 +58,7 @@ export default function PendingDashboard() {
           <span className="text-sm text-slate-500 dark:text-slate-400">
             Role: {user?.role}
           </span>
-          <span className="text-sm text-yellow-600 dark:text-yellow-400">
+          <span className="text-sm text-slate-100 dark:text-slate-200">
             Status: {user?.accountStatus}
           </span>
         </div>

@@ -51,7 +51,7 @@ const Verifier = () => {
 
     // Filter pending users, role filter, and search
     const filteredUsers = users
-        .filter((user) => user.accountStatus === "APPROVED" && user.role?.toUpperCase() === "ADMIN")
+        .filter((user) => user.accountStatus === "APPROVED" && user.role?.toUpperCase() === "VERIFIER")
         .filter((user) => {
             const fullName = `${user.firstName} ${user.middleName} ${user.lastName}`.toLowerCase();
             return fullName.includes(searchQuery.toLowerCase());

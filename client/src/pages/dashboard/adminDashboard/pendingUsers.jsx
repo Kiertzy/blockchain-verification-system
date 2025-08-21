@@ -107,7 +107,7 @@ const PendingUsers = () => {
 
         const csvHeader = [
             "#",
-            "Student ID",
+            "Student Number",
             "First Name",
             "Middle Name",
             "Last Name",
@@ -143,9 +143,7 @@ const PendingUsers = () => {
             user.walletAddress,
         ]);
 
-        const csvContent = [csvHeader, ...csvRows]
-            .map((row) => row.map((val) => `"${val}"`).join(",")) 
-            .join("\n");
+        const csvContent = [csvHeader, ...csvRows].map((row) => row.map((val) => `"${val}"`).join(",")).join("\n");
 
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
@@ -243,7 +241,7 @@ const PendingUsers = () => {
                                 <thead className="bg-gray-100 text-gray-700 dark:bg-slate-800 dark:text-gray-300">
                                     <tr>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">#</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">School ID</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Student Number</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">First Name</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Middle Name</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Last Name</th>
@@ -312,7 +310,18 @@ const PendingUsers = () => {
                                                     {user.institutionPosition || "—"}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                                    {user.accreditationInfo || "—"}
+                                                    {user.accreditationInfo ? (
+                                                        <a
+                                                            href={user.accreditationInfo}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="inline-block rounded-lg bg-blue-600 px-3 py-1 text-sm font-medium text-white shadow transition hover:bg-blue-700"
+                                                        >
+                                                            📂 View File
+                                                        </a>
+                                                    ) : (
+                                                        <span className="text-gray-400">—</span>
+                                                    )}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 font-bold text-yellow-500 dark:border-slate-700">
                                                     {user.accountStatus}
