@@ -9,6 +9,7 @@ const InstitutionCertificateStudentList = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { users, loading, error } = useSelector((state) => state.users);
+    const { user: loggedInUser } = useSelector((state) => state.auth);
     const { loading: updating, success, error: updateError, message: updateMsg } = useSelector((state) => state.updateUserAccountStatus);
 
     const [searchQuery, setSearchQuery] = useState("");
@@ -36,7 +37,12 @@ const InstitutionCertificateStudentList = () => {
 
     // Filter pending users, role filter, and search
     const filteredUsers = users
-        .filter((user) => user.accountStatus === "APPROVED" && user.role?.toUpperCase() === "STUDENT")
+        .filter(
+            (user) =>
+                user.accountStatus === "APPROVED" &&
+                user.role?.toUpperCase() === "STUDENT" &&
+                user.certIssued?.some((cert) => cert.issuedBy?._id === loggedInUser._id),
+        )
         .filter((user) => {
             const fullName = `${user.firstName} ${user.middleName} ${user.lastName}`.toLowerCase();
             return fullName.includes(searchQuery.toLowerCase());
@@ -84,7 +90,7 @@ const InstitutionCertificateStudentList = () => {
                                 <thead className="bg-gray-100 text-gray-700 dark:bg-slate-800 dark:text-gray-300">
                                     <tr>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">#</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">School ID</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Student Number</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">First Name</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Middle Name</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Last Name</th>
