@@ -4,6 +4,9 @@ import { FileDown } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, clearUserState, deleteUser, clearDeleteState } from "../../../store/slices/userSlice";
 import { clearUpdateAccountStatusState } from "../../../store/slices/updateUserAccountStatusSlice";
+import { getAllColleges } from "../../../store/slices/collegeSlice";
+import { getAllCourses } from "../../../store/slices/courseSlice";
+import { getAllMajors } from "../../../store/slices/majorSlice";
 import { message, Modal } from "antd";
 
 const { confirm } = Modal;
@@ -13,13 +16,23 @@ const Students = () => {
     const dispatch = useDispatch();
     const { users, loading, error, deleteLoading, deleteError, deleteMessage } = useSelector((state) => state.users);
     const { loading: updating, success, error: updateError, message: updateMsg } = useSelector((state) => state.updateUserAccountStatus);
+    const { colleges } = useSelector((state) => state.college);
+    const { courses } = useSelector((state) => state.course);
+    const { majors } = useSelector((state) => state.major);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedCollege, setSelectedCollege] = useState("");
+    const [selectedCourse, setSelectedCourse] = useState("");
+    const [selectedMajor, setSelectedMajor] = useState("");
+
     const usersPerPage = 5;
 
     useEffect(() => {
         dispatch(getAllUsers());
+        dispatch(getAllColleges());
+        dispatch(getAllCourses());
+        dispatch(getAllMajors());
         return () => {
             dispatch(clearUserState());
         };
@@ -55,7 +68,10 @@ const Students = () => {
         .filter((user) => {
             const fullName = `${user.firstName} ${user.middleName} ${user.lastName}`.toLowerCase();
             return fullName.includes(searchQuery.toLowerCase());
-        });
+        })
+        .filter((user) => (selectedCollege ? user.college === selectedCollege : true))
+        .filter((user) => (selectedCourse ? user.department === selectedCourse : true))
+        .filter((user) => (selectedMajor ? user.major === selectedMajor : true));
 
     // Pagination logic
     const indexOfLastUser = currentPage * usersPerPage;
@@ -72,7 +88,7 @@ const Students = () => {
 
         const csvHeader = [
             "#",
-            "Student ID",
+            "Student Number",
             "First Name",
             "Middle Name",
             "Last Name",
@@ -133,28 +149,79 @@ const Students = () => {
     return (
         <div className="flex flex-col gap-y-4">
             <h1 className="title">Students</h1>
+            <div className="flex flex-col gap-4">
+                <div className="mb-4 flex items-center justify-between gap-4">
+                    <input
+                        type="text"
+                        placeholder="Search by name..."
+                        value={searchQuery}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setCurrentPage(1);
+                        }}
+                        className="w-full max-w-md rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                    />
 
-            <div className="mb-4 flex items-center justify-between gap-4">
-                {/* Search */}
-                <input
-                    type="text"
-                    placeholder="Search by name..."
-                    value={searchQuery}
-                    onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        setCurrentPage(1);
-                    }}
-                    className="w-full max-w-md rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
-                />
+                    <button
+                        onClick={exportInstitutionsCSV}
+                        className="flex items-center gap-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                    >
+                        <FileDown size={16} />
+                        Export
+                    </button>
+                </div>
 
-                {/* Export Button */}
-                <button
-                    onClick={exportInstitutionsCSV}
-                    className="flex items-center gap-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
-                >
-                    <FileDown size={16} />
-                    Export
-                </button>
+                <div className="flex flex-col gap-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                        <select
+                            value={selectedCollege}
+                            onChange={(e) => setSelectedCollege(e.target.value)}
+                            className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                        >
+                            <option value="">All Colleges</option>
+                            {colleges.map((college) => (
+                                <option
+                                    key={college._id}
+                                    value={college.collegeName}
+                                >
+                                    {college.collegeName}
+                                </option>
+                            ))}
+                        </select>
+
+                        <select
+                            value={selectedCourse}
+                            onChange={(e) => setSelectedCourse(e.target.value)}
+                            className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                        >
+                            <option value="">All Courses</option>
+                            {courses.map((course) => (
+                                <option
+                                    key={course._id}
+                                    value={course.courseName}
+                                >
+                                    {course.courseName}
+                                </option>
+                            ))}
+                        </select>
+
+                        <select
+                            value={selectedMajor}
+                            onChange={(e) => setSelectedMajor(e.target.value)}
+                            className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                        >
+                            <option value="">All Majors</option>
+                            {majors.map((major) => (
+                                <option
+                                    key={major._id}
+                                    value={major.majorName}
+                                >
+                                    {major.majorName}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
             </div>
 
             {/* Table */}
@@ -174,7 +241,7 @@ const Students = () => {
                                 <thead className="bg-gray-100 text-gray-700 dark:bg-slate-800 dark:text-gray-300">
                                     <tr>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">#</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">School ID</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Student Number</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">First Name</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Middle Name</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Last Name</th>
@@ -249,7 +316,7 @@ const Students = () => {
                                                         onClick={() => showDeleteConfirm(user._id)}
                                                         disabled={updating}
                                                     >
-                                                      Delete
+                                                        Delete
                                                     </button>
                                                 </td>
                                             </tr>
