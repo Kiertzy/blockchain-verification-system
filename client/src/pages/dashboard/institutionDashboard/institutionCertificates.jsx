@@ -6,25 +6,24 @@ import { getAllUsers } from "../../../store/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-// Use env variables in production!
-const CLOUD_NAME = "duifaweje"; // 🔹 replace with your Cloudinary cloud name
-const UPLOAD_PRESET = "student_certificates"; // 🔹 replace with your unsigned upload preset
+const CLOUD_NAME = "duifaweje";
+const UPLOAD_PRESET = "student_certificates";
 
 const InstitutionCertificate = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { user: currentUser } = useSelector((state) => state.auth);
     const { users } = useSelector((state) => state.users);
+    const { loading, error, message: successMsg, issuedCertificate, blockchainData } = useSelector((state) => state.issueCertificate);
+
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedStudent, setSelectedStudent] = useState(null);
+    const [selectedImageFile, setSelectedImageFile] = useState(null);
+    const [isDuplicate, setIsDuplicate] = useState(false);
 
     useEffect(() => {
         dispatch(getAllUsers());
     }, [dispatch]);
-
-    const { loading, error, message: successMsg, issuedCertificate, blockchainData } = useSelector((state) => state.issueCertificate);
-
-    const [selectedImageFile, setSelectedImageFile] = useState(null);
 
     // Filter approved students
     const filteredUsers = users
@@ -54,8 +53,16 @@ const InstitutionCertificate = () => {
         issuedBy: institutionData.issuedBy,
         issuedTo: "",
         imageOfCertificate: "",
-        ipfsCID: "", // (you can rename this to cloudinaryUrl if you want)
+        ipfsCID: "",
     });
+
+    // 🔹 Check duplicate when certificate name changes
+    const checkDuplicate = (certName, student) => {
+        if (!certName || !student?.certIssued) return false;
+        return student.certIssued.some(
+            (cert) => cert.issuedBy?._id === currentUser._id && cert.certificateName?.toLowerCase() === certName.toLowerCase(),
+        );
+    };
 
     const handleStudentSelect = (student) => {
         setSelectedStudent(student);
@@ -71,8 +78,33 @@ const InstitutionCertificate = () => {
         setSearchQuery("");
     };
 
+    const toTitleCase = (str) => {
+        return str
+            .toLowerCase()
+            .split(" ")
+            .filter(Boolean)
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+    };
+
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+
+        let newValue = value;
+
+        if (name === "nameOfCertificate") {
+            newValue = toTitleCase(value);
+
+            if (selectedStudent) {
+                const duplicate = checkDuplicate(newValue, selectedStudent);
+                setIsDuplicate(duplicate);
+                if (duplicate) {
+                    message.warning("This certificate has already been issued to the student.");
+                }
+            }
+        }
+
         if (error || successMsg) {
             dispatch(clearIssueCertificateState());
         }
@@ -88,7 +120,11 @@ const InstitutionCertificate = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validate
+        if (isDuplicate) {
+            message.error("Duplicate detected: Certificate already issued to this student.");
+            return;
+        }
+
         const requiredFields = [
             "nameOfInstitution",
             "nameOfCertificate",
@@ -117,7 +153,6 @@ const InstitutionCertificate = () => {
         }
 
         try {
-            // 1️⃣ Upload image to Cloudinary
             const formDataCloud = new FormData();
             formDataCloud.append("file", selectedImageFile);
             formDataCloud.append("upload_preset", UPLOAD_PRESET);
@@ -126,33 +161,29 @@ const InstitutionCertificate = () => {
 
             const cloudinaryUrl = res.data.secure_url;
 
-            // 2️⃣ Merge into form data
             const finalFormData = {
                 ...formData,
                 imageOfCertificate: cloudinaryUrl,
-                ipfsCID: res.data.public_id, // optional, you can rename this to cloudinaryId
+                ipfsCID: res.data.public_id,
             };
 
-            console.log("✅ Certificate uploaded to Cloudinary:", cloudinaryUrl);
-
-            // 3️⃣ Dispatch to backend / blockchain
             dispatch(issueCertificate(finalFormData));
         } catch (error) {
-            console.error("❌ Cloudinary upload failed:", error);
             message.error("Failed to upload image to Cloudinary");
         }
     };
 
     return (
         <div className="flex flex-col items-center justify-center gap-6 p-6">
-            <h1 className="title text-slate-900 dark:text-white">Issue Student Certificate</h1>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Issue Student Certificate</h1>
 
+            {/* 🔎 Student Search */}
             <input
                 type="text"
                 placeholder="Search student..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 sm:max-w-md"
+                className="w-full rounded-md border border-slate-300 bg-white px-4 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white sm:max-w-md"
             />
             {searchQuery && (
                 <div className="max-h-60 w-full overflow-auto rounded-md border border-slate-300 bg-white shadow-md dark:border-slate-600 dark:bg-slate-800 sm:max-w-md">
@@ -160,7 +191,7 @@ const InstitutionCertificate = () => {
                         filteredUsers.map((student) => (
                             <div
                                 key={student._id}
-                                className="cursor-pointer px-4 py-2 text-slate-900 hover:bg-blue-100 dark:text-white dark:hover:bg-blue-900"
+                                className="cursor-pointer px-4 py-2 hover:bg-blue-100 dark:hover:bg-blue-900"
                                 onClick={() => handleStudentSelect(student)}
                             >
                                 {student.firstName} {student.middleName} {student.lastName}
@@ -172,17 +203,37 @@ const InstitutionCertificate = () => {
                 </div>
             )}
 
+            {/* 🔹 Show already issued certs */}
+            {selectedStudent?.certIssued?.length > 0 && (
+                <div className="w-full max-w-2xl rounded-lg border border-slate-200 p-4 dark:border-slate-700">
+                    <h2 className="mb-2 font-semibold text-slate-800 dark:text-white">Already Issued Certificates:</h2>
+                    <div className="flex flex-wrap gap-2">
+                        {selectedStudent.certIssued
+                            .filter((cert) => cert.issuedBy?._id === currentUser._id)
+                            .map((cert, idx) => (
+                                <span
+                                    key={idx}
+                                    className="rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                                >
+                                    {cert.nameOfCertificate}
+                                </span>
+                            ))}
+                    </div>
+                </div>
+            )}
+
+            {/* 🔹 Issue Certificate Form */}
             <form
                 onSubmit={handleSubmit}
-                className="flex w-full max-w-full flex-col gap-4 sm:max-w-2xl"
+                className="flex w-full max-w-2xl flex-col gap-4"
             >
+                {/* Student & Cert Info */}
                 {[
                     { name: "nameOfInstitution", label: "Institution Name", disabled: true },
                     { name: "nameOfStudent", label: "Student Name", disabled: true },
                     { name: "college", label: "College", disabled: true },
                     { name: "course", label: "Course", disabled: true },
                     { name: "major", label: "Major", disabled: true },
-                    { name: "certStatus", label: "Certificate Status", disabled: true },
                     { name: "walletAddressInstitution", label: "Institution Wallet", disabled: true },
                     { name: "walletAddressStudent", label: "Student Wallet", disabled: true },
                     { name: "nameOfCertificate", label: "Certificate Name" },
@@ -195,39 +246,28 @@ const InstitutionCertificate = () => {
                         value={formData[field.name]}
                         onChange={handleChange}
                         disabled={field.disabled}
-                        className="w-full rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none disabled:bg-slate-100 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-500 disabled:dark:bg-slate-700"
+                        className={`w-full rounded-md border px-4 py-2 text-sm ${isDuplicate && field.name === "nameOfCertificate" ? "border-red-500" : "border-slate-300"} dark:border-slate-600 dark:bg-slate-800 dark:text-white`}
                     />
                 ))}
 
-                <label className="text-sm font-semibold dark:text-white">Image of Certificate</label>
+                <label className="text-sm font-semibold dark:text-white">Upload Certificate Image</label>
                 <input
                     type="file"
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="w-full rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none dark:border-slate-600 dark:bg-slate-800 dark:text-white"
-                />
-
-                <input
-                    type="datetime-local"
-                    name="dateIssued"
-                    value={formData.dateIssued.slice(0, 16)}
-                    onChange={(e) => {
-                        const val = new Date(e.target.value).toISOString();
-                        setFormData((prev) => ({ ...prev, dateIssued: val }));
-                    }}
-                    disabled
-                    className="w-full rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none disabled:bg-slate-100 dark:border-slate-600 dark:bg-slate-800 dark:text-white disabled:dark:bg-slate-700"
+                    className="w-full rounded-md border border-slate-300 bg-white px-4 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                 />
 
                 <button
                     type="submit"
-                    disabled={loading}
-                    className="w-full rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700 disabled:opacity-50"
+                    disabled={loading || isDuplicate}
+                    className={`w-full rounded px-4 py-2 text-white ${isDuplicate ? "bg-gray-500" : "bg-green-600 hover:bg-green-700"} disabled:opacity-50`}
                 >
-                    {loading ? "Issuing..." : "Issue Certificate"}
+                    {loading ? "Issuing..." : isDuplicate ? "Duplicate Certificate Detected" : "Issue Certificate"}
                 </button>
             </form>
 
+            {/* Alerts */}
             {error && (
                 <div className="mt-4 max-w-full break-words rounded border border-red-500 bg-red-100 px-4 py-2 text-center text-red-700 dark:bg-red-800 dark:text-red-300 sm:max-w-md">
                     {error}
@@ -248,8 +288,6 @@ const InstitutionCertificate = () => {
                     </p>
 
                     <button
-                        target="_blank"
-                        rel="noopener noreferrer"
                         onClick={() => navigate(`/certificate/${issuedCertificate._id}`)}
                         className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                     >

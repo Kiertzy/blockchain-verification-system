@@ -50,6 +50,16 @@ const IssueCertificateService = async (Request) => {
   if (!institution) throw CreateError("Issuing institution not found", 404);
   if (!student) throw CreateError("Student not found", 404);
 
+  const existingCert = await CertificateIssuedModel.findOne({
+    issuedBy: institution._id,
+    issuedTo: student._id,
+    nameOfCertificate: { $regex: new RegExp(`^${nameOfCertificate}$`, "i") }, // case-insensitive match
+  });
+
+  if (existingCert) {
+    throw CreateError("Duplicate: This certificate has already been issued to the student", 400);
+  }
+  
   // Create certificate hash (off-chain identifier)
   const certData = `${nameOfInstitution}-${nameOfCertificate}-${nameOfStudent}-${college}-${course}-${major}-${walletAddressStudent}-${dateIssued}`;
   const certHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(certData)); // hex string
