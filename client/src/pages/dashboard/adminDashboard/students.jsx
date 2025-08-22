@@ -149,6 +149,7 @@ const Students = () => {
     return (
         <div className="flex flex-col gap-y-4">
             <h1 className="title">Students</h1>
+            
             <div className="flex flex-col gap-4">
                 <div className="mb-4 flex items-center justify-between gap-4">
                     <input
