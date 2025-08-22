@@ -31,8 +31,6 @@ import BulkVerificationCertificate from "./pages/dashboard/adminDashboard/bulkVe
 
 import InstitutionDashboard from "./pages/dashboard/institutionDashboard/institutionDashboard";
 import InstitutionCertificates from "./pages/dashboard/institutionDashboard/institutionCertificates";
-import InstitutionReports from "./pages/dashboard/institutionDashboard/reports";
-import InstitutionCertificateList from "./pages/dashboard/institutionDashboard/institutionCertificateList";
 import InstitutionCertificateStudentList from "./pages/dashboard/institutionDashboard/institutionCertificateStudentList";
 import InstitutionStudentDetails from "./pages/dashboard/institutionDashboard/studentDetails";
 import InstitutionCertificateDetails from "./pages/dashboard/institutionDashboard/viewCertificateDetails";
@@ -172,18 +170,12 @@ function App() {
                                 path="institution-dashboard"
                                 element={<InstitutionDashboard />}
                             />
-                            <Route
-                                path="certificates/reports"
-                                element={<InstitutionReports />}
-                            />
+                           
                             <Route
                                 path="certificates/issue"
                                 element={<InstitutionCertificates />}
                             />
-                            <Route
-                                path="certificates/list"
-                                element={<InstitutionCertificateList />}
-                            />
+                           
                             <Route
                                 path="certificates/student/details/:id"
                                 element={<InstitutionStudentDetails />}

@@ -10,6 +10,7 @@ const StudentDetails = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { user: loggedInUser } = useSelector((state) => state.auth);
     const { selectedUser, loading, error } = useSelector((state) => state.users);
     const { loading: certLoading, error: certError, message: certMessage } = useSelector((state) => state.allCertificates);
 
@@ -190,67 +191,66 @@ const StudentDetails = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {selectedUser.certIssued.map((cert, index) => (
-                                    <tr
-                                        key={cert._id}
-                                        className="hover:bg-gray-50 dark:hover:bg-slate-800"
-                                    >
-                                        <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                            {index + 1}
-                                        </td>
-                                        <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                            {cert.nameOfCertificate}
-                                        </td>
-                                        <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                            {cert.nameOfInstitution}
-                                        </td>
-                                        <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                            {cert.dateIssued ? new Date(cert.dateIssued).toLocaleDateString() : "N/A"}
-                                        </td>
-                                        <td className="border-b px-4 py-2 dark:border-slate-700">
-                                            <span
-                                                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                                                    cert.certStatus === "CONFIRMED"
-                                                        ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
-                                                        : cert.certStatus === "REVOKED"
-                                                          ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
-                                                          : "bg-gray-100 text-gray-700 dark:bg-gray-900/40 dark:text-gray-300"
-                                                }`}
-                                            >
-                                                {cert.certStatus}
-                                            </span>
-                                        </td>
-
-                                        <td className="border-b px-4 py-2 dark:border-slate-700">
-                                            <div className="flex flex-wrap gap-2">
-                                                <button
-                                                    className="rounded-lg bg-blue-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-blue-600"
-                                                    onClick={() => {
-                                                        console.log("Navigating to certificate", cert._id);
-                                                        navigate(`/certificate/details/${cert._id}`);
-                                                    }}
+                                {selectedUser.certIssued
+                                    .filter((cert) => cert.issuedBy?._id === loggedInUser._id) // ✅ only show certs from this logged in institution
+                                    .map((cert, index) => (
+                                        <tr
+                                            key={cert._id}
+                                            className="hover:bg-gray-50 dark:hover:bg-slate-800"
+                                        >
+                                            <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
+                                                {index + 1}
+                                            </td>
+                                            <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
+                                                {cert.nameOfCertificate}
+                                            </td>
+                                            <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
+                                                {cert.nameOfInstitution}
+                                            </td>
+                                            <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
+                                                {cert.dateIssued ? new Date(cert.dateIssued).toLocaleDateString() : "N/A"}
+                                            </td>
+                                            <td className="border-b px-4 py-2 dark:border-slate-700">
+                                                <span
+                                                    className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                                                        cert.certStatus === "CONFIRMED"
+                                                            ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
+                                                            : cert.certStatus === "REVOKED"
+                                                              ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
+                                                              : "bg-gray-100 text-gray-700 dark:bg-gray-900/40 dark:text-gray-300"
+                                                    }`}
                                                 >
-                                                    View
-                                                </button>
+                                                    {cert.certStatus}
+                                                </span>
+                                            </td>
 
-                                                <button
-                                                    className="rounded-lg bg-yellow-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-yellow-600"
-                                                    onClick={() => handleUpdateStatus(cert._id, cert.certStatus)}
-                                                >
-                                                    Update Status
-                                                </button>
+                                            <td className="border-b px-4 py-2 dark:border-slate-700">
+                                                <div className="flex flex-wrap gap-2">
+                                                    <button
+                                                        className="rounded-lg bg-blue-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-blue-600"
+                                                        onClick={() => navigate(`/certificate/details/${cert._id}`)}
+                                                    >
+                                                        View
+                                                    </button>
 
-                                                <button
-                                                    className="rounded-lg bg-red-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-red-600"
-                                                    onClick={() => handleDelete(cert._id)}
-                                                    disabled={certLoading} // disables while loading
-                                                >
-                                                    {certLoading ? "Deleting..." : "Delete"}
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                                    <button
+                                                        className="rounded-lg bg-yellow-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-yellow-600"
+                                                        onClick={() => handleUpdateStatus(cert._id, cert.certStatus)}
+                                                    >
+                                                        Update Status
+                                                    </button>
+
+                                                    <button
+                                                        className="rounded-lg bg-red-500 px-3 py-1 text-xs font-medium text-white shadow hover:bg-red-600"
+                                                        onClick={() => handleDelete(cert._id)}
+                                                        disabled={certLoading}
+                                                    >
+                                                        {certLoading ? "Deleting..." : "Delete"}
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
                             </tbody>
                         </table>
                     ) : (

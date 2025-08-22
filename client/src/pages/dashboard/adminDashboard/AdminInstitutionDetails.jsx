@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal, Form, Input, Select, Button, message, Col, Row } from "antd";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getUserById, clearUserState, updateUserDetails, clearUpdateState } from "../../../store/slices/userSlice";
 
 const { Option } = Select;

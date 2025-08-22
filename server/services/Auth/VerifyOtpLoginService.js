@@ -20,7 +20,10 @@ const VerifyOtpLoginService = async (Request, UsersModel) => {
   otpRecord.otpStatus = 1;
   await otpRecord.save();
 
-  const user = await UsersModel.findOne({ email });
+  const user = await UsersModel.findOne({ email })
+    .populate("certIssued")
+    .populate("certificateIssued"); 
+
   if (!user) throw CreateError("User not found", 404);
 
   // Generate JWT

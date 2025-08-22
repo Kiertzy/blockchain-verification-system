@@ -136,11 +136,6 @@ export const navbarInstitutionLinks = [
                 icon: Home,
                 path: "/institution-dashboard",
             },
-            {
-                label: "Reports",
-                icon: NotepadText,
-                path: "/certificates/reports",
-            },
         ],
     },
 
@@ -151,11 +146,6 @@ export const navbarInstitutionLinks = [
                 label: "Issue Certificate",
                 icon: Award,
                 path: "/certificates/issue",
-            },
-            {
-                label: "Certificate List",
-                icon: Package,
-                path: "/certificates/list",
             },
             {
                 label: "Student List",

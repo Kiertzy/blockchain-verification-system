@@ -99,7 +99,7 @@ const InstitutionCertificateStudentList = () => {
                 user.certIssued
                     ?.filter((cert) => cert.issuedBy?._id === loggedInUser._id)
                     .map((cert) => cert.nameOfCertificate)
-                    .join("; ") || ""; 
+                    .join("; ") || "";
 
             return [
                 index + 1,
@@ -116,13 +116,10 @@ const InstitutionCertificateStudentList = () => {
                 user.accountStatus,
                 certs,
                 user.walletAddress,
-                
             ];
         });
 
-        const csvContent = [csvHeader, ...csvRows]
-            .map((row) => row.map((val) => `"${val}"`).join(",")) 
-            .join("\n");
+        const csvContent = [csvHeader, ...csvRows].map((row) => row.map((val) => `"${val}"`).join(",")).join("\n");
 
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
@@ -241,7 +238,7 @@ const InstitutionCertificateStudentList = () => {
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">College</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Department</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Major</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Certificates</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Certificates of Student</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Status</th>
                                         <th
                                             className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700"
@@ -292,25 +289,33 @@ const InstitutionCertificateStudentList = () => {
                                                     {user.major || "—"}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 font-bold text-green-500 dark:border-slate-700">
-                                                    {/* DISPLAY HERE THE certificates of the student the name of the certificates */}
                                                     {user.certIssued && user.certIssued.length > 0 ? (
-                                                        <div className="flex flex-wrap gap-2">
+                                                        <div
+                                                            className="max-w-[200px] truncate"
+                                                            title={user.certIssued
+                                                                .filter((cert) => cert.issuedBy?._id === loggedInUser._id)
+                                                                .map((cert) => cert.nameOfCertificate || "Unnamed Certificate")
+                                                                .join(", ")}
+                                                        >
                                                             {user.certIssued
-                                                                .filter((cert) => cert.issuedBy?._id === loggedInUser._id) // only show from this institution
+                                                                .filter((cert) => cert.issuedBy?._id === loggedInUser._id)
+                                                                .slice(0, 3) // show only first 3 badges in table
                                                                 .map((cert, idx) => (
                                                                     <span
                                                                         key={idx}
-                                                                        className="rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                                                                        className="mr-1 rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300"
                                                                     >
                                                                         {cert.nameOfCertificate || "Unnamed Certificate"}
                                                                     </span>
                                                                 ))}
+                                                            {user.certIssued.filter((cert) => cert.issuedBy?._id === loggedInUser._id).length > 3 && (
+                                                                <span className="text-xs text-gray-500">+ more</span>
+                                                            )}
                                                         </div>
                                                     ) : (
                                                         <span className="text-gray-400">No Certificates</span>
                                                     )}
                                                 </td>
-
                                                 <td className="whitespace-nowrap border-b px-4 py-2 font-bold text-green-500 dark:border-slate-700">
                                                     {user.accountStatus}
                                                 </td>
