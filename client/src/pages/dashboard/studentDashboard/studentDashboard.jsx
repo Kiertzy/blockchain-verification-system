@@ -15,7 +15,7 @@ const DashboardPage = () => {
     }, [dispatch]);
 
     // Filter only certificates belonging to this user
-    const userCertificates = certificates.filter((cert) => user.certIssued.includes(cert._id));
+    const userCertificates = user.certIssued || [];
 
     return (
         <div className="flex flex-col gap-y-8">

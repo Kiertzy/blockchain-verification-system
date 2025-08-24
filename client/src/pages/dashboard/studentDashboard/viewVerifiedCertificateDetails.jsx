@@ -1,19 +1,17 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { QRCodeCanvas } from "qrcode.react";
 import { Sun, Moon } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { fetchCertificateById, clearAllCertificatesState } from "../../../store/slices/certViewSlice";
 
-const StudentCertificateDetails = () => {
+const ViewVerifiedCertificateDetails = () => {
     const { certId } = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { certificate, loading, error } = useSelector((state) => state.allCertificates);
 
     const { theme, setTheme } = useTheme();
-    const verifyUrl = `${window.location.origin}/certificates/student/verify/${certId}`;
 
     useEffect(() => {
         if (certId) dispatch(fetchCertificateById(certId));
@@ -91,6 +89,35 @@ const StudentCertificateDetails = () => {
 
                 {/* Certificate Info */}
                 <div className="mt-8 grid grid-cols-1 gap-6 rounded-lg border border-gray-300 bg-white p-6 dark:border-slate-700 dark:bg-slate-800 sm:grid-cols-2">
+                    {/* <Detail
+                        label="Institution"
+                        value={certificate.nameOfInstitution}
+                    />
+                    <Detail
+                        label="Certificate Name"
+                        value={certificate.nameOfCertificate}
+                    />
+                    <Detail
+                        label="Student Name"
+                        value={certificate.nameOfStudent}
+                    />
+                    <Detail
+                        label="College"
+                        value={certificate.college}
+                    />
+                    <Detail
+                        label="Course"
+                        value={certificate.course}
+                    />
+                    <Detail
+                        label="Major"
+                        value={certificate.major}
+                    />
+                    <Detail
+                        label="Status"
+                        value={certificate.certStatus}
+                        isStatus
+                    /> */}
                     <Detail
                         label="Date Issued"
                         value={certificate.dateIssued ? new Date(certificate.dateIssued).toLocaleString() : "N/A"}
@@ -101,25 +128,12 @@ const StudentCertificateDetails = () => {
                         fullWidth
                         isHash
                     />
-                </div>
-
-                <div className="mt-12 flex w-full justify-center px-4">
-                    <div className="flex w-full max-w-sm flex-col items-center justify-center rounded-2xl border border-gray-300 bg-white p-8 shadow-lg dark:border-gray-700 dark:bg-slate-800">
-                        <span className="mb-4 text-center text-lg font-semibold text-gray-800 dark:text-gray-100">Verification QR Code</span>
-
-                        <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-600">
-                            <QRCodeCanvas
-                                value={verifyUrl}
-                                size={220} // Responsive but still big
-                                bgColor="#ffffff"
-                                fgColor="#000000"
-                                level="H"
-                                includeMargin
-                            />
-                        </div>
-
-                        <span className="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">Scan to verify certificate</span>
-                    </div>
+                    <Detail
+                        label="Transaction Hash"
+                        value={certificate.txHash}
+                        fullWidth
+                        isHash
+                    />
                 </div>
 
                 <div className="mt-8 flex justify-center">
@@ -160,4 +174,4 @@ const Detail = ({ label, value, fullWidth, isHash, isStatus }) => (
     </div>
 );
 
-export default StudentCertificateDetails;
+export default ViewVerifiedCertificateDetails;

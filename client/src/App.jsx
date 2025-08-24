@@ -24,6 +24,7 @@ import AdminVerifierDetails from "./pages/dashboard/adminDashboard/AdminVerifier
 
 import StudentDashboardPage from "@/pages/dashboard/studentDashboard/studentDashboard";
 import StudentViewCertificateDetails from "@/pages/dashboard/studentDashboard/studentViewCertificateDetails.jsx";
+import ViewVerifiedCertificateDetails from "./pages/dashboard/studentDashboard/viewVerifiedCertificateDetails";
 
 import ForgotPassword from "./pages/recoveryPassword/ForgotPassword";
 import VerifyCertificates from "./pages/dashboard/adminDashboard/verifyCertificates";
@@ -76,6 +77,11 @@ function App() {
 
                     <Route
                         path="/certificates/student/certificate/view/:certId"
+                        element={<StudentViewCertificateDetails />}
+                    />
+
+                    <Route
+                        path="/certificates/student/verify/:certId"
                         element={<StudentViewCertificateDetails />}
                     />
 
