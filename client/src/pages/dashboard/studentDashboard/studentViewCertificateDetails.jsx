@@ -110,7 +110,7 @@ const StudentCertificateDetails = () => {
                         <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-600">
                             <QRCodeCanvas
                                 value={verifyUrl}
-                                size={220} // Responsive but still big
+                                size={220} 
                                 bgColor="#ffffff"
                                 fgColor="#000000"
                                 level="H"

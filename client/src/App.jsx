@@ -82,7 +82,7 @@ function App() {
 
                     <Route
                         path="/certificates/student/verify/:certId"
-                        element={<StudentViewCertificateDetails />}
+                        element={<ViewVerifiedCertificateDetails />}
                     />
 
                     {/* Admin Protected Routes */}
