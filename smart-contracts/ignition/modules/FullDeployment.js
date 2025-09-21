@@ -8,9 +8,9 @@ module.exports = buildModule("FullDeployment", (m) => {
   const { userRegistry } = m.useModule(UserRegistryModule);
 
   // Deploy CertificateRegistry next (from its own module)
-  // If your CertificateRegistry requires UserRegistry's address in constructor,
-  // replace [] with [userRegistry]
   const { certificateRegistry } = m.useModule(CertificateRegistryModule);
 
   return { userRegistry, certificateRegistry };
 });
+
+
