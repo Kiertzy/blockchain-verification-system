@@ -24,6 +24,7 @@ const InstitutionCertificateStudentList = () => {
     const [selectedCollege, setSelectedCollege] = useState("");
     const [selectedCourse, setSelectedCourse] = useState("");
     const [selectedMajor, setSelectedMajor] = useState("");
+    const [selectedCertificate, setSelectedCertificate] = useState("");
     const usersPerPage = 5;
 
     useEffect(() => {
@@ -62,7 +63,21 @@ const InstitutionCertificateStudentList = () => {
         })
         .filter((user) => (selectedCollege ? user.college === selectedCollege : true))
         .filter((user) => (selectedCourse ? user.department === selectedCourse : true))
-        .filter((user) => (selectedMajor ? user.major === selectedMajor : true));
+        .filter((user) => (selectedMajor ? user.major === selectedMajor : true))
+        .filter((user) =>
+            selectedCertificate
+                ? user.certIssued?.some((cert) => cert.issuedBy?._id === loggedInUser._id && cert.nameOfCertificate === selectedCertificate)
+                : true,
+        );
+
+    // ✅ Collect certificate names issued by this institution
+    const institutionCertificates = [
+        ...new Set(
+            users
+                .flatMap((user) => user.certIssued?.filter((cert) => cert.issuedBy?._id === loggedInUser._id).map((cert) => cert.nameOfCertificate))
+                .filter(Boolean), // remove null/undefined
+        ),
+    ];
 
     // Pagination logic
     const indexOfLastUser = currentPage * usersPerPage;
@@ -204,6 +219,23 @@ const InstitutionCertificateStudentList = () => {
                                     value={major.majorName}
                                 >
                                     {major.majorName}
+                                </option>
+                            ))}
+                        </select>
+
+                        {/* Add here a selection of Certificate name */}
+                        <select
+                            value={selectedCertificate}
+                            onChange={(e) => setSelectedCertificate(e.target.value)}
+                            className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
+                        >
+                            <option value="">All Certificates</option>
+                            {institutionCertificates.map((certName, idx) => (
+                                <option
+                                    key={idx}
+                                    value={certName}
+                                >
+                                    {certName}
                                 </option>
                             ))}
                         </select>

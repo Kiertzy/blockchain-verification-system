@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { Button, Form, Input, Row, Col, Select, Modal, message } from "antd";
 import { Users, BookOpen, GraduationCap, School, FileText } from "lucide-react";
 import { updateUserDetails, clearUpdateState, getUserById } from "../../../store/slices/userSlice";
-
 import { getAllMajors } from "../../../store/slices/majorSlice";
 import { getAllCourses } from "../../../store/slices/courseSlice";
 import { getAllColleges } from "../../../store/slices/collegeSlice";
@@ -12,62 +11,55 @@ const { Option } = Select;
 
 const InstitutionDashboard = () => {
     const dispatch = useDispatch();
-
     const { user: loggedInUser } = useSelector((state) => state.auth);
     const { colleges } = useSelector((state) => state.college);
     const { courses } = useSelector((state) => state.course);
     const { majors } = useSelector((state) => state.major);
-
     const { selectedUser, updateMessage, updateError, updateLoading } = useSelector((state) => state.users);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [form] = Form.useForm();
-
     const id = loggedInUser?._id;
 
-    // ✅ Certificates issued by this institution (from selectedUser)
+    // ✅ Certificates issued by this institution
     const institutionCertificates = selectedUser?.certificateIssued || [];
 
     const studentsWithCertificates = new Set(
         institutionCertificates
             .filter((cert) => {
                 const issuedById =
-                    typeof cert.issuedBy === "object" && cert.issuedBy !== null ? cert.issuedBy._id?.toString?.() : cert.issuedBy?.toString?.();
-
+                    typeof cert.issuedBy === "object" && cert.issuedBy !== null
+                        ? cert.issuedBy._id?.toString?.()
+                        : cert.issuedBy?.toString?.();
                 return issuedById === loggedInUser._id.toString();
             })
-            .map((cert) => (typeof cert.issuedTo === "object" && cert.issuedTo !== null ? cert.issuedTo._id?.toString() : cert.issuedTo?.toString())),
+            .map((cert) =>
+                typeof cert.issuedTo === "object" && cert.issuedTo !== null
+                    ? cert.issuedTo._id?.toString()
+                    : cert.issuedTo?.toString()
+            )
     );
 
     const totalStudentsWithCertificates = studentsWithCertificates.size;
-
-    // ✅ Total certificates issued
     const totalCertificatesIssued = institutionCertificates.length;
 
     // ✅ Group students by certificate name
     const certificatesByName = institutionCertificates.reduce((acc, cert) => {
-        if (!acc[cert.nameOfCertificate]) {
-            acc[cert.nameOfCertificate] = new Set();
-        }
+        if (!acc[cert.nameOfCertificate]) acc[cert.nameOfCertificate] = new Set();
         acc[cert.nameOfCertificate].add(cert.issuedTo);
         return acc;
     }, {});
 
-    // Fetch data on mount
     useEffect(() => {
         dispatch(getAllColleges());
         dispatch(getAllCourses());
         dispatch(getAllMajors());
     }, [dispatch]);
 
-    // Fetch user details when component mounts
     useEffect(() => {
-        if (id) {
-            dispatch(getUserById(id));
-        }
+        if (id) dispatch(getUserById(id));
     }, [id, dispatch]);
 
-    // Prefill form when modal opens
     useEffect(() => {
         if (isModalOpen && selectedUser) {
             form.setFieldsValue({
@@ -85,7 +77,6 @@ const InstitutionDashboard = () => {
         }
     }, [isModalOpen, selectedUser, form]);
 
-    // Handle update messages
     useEffect(() => {
         if (updateMessage) {
             message.success(updateMessage);
@@ -100,9 +91,7 @@ const InstitutionDashboard = () => {
     }, [updateMessage, updateError, dispatch, id]);
 
     const handleUpdateUser = (values) => {
-        if (id) {
-            dispatch(updateUserDetails({ userId: id, userData: values }));
-        }
+        if (id) dispatch(updateUserDetails({ userId: id, userData: values }));
     };
 
     if (!selectedUser) {
@@ -112,16 +101,13 @@ const InstitutionDashboard = () => {
     return (
         <div className="flex flex-col gap-y-4">
             <h1 className="title">Dashboard</h1>
-            
+
             {/* Stats Grid */}
             <div className="mb-10 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 {/* Students */}
                 <div className="card">
                     <div className="card-header">
-                        <Users
-                            className="text-pink-600"
-                            size={28}
-                        />
+                        <Users className="text-pink-600" size={28} />
                         <p className="card-title">Students</p>
                     </div>
                     <div className="card-body bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -132,10 +118,7 @@ const InstitutionDashboard = () => {
                 {/* Colleges */}
                 <div className="card">
                     <div className="card-header">
-                        <School
-                            className="text-blue-600"
-                            size={28}
-                        />
+                        <School className="text-blue-600" size={28} />
                         <p className="card-title">Colleges</p>
                     </div>
                     <div className="card-body bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -146,10 +129,7 @@ const InstitutionDashboard = () => {
                 {/* Courses */}
                 <div className="card">
                     <div className="card-header">
-                        <BookOpen
-                            className="text-indigo-600"
-                            size={28}
-                        />
+                        <BookOpen className="text-indigo-600" size={28} />
                         <p className="card-title">Courses</p>
                     </div>
                     <div className="card-body bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -160,10 +140,7 @@ const InstitutionDashboard = () => {
                 {/* Majors */}
                 <div className="card">
                     <div className="card-header">
-                        <GraduationCap
-                            className="text-purple-600"
-                            size={28}
-                        />
+                        <GraduationCap className="text-purple-600" size={28} />
                         <p className="card-title">Majors</p>
                     </div>
                     <div className="card-body bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -174,10 +151,7 @@ const InstitutionDashboard = () => {
                 {/* Certificates */}
                 <div className="card">
                     <div className="card-header">
-                        <FileText
-                            className="text-red-600"
-                            size={28}
-                        />
+                        <FileText className="text-red-600" size={28} />
                         <p className="card-title">Certificates</p>
                     </div>
                     <div className="card-body bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
@@ -185,24 +159,34 @@ const InstitutionDashboard = () => {
                     </div>
                 </div>
 
-                <div className="card">
+                {/* Students with Certificates (by Name) */}
+                <div className="card col-span-1 md:col-span-2 lg:col-span-4">
                     <div className="card-header">
-                        <FileText
-                            className="text-red-600"
-                            size={28}
-                        />
+                        <FileText className="text-red-600" size={28} />
                         <p className="card-title">Students with Certificates (by Name)</p>
                     </div>
+
+                    {/* ✅ FIXED GRID ALIGNMENT */}
                     <div className="card-body bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
-                        {Object.entries(certificatesByName).map(([name, students]) => (
-                            <div
-                                key={name}
-                                className="flex justify-between"
-                            >
-                                <span className="font-medium">{name}</span>
-                                <span className="text-lg font-bold">{students.size}</span>
-                            </div>
-                        ))}
+                        <div
+                            className="grid gap-4"
+                            style={{
+                                gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                            }}
+                        >
+                            {Object.entries(certificatesByName).map(([name, students]) => (
+                                <div
+                                    key={name}
+                                    className="flex items-center justify-between rounded-lg border border-slate-300 bg-white px-4 py-2 shadow-sm dark:border-slate-700 dark:bg-slate-800"
+                                >
+                                    <span className="font-medium truncate">{name}</span>
+                                    <span className="text-lg font-bold">{students.size}</span>
+                                </div>
+                            ))}
+                            {Object.keys(certificatesByName).length === 0 && (
+                                <p className="text-slate-500">No certificates issued yet.</p>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -210,18 +194,19 @@ const InstitutionDashboard = () => {
             {/* Page Title */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{selectedUser.institutionName} Profile</h1>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">Detailed information and issued certificates</p>
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
+                        {selectedUser.institutionName} Profile
+                    </h1>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                        Detailed information and issued certificates
+                    </p>
                 </div>
-                <Button
-                    type="primary"
-                    onClick={() => setIsModalOpen(true)}
-                >
+                <Button type="primary" onClick={() => setIsModalOpen(true)}>
                     Update User Details
                 </Button>
             </div>
 
-            {/* User Info Card */}
+            {/* Profile Info */}
             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
                 <div className="border-b px-6 py-4 dark:border-slate-700">
                     <h2 className="text-xl font-semibold text-slate-800 dark:text-white">Personal Information</h2>
@@ -235,7 +220,9 @@ const InstitutionDashboard = () => {
                     </div>
                     <div>
                         <p className="text-sm text-slate-500 dark:text-slate-400">Position</p>
-                        <p className="font-medium text-slate-900 dark:text-white">{selectedUser.institutionPosition || "—"}</p>
+                        <p className="font-medium text-slate-900 dark:text-white">
+                            {selectedUser.institutionPosition || "—"}
+                        </p>
                     </div>
                     <div>
                         <p className="text-sm text-slate-500 dark:text-slate-400">Email</p>
@@ -259,27 +246,22 @@ const InstitutionDashboard = () => {
                     </div>
                     <div className="max-w-full">
                         <p className="text-sm text-slate-500 dark:text-slate-400">Accreditation Info</p>
-                        <p className="break-words font-medium text-slate-900 dark:text-white">{selectedUser.accreditationInfo || "—"}</p>
+                        <p className="break-words font-medium text-slate-900 dark:text-white">
+                            {selectedUser.accreditationInfo || "—"}
+                        </p>
                     </div>
                     <div className="max-w-full">
                         <p className="text-sm text-slate-500 dark:text-slate-400">Wallet Address</p>
-                        <p className="break-words font-medium text-slate-900 dark:text-white">{selectedUser.walletAddress || "—"}</p>
+                        <p className="break-words font-medium text-slate-900 dark:text-white">
+                            {selectedUser.walletAddress || "—"}
+                        </p>
                     </div>
                 </div>
             </div>
 
-            {/* Modal for updating user */}
-            <Modal
-                title="Update Institution Details"
-                open={isModalOpen}
-                onCancel={() => setIsModalOpen(false)}
-                footer={null}
-            >
-                <Form
-                    form={form}
-                    layout="vertical"
-                    onFinish={handleUpdateUser}
-                >
+            {/* Update Modal */}
+            <Modal title="Update Institution Details" open={isModalOpen} onCancel={() => setIsModalOpen(false)} footer={null}>
+                <Form form={form} layout="vertical" onFinish={handleUpdateUser}>
                     <Form.Item
                         name="institutionName"
                         label="Institution Name"
@@ -289,10 +271,7 @@ const InstitutionDashboard = () => {
                     </Form.Item>
 
                     <Row gutter={16}>
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="firstName"
                                 label="First Name"
@@ -301,23 +280,12 @@ const InstitutionDashboard = () => {
                                 <Input />
                             </Form.Item>
                         </Col>
-
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
-                            <Form.Item
-                                name="middleName"
-                                label="Middle Name"
-                            >
+                        <Col xs={24} sm={12}>
+                            <Form.Item name="middleName" label="Middle Name">
                                 <Input />
                             </Form.Item>
                         </Col>
-
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="lastName"
                                 label="Last Name"
@@ -326,11 +294,7 @@ const InstitutionDashboard = () => {
                                 <Input />
                             </Form.Item>
                         </Col>
-
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="email"
                                 label="Email"
@@ -339,11 +303,7 @@ const InstitutionDashboard = () => {
                                 <Input />
                             </Form.Item>
                         </Col>
-
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="sex"
                                 label="Sex"
@@ -355,11 +315,7 @@ const InstitutionDashboard = () => {
                                 </Select>
                             </Form.Item>
                         </Col>
-
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="institutionPosition"
                                 label="Institution Position"
@@ -368,15 +324,8 @@ const InstitutionDashboard = () => {
                                 <Input />
                             </Form.Item>
                         </Col>
-
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
-                            <Form.Item
-                                name="accountStatus"
-                                label="Account Status"
-                            >
+                        <Col xs={24} sm={12}>
+                            <Form.Item name="accountStatus" label="Account Status">
                                 <Select>
                                     <Option value="APPROVED">APPROVED</Option>
                                     <Option value="PENDING">PENDING</Option>
@@ -384,11 +333,7 @@ const InstitutionDashboard = () => {
                                 </Select>
                             </Form.Item>
                         </Col>
-
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="accreditationInfo"
                                 label="Accreditation Info"
@@ -399,19 +344,12 @@ const InstitutionDashboard = () => {
                         </Col>
                     </Row>
 
-                    <Form.Item
-                        name="walletAddress"
-                        label="Wallet Address"
-                    >
+                    <Form.Item name="walletAddress" label="Wallet Address">
                         <Input disabled />
                     </Form.Item>
 
                     <Form.Item>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            loading={updateLoading}
-                        >
+                        <Button type="primary" htmlType="submit" loading={updateLoading}>
                             Update
                         </Button>
                     </Form.Item>
@@ -422,3 +360,4 @@ const InstitutionDashboard = () => {
 };
 
 export default InstitutionDashboard;
+
