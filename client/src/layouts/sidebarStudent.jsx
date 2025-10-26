@@ -3,8 +3,8 @@ import { NavLink } from "react-router-dom";
 
 import { navbarStudentLinks } from "@/constants";
 
-import logoLight from "@/assets/logo-light.svg";
-import logoDark from "@/assets/logo-dark.svg";
+import logoLight from "../assets/logoLogin.png";
+import logoDark from "../assets/logoLogin.png";
 
 import { cn } from "@/utils/cn";
 
