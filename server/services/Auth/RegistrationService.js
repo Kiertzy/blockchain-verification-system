@@ -3,8 +3,8 @@ const { HashPassword } = require("../../utility/BcryptHelper");
 const { ethers } = require("ethers");
 require('dotenv').config();
 
-// const contractABI = require("../../../smart-contracts/artifacts/contracts/UserRegistry.sol/UserRegistry.json").abi;
-const contractABI = require('../../smart-contracts/UserRegistry.json');
+const contractABI = require("../../../smart-contracts/artifacts/contracts/UserRegistry.sol/UserRegistry.json").abi;
+// const contractABI = require('../../smart-contracts/UserRegistry.json');
  
 const contractAddress = process.env.USER_REGISTRY_CONTRACT; // Replace with actual address
 
