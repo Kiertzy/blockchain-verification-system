@@ -6,7 +6,7 @@ import { getAllUsers } from "../../../store/slices/userSlice";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const CLOUD_NAME = "duifaweje";
+const CLOUD_NAME = "dgvkdyhcc";
 const UPLOAD_PRESET = "student_certificates";
 
 const InstitutionCertificate = () => {
