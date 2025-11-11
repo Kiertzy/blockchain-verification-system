@@ -19,7 +19,9 @@ const SendMailUtility = async (emailTo, emailText, emailSubject) => {
     from: `${process.env.APPLICATION_NAME} <${process.env.EMAIL_USERNAME}>`,
     to: emailTo,
     subject: emailSubject,
-    html: emailText,
+    // html: emailText,
+    html: htmlBody,
+    attachments,
   };
 
   return await transporter.sendMail(mailOption);
