@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../store/slices/authSlice";
 import { useTheme } from "@/hooks/use-theme";
-import { ClipboardCopy, Check, Bell, ChevronsLeft, Moon, Sun, LogOut } from "lucide-react";
+import { ClipboardCopy, Check, ChevronsLeft, Moon, Sun, LogOut } from "lucide-react";
 import PropTypes from "prop-types";
 
 export const Header = ({ collapsed, setCollapsed }) => {
@@ -88,9 +88,9 @@ export const Header = ({ collapsed, setCollapsed }) => {
                     />
                 </button>
 
-                <button className="btn-ghost size-10">
+                {/* <button className="btn-ghost size-10">
                     <Bell size={20} />
-                </button>
+                </button> */}
 
                 {/* Profile avatar */}
                 <button
