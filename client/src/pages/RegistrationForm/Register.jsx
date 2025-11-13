@@ -7,7 +7,6 @@ import { registerUser, clearRegistrationState } from "@/store/slices/registratio
 import { getAllColleges } from "../../store/slices/collegeSlice";
 import { getAllCourses } from "../../store/slices/courseSlice";
 import { getAllMajors } from "../../store/slices/majorSlice";
-import { ethers } from "ethers";
 
 const Register = () => {
     const { theme, setTheme } = useTheme();
@@ -64,13 +63,6 @@ const Register = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        // ✅ Client-side wallet validation before sending request
-        // if (formData.walletAddress && !ethers.utils.isAddress(formData.walletAddress)) {
-        //     alert("Invalid wallet address format. Please enter a valid Ethereum address starting with 0x and 42 characters long.");
-        //     return;
-        // }
-
         dispatch(registerUser(formData));
     };
 
