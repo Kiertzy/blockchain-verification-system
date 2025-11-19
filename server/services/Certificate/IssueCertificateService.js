@@ -1,5 +1,4 @@
 // services/Certificate/IssueCertificateService.js
-
 const { CreateError } = require("../../helper/ErrorHandler");
 const CertificateIssuedModel = require("../../model/CertificateIssuedModel");
 const UsersModel = require("../../model/UserModel");
@@ -154,44 +153,49 @@ const IssueCertificateService = async (Request) => {
   // ✅ Send HTML email notification
   try {
     const emailSubject = `Certificate Issued by ${institution.institutionName}`;
+
+    const certificateLink = `${process.env.FRONTEND_URL}/certificates/student/verify/${certificate._id}`;
+
     const emailHTML = `
       <div style="font-family: Arial, sans-serif; color: #111; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+
         <h2 style="text-align: center; color: #2c3e50;">Certificate Issued</h2>
+
         <p>Hello <b>${student.firstName}</b>,</p>
-        <p>We are pleased to inform you that <b>${institution.institutionName}</b> has issued a new certificate to you.</p>
+        <p>We are pleased to inform you that <b>${
+          institution.institutionName
+        }</b> has issued a new certificate to you.</p>
 
         <h3 style="border-bottom: 1px solid #ccc; padding-bottom: 5px;">Certificate Details</h3>
+
         <table style="width: 100%; border-collapse: collapse; margin: 10px 0;">
-          <tr>
-            <td style="padding: 4px; font-weight: bold;">Certificate Name:</td>
-            <td style="padding: 4px;">${nameOfCertificate}</td>
-          </tr>
-          <tr>
-            <td style="padding: 4px; font-weight: bold;">Course:</td>
-            <td style="padding: 4px;">${course}</td>
-          </tr>
-          <tr>
-            <td style="padding: 4px; font-weight: bold;">Major:</td>
-            <td style="padding: 4px;">${major}</td>
-          </tr>
-          <tr>
-            <td style="padding: 4px; font-weight: bold;">College:</td>
-            <td style="padding: 4px;">${college}</td>
-          </tr>
-          <tr>
-            <td style="padding: 4px; font-weight: bold;">Date Issued:</td>
-            <td style="padding: 4px;">${new Date(dateIssued).toLocaleDateString()}</td>
-          </tr>
+          <tr><td style="padding: 4px; font-weight: bold;">Certificate Name:</td><td style="padding: 4px;">${nameOfCertificate}</td></tr>
+          <tr><td style="padding: 4px; font-weight: bold;">Course:</td><td style="padding: 4px;">${course}</td></tr>
+          <tr><td style="padding: 4px; font-weight: bold;">Major:</td><td style="padding: 4px;">${major}</td></tr>
+          <tr><td style="padding: 4px; font-weight: bold;">College:</td><td style="padding: 4px;">${college}</td></tr>
+          <tr><td style="padding: 4px; font-weight: bold;">Date Issued:</td><td style="padding: 4px;">${new Date(
+            dateIssued
+          ).toLocaleDateString()}</td></tr>
         </table>
 
-        <p>You can verify the authenticity of your certificate anytime on the <b>${process.env.APPLICATION_NAME}</b> platform.</p>
+        <p style="margin-top: 20px;">
+          <a href="${certificateLink}" 
+            style="padding: 10px 20px; background: #2c3e50; color: white; text-decoration: none; 
+                    border-radius: 5px; display: inline-block;">
+            View Your Certificate
+          </a>
+        </p>
 
-        <p><b>Transaction Hash:</b> ${txHash}<br>
-           <b>Certificate Hash:</b> ${certHash}</p>
+        <p>If the button does not work, click this link:<br>
+          <a href="${certificateLink}" style="color: #2980b9;">${certificateLink}</a>
+        </p>
 
         <p style="font-size: 0.9em; color: #555; margin-top: 20px;">
-          This is an automated message from <b>${process.env.APPLICATION_NAME}</b>. Please do not reply to this email.
+          This is an automated message from <b>${
+            process.env.APPLICATION_NAME
+          }</b>. Please do not reply to this email.
         </p>
+
       </div>
     `;
 
@@ -211,5 +215,7 @@ const IssueCertificateService = async (Request) => {
   };
 };
 
+
 module.exports = IssueCertificateService;
+
 
