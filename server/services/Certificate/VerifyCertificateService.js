@@ -23,7 +23,6 @@ const VerifyCertificateService = async (Request) => {
     .populate("issuedBy", "nameOfInstitution walletAddress email contactInfo");
 
   if (!certificate) {
-    // ❌ Send FAILED email (not found in DB)
     await SendMailUtility(
       verifierEmail,
       `
