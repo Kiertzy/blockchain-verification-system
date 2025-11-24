@@ -44,6 +44,9 @@ import BulkVerification from "./pages/dashboard/verifierDashboard/bulkVerificati
 import VerifierLayout from "./pages/dashboard/verifierDashboard/layout";
 import RegistrationSuccess from "./components/registrationSuccess";
 import CertificateDetails from "./components/CertificateDetails";
+import VerifierStudentDetails from "./pages/dashboard/verifierDashboard/verifierStudentDetails";
+import VerifierViewCertificateDetails from "./pages/dashboard/verifierDashboard/verifierViewCertificateDetails";
+
 
 function App() {
     return (
@@ -176,12 +179,12 @@ function App() {
                                 path="institution-dashboard"
                                 element={<InstitutionDashboard />}
                             />
-                           
+
                             <Route
                                 path="certificates/issue"
                                 element={<InstitutionCertificates />}
                             />
-                           
+
                             <Route
                                 path="certificates/student/details/:id"
                                 element={<InstitutionStudentDetails />}
@@ -195,7 +198,7 @@ function App() {
                                 path="/certificate/details/:certId"
                                 element={<InstitutionCertificateDetails />}
                             />
-    
+
                             <Route
                                 path="/certificate/:id"
                                 element={<CertificateDetails />}
@@ -203,7 +206,7 @@ function App() {
                         </Route>
                     </Route>
 
-                    {/* Institution Protected Routes */}
+                    {/* VERIFIER Protected Routes */}
                     <Route element={<ProtectedRoute allowedRoles={["VERIFIER"]} />}>
                         <Route element={<VerifierLayout />}>
                             <Route
@@ -217,6 +220,14 @@ function App() {
                             <Route
                                 path="verifier/certificates/verify"
                                 element={<VerifierCertificates />}
+                            />
+                            <Route
+                                path="verifier/certificates/student-details/:id"
+                                element={<VerifierStudentDetails />}
+                            />
+                             <Route
+                                path="certificates/verifier/student/certificate/:certId"
+                                element={<VerifierViewCertificateDetails />}
                             />
                             <Route
                                 path="verifier/certificates/bulk-verification"

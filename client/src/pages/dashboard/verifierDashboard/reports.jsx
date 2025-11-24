@@ -307,18 +307,19 @@ const Reports = () => {
                                                 <td className="flex gap-2 whitespace-nowrap border-b px-4 py-2 font-bold text-yellow-500 dark:border-slate-700">
                                                     <button
                                                         className="rounded bg-green-500 px-3 py-1 text-white hover:bg-green-600"
-                                                        onClick={() => navigate(`/certificates/admin/student-details/${user._id}`)}
+                                                        onClick={() => navigate(`/verifier/certificates/student-details/${user._id}`)}
                                                         disabled={updating}
                                                     >
                                                         View
                                                     </button>
-                                                    <button
+                                                    
+                                                    {/* <button
                                                         className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
                                                         onClick={() => showDeleteConfirm(user._id)}
                                                         disabled={updating}
                                                     >
                                                         Delete
-                                                    </button>
+                                                    </button> */}
                                                 </td>
                                             </tr>
                                         ))
