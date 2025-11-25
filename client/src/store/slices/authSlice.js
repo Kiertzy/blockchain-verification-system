@@ -1,19 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-const API_BASE_URL = "https://blockchain-based-academic-certificate.onrender.com/api/v1";
-
-/**
- * Generate a unique ID for each tab.
- * - window.name persists for this tab only
- * - duplicated tabs will get a new random ID
- */
-if (!window.name) {
-  window.name = 'tab_' + Math.random().toString(36).substring(2, 15);
-}
-
-const TAB_STORAGE_KEY = window.name;
-
-const getStorageKey = (type) => `${TAB_STORAGE_KEY}_${type}`;
+const API_BASE_URL = "http://localhost:5000/api/v1";
 
 // Safe JSON parse
 const safeParseJson = async (response) => {
@@ -21,9 +8,9 @@ const safeParseJson = async (response) => {
   return text ? JSON.parse(text) : {};
 };
 
-// Load persisted state for this tab only
-const tokenFromStorage = sessionStorage.getItem(getStorageKey('token'));
-const userFromStorage = sessionStorage.getItem(getStorageKey('user'));
+// Load persisted state from localStorage
+const tokenFromStorage = localStorage.getItem('token');
+const userFromStorage = localStorage.getItem('user');
 const parsedUser = userFromStorage ? JSON.parse(userFromStorage) : null;
 
 // Async thunk: Login
@@ -96,19 +83,12 @@ const authSlice = createSlice({
       state.otpSent = false;
       state.email = null;
       state.otpFailed = false;
-      
-      // Clear this tab’s sessionStorage keys
-      sessionStorage.removeItem(getStorageKey('token'));
-      sessionStorage.removeItem(getStorageKey('user'));
 
-      // Optional: clear *all* sessionStorage for this tab
-      sessionStorage.clear();
-
-      // Optional: clear all localStorage auth data
+      // Clear localStorage
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      
-      // Trigger multi-tab logout event
+
+      // Trigger multi-tab logout
       localStorage.setItem('logout', Date.now());
     },
     resetOtpState: (state) => {
@@ -150,9 +130,9 @@ const authSlice = createSlice({
         state.error = null;
         state.otpFailed = false;
 
-        // Save to per-tab storage
-        if (token) sessionStorage.setItem(getStorageKey('token'), token);
-        if (user) sessionStorage.setItem(getStorageKey('user'), JSON.stringify(user));
+        // Save to localStorage (persist across tabs)
+        if (token) localStorage.setItem('token', token);
+        if (user) localStorage.setItem('user', JSON.stringify(user));
       })
       .addCase(verifyOTP.rejected, (state, action) => {
         state.isLoading = false;
