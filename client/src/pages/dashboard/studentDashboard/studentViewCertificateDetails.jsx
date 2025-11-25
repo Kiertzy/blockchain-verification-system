@@ -13,7 +13,8 @@ const StudentCertificateDetails = () => {
     const { certificate, loading, error } = useSelector((state) => state.allCertificates);
 
     const { theme, setTheme } = useTheme();
-    const verifyUrl = `${window.location.origin}/certificates/student/verify/${certId}`;
+    const LOCALHOST_URL = "https://blockchain-academic-certificate.onrender.com";
+    const verifyUrl = `${LOCALHOST_URL}/certificates/student/verify/${certId}`;
 
     useEffect(() => {
         if (certId) dispatch(fetchCertificateById(certId));
@@ -36,7 +37,7 @@ const StudentCertificateDetails = () => {
         );
 
     // Public link for certificate (adjust if your certs have a public page)
-    const certificateUrl = `${window.location.origin}/certificates/student/certificate/view/${certId}`;
+    const certificateUrl = `${LOCALHOST_URL}/certificates/student/certificate/view/${certId}`;
 
     const handleShare = async () => {
         try {
