@@ -78,7 +78,7 @@ function App() {
                         element={<PendingDashboard />}
                     />
 
-                    {/* <Route
+                    <Route
                         path="/certificates/student/certificate/view/:certId"
                         element={<StudentViewCertificateDetails />}
                     />
@@ -86,7 +86,7 @@ function App() {
                     <Route
                         path="/certificates/student/verify/:certId"
                         element={<ViewVerifiedCertificateDetails />}
-                    /> */}
+                    />
 
                     {/* Admin Protected Routes */}
                     <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
@@ -169,14 +169,14 @@ function App() {
                                 path="student-dashboard"
                                 element={<StudentDashboardPage />}
                             />
-                            <Route
+                            {/* <Route
                                 path="certificates/student/certificate/view/:certId"
                                 element={<StudentViewCertificateDetails />}
                             />
                             <Route
                                 path="certificates/student/verify/:certId"
                                 element={<ViewVerifiedCertificateDetails />}
-                            />
+                            /> */}
                         </Route>
                     </Route>
 
