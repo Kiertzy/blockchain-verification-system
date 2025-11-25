@@ -2,18 +2,29 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-// eslint-disable-next-line react/prop-types
-const ProtectedRoute = ({ allowedRoles }) => {
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
-  if (!isAuthenticated) {
+const ProtectedRoute = ({ allowedRoles }) => {
+  const { isAuthenticated, user, token } = useSelector((state) => state.auth);
+
+  // If no token, redirect to login
+  if (!token) {
     return <Navigate to="/" replace />;
   }
 
-  // eslint-disable-next-line react/prop-types
-  if (!allowedRoles.includes(user?.role)) {
-    // Redirect to unauthorized or default dashboard
-    return <Navigate to="/" replace />;
+  // If token exists but user role not allowed, redirect to dashboard depending on role
+  if (user && !allowedRoles.includes(user.role)) {
+    switch (user.role) {
+      case "ADMIN":
+        return <Navigate to="/dashboard" replace />;
+      case "STUDENT":
+        return <Navigate to="/student-dashboard" replace />;
+      case "INSTITUTION":
+        return <Navigate to="/institution-dashboard" replace />;
+      case "VERIFIER":
+        return <Navigate to="/verifier/dashboard" replace />;
+      default:
+        return <Navigate to="/" replace />;
+    }
   }
 
   return <Outlet />;
