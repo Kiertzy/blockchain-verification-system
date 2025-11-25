@@ -169,6 +169,14 @@ function App() {
                                 path="student-dashboard"
                                 element={<StudentDashboardPage />}
                             />
+                            <Route
+                                path="certificates/student/certificate/view/:certId"
+                                element={<StudentViewCertificateDetails />}
+                            />
+                            <Route
+                                path="certificates/student/verify/:certId"
+                                element={<ViewVerifiedCertificateDetails />}
+                            />
                         </Route>
                     </Route>
 
