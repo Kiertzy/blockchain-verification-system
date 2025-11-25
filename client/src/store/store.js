@@ -37,3 +37,16 @@ export const store = configureStore({
 
 export default store;
 
+// Hydrate auth state from localStorage immediately
+const token = localStorage.getItem('token');
+const user = localStorage.getItem('user');
+
+if (token && user) {
+  store.dispatch({
+    type: 'auth/verifyOTP/fulfilled',
+    payload: {
+      token,
+      user: JSON.parse(user),
+    },
+  });
+}
