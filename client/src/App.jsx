@@ -65,7 +65,7 @@ function App() {
           <Route path="/pending-dashboard" element={<PendingDashboard />} />
 
           {/* Student deep links (direct access allowed) */}
-          <Route
+          {/* <Route
             path="/certificates/student/certificate/view/:certId"
             element={
               <ProtectedRoute allowedRoles={["STUDENT"]}>
@@ -80,7 +80,10 @@ function App() {
                 <ViewVerifiedCertificateDetails />
               </ProtectedRoute>
             }
-          />
+          /> */}
+          {/* Public certificate links (anyone can open via link, even student) */}
+            <Route path="/certificates/student/certificate/view/:certId" element={<StudentViewCertificateDetails />} />
+            <Route path="/certificates/student/verify/:certId" element={<ViewVerifiedCertificateDetails />} />
 
           {/* Admin Protected Routes */}
           <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
