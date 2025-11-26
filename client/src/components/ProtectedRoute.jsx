@@ -1,17 +1,23 @@
-// components/ProtectedRoute.jsx
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
-
 const ProtectedRoute = ({ allowedRoles }) => {
-  const { isAuthenticated, user, token } = useSelector((state) => state.auth);
+  const { token, user } = useSelector((state) => state.auth);
+  const location = useLocation();
 
-  // If no token, redirect to login
+  // Allow public certificate routes to bypass authentication
+  if (
+    location.pathname.startsWith("/certificates/student/certificate/view") ||
+    location.pathname.startsWith("/certificates/student/verify")
+  ) {
+    return <Outlet />;
+  }
+
+  // Normal protection rules
   if (!token) {
     return <Navigate to="/" replace />;
   }
 
-  // If token exists but user role not allowed, redirect to dashboard depending on role
   if (user && !allowedRoles.includes(user.role)) {
     switch (user.role) {
       case "ADMIN":
