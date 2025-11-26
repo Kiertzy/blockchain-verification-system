@@ -108,8 +108,8 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={["STUDENT"]} />}>
             <Route element={<LayoutStudent />}>
               <Route path="student-dashboard" element={<StudentDashboardPage />} />
-              <Route path="/certificates/student/certificate/view/:certId" element={<StudentViewCertificateDetails />} />
-              <Route path="/certificates/student/verify/:certId" element={<ViewVerifiedCertificateDetails />} />
+              {/* <Route path="/certificates/student/certificate/view/:certId" element={<StudentViewCertificateDetails />} />
+              <Route path="/certificates/student/verify/:certId" element={<ViewVerifiedCertificateDetails />} /> */}
             </Route>
           </Route>
 
