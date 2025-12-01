@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileDown } from "lucide-react";
+import { FileDown, ArrowUpDown } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, clearUserState, deleteUser, clearDeleteState } from "../../../store/slices/userSlice";
 import { clearUpdateAccountStatusState } from "../../../store/slices/updateUserAccountStatusSlice";
@@ -25,6 +25,7 @@ const Reports = () => {
     const [selectedCollege, setSelectedCollege] = useState("");
     const [selectedCourse, setSelectedCourse] = useState("");
     const [selectedMajor, setSelectedMajor] = useState("");
+    const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
 
     const usersPerPage = 5;
 
@@ -71,13 +72,38 @@ const Reports = () => {
         })
         .filter((user) => (selectedCollege ? user.college === selectedCollege : true))
         .filter((user) => (selectedCourse ? user.department === selectedCourse : true))
-        .filter((user) => (selectedMajor ? user.major === selectedMajor : true));
+        .filter((user) => (selectedMajor ? user.major === selectedMajor : true))
+        .sort((a, b) => {
+            // Sort alphabetically by last name, then first name
+            const lastNameA = a.lastName?.toLowerCase() || "";
+            const lastNameB = b.lastName?.toLowerCase() || "";
+            const firstNameA = a.firstName?.toLowerCase() || "";
+            const firstNameB = b.firstName?.toLowerCase() || "";
+
+            if (sortOrder === "asc") {
+                if (lastNameA !== lastNameB) {
+                    return lastNameA.localeCompare(lastNameB);
+                }
+                return firstNameA.localeCompare(firstNameB);
+            } else {
+                if (lastNameA !== lastNameB) {
+                    return lastNameB.localeCompare(lastNameA);
+                }
+                return firstNameB.localeCompare(firstNameA);
+            }
+        });
 
     // Pagination logic
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
     const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+    // Toggle sort order
+    const toggleSortOrder = () => {
+        setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+        setCurrentPage(1); // Reset to first page when sorting
+    };
 
     // ✅ Export CSV without any dependency
     const exportInstitutionsCSV = () => {
@@ -163,13 +189,25 @@ const Reports = () => {
                         className="w-full max-w-md rounded-md border border-slate-300 bg-white px-4 py-2 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                     />
 
-                    <button
-                        onClick={exportInstitutionsCSV}
-                        className="flex items-center gap-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
-                    >
-                        <FileDown size={16} />
-                        Export
-                    </button>
+                    <div className="flex gap-2">
+                        {/* Sort Button */}
+                        <button
+                            onClick={toggleSortOrder}
+                            className="flex items-center gap-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                            title={`Sort ${sortOrder === "asc" ? "Z-A" : "A-Z"}`}
+                        >
+                            <ArrowUpDown size={16} />
+                            {sortOrder === "asc" ? "A-Z" : "Z-A"}
+                        </button>
+
+                        <button
+                            onClick={exportInstitutionsCSV}
+                            className="flex items-center gap-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
+                        >
+                            <FileDown size={16} />
+                            Export
+                        </button>
+                    </div>
                 </div>
 
                 <div className="flex flex-col gap-4">
@@ -228,7 +266,9 @@ const Reports = () => {
             {/* Table */}
             <div className="rounded border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
                 <div className="border-b border-gray-200 p-4 dark:border-slate-700">
-                    <p className="text-lg font-medium text-slate-900 dark:text-white">List of Students</p>
+                    <p className="text-lg font-medium text-slate-900 dark:text-white">
+                        List of Students {sortOrder === "asc" ? "(A-Z)" : "(Z-A)"}
+                    </p>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -312,14 +352,6 @@ const Reports = () => {
                                                     >
                                                         View
                                                     </button>
-                                                    
-                                                    {/* <button
-                                                        className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600"
-                                                        onClick={() => showDeleteConfirm(user._id)}
-                                                        disabled={updating}
-                                                    >
-                                                        Delete
-                                                    </button> */}
                                                 </td>
                                             </tr>
                                         ))

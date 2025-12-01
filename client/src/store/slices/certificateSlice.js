@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_BASE_URL = "https://blockchain-based-academic-certificate.onrender.com/api/v1";
+const API_BASE_URL = 'https://blockchain-based-academic-certificate.onrender.com/api/v1';
 
 // Async thunk for verifying certificate by certHash
 export const verifyCertificate = createAsyncThunk(
@@ -122,3 +122,4 @@ const verifyCertificateSlice = createSlice({
 export const { clearVerifyCertificateState } = verifyCertificateSlice.actions;
 
 export default verifyCertificateSlice.reducer;
+

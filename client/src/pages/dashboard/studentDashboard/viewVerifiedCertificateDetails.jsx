@@ -112,17 +112,24 @@ const ViewVerifiedCertificateDetails = () => {
                     <Detail
                         label="Major"
                         value={certificate.major}
+                    /> */}
+
+                    <Detail
+                        label="Verification"
+                        value={certificate.certVerificationStatus}
+                        isStatus
                     />
+
                     <Detail
                         label="Status"
                         value={certificate.certStatus}
                         isStatus
-                    /> */}
+                    />
                     <Detail
                         label="Date Issued"
                         value={certificate.dateIssued ? new Date(certificate.dateIssued).toLocaleString() : "N/A"}
                     />
-                    <Detail
+                    {/* <Detail
                         label="Certificate Hash"
                         value={certificate.certHash}
                         fullWidth
@@ -133,7 +140,7 @@ const ViewVerifiedCertificateDetails = () => {
                         value={certificate.txHash}
                         fullWidth
                         isHash
-                    />
+                    /> */}
                 </div>
 
                 <div className="mt-8 flex justify-center">

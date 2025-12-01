@@ -26,3 +26,4 @@ const GetAllCertificatesService = async () => {
 };
 
 module.exports = GetAllCertificatesService;
+

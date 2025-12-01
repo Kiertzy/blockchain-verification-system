@@ -112,7 +112,7 @@ const IssueCertificateService = async (Request) => {
     }
   }
 
-  // Save to MongoDB
+  // ✅ Save to MongoDB with certVerificationStatus
   const certificate = await CertificateIssuedModel.create({
     nameOfInstitution,
     nameOfCertificate,
@@ -125,6 +125,7 @@ const IssueCertificateService = async (Request) => {
     walletAddressStudent,
     walletAddressInstitution,
     certStatus,
+    certVerificationStatus: "PENDING", // ✅ Set initial status as PENDING
     imageOfCertificate,
     issuedBy: institution._id,
     issuedTo: student._id,
@@ -159,7 +160,7 @@ const IssueCertificateService = async (Request) => {
     const emailHTML = `
       <div style="font-family: Arial, sans-serif; color: #111; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
 
-        <h2 style="text-align: center; color: #2c3e50;">Certificate Issued</h2>
+        <h2 style="text-align: center; color: #2c3e50;">🎓 Certificate Issued</h2>
 
         <p>Hello <b>${student.firstName}</b>,</p>
         <p>We are pleased to inform you that <b>${
@@ -176,7 +177,12 @@ const IssueCertificateService = async (Request) => {
           <tr><td style="padding: 4px; font-weight: bold;">Date Issued:</td><td style="padding: 4px;">${new Date(
             dateIssued
           ).toLocaleDateString()}</td></tr>
+          <tr><td style="padding: 4px; font-weight: bold;">Status:</td><td style="padding: 4px;"><span style="color: #f39c12; font-weight: bold;">PENDING VERIFICATION</span></td></tr>
         </table>
+
+        <p style="margin-top: 20px; padding: 10px; background-color: #fff3cd; border-left: 4px solid #f39c12; border-radius: 4px;">
+          📌 <b>Note:</b> Your certificate is currently <b>PENDING</b> verification. It will be marked as <b>VERIFIED</b> once someone successfully verifies it on the blockchain.
+        </p>
 
         <p style="margin-top: 20px;">
           <a href="${certificateLink}" 
@@ -192,7 +198,7 @@ const IssueCertificateService = async (Request) => {
 
         <p style="font-size: 0.9em; color: #555; margin-top: 20px;">
           This is an automated message from <b>${
-            process.env.APPLICATION_NAME
+            process.env.APPLICATION_NAME || "Certificate Verification System"
           }</b>. Please do not reply to this email.
         </p>
 
@@ -212,10 +218,9 @@ const IssueCertificateService = async (Request) => {
       txHash,
       certHash,
     },
+    verificationStatus: "PENDING", 
   };
 };
 
-
 module.exports = IssueCertificateService;
-
 

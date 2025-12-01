@@ -14,6 +14,9 @@ const UpdateUserDetailsService = async (Request, UsersModel) => {
     walletAddress,
     institutionName,
     institutionPosition,
+    institutionDepartmentAccess,
+    institutionCollegeAccess,
+    institutionMajorAccess,
     accountStatus,
     accreditationInfo,
     studentId,
@@ -51,11 +54,18 @@ const UpdateUserDetailsService = async (Request, UsersModel) => {
   if (institutionName) updates.institutionName = institutionName;
   if (institutionPosition) updates.institutionPosition = institutionPosition;
   if (accreditationInfo) updates.accreditationInfo = accreditationInfo;
+  if (institutionDepartmentAccess) updates.institutionDepartmentAccess = institutionDepartmentAccess;
+  if (institutionCollegeAccess) updates.institutionCollegeAccess = institutionCollegeAccess;
+  if (institutionMajorAccess) updates.institutionMajorAccess = institutionMajorAccess;
 
   if (role === "INSTITUTION") {
     if (institutionName) updates.institutionName = institutionName;
     if (institutionPosition) updates.institutionPosition = institutionPosition;
     if (accreditationInfo) updates.accreditationInfo = accreditationInfo;
+    if (institutionDepartmentAccess) updates.institutionDepartmentAccess = institutionDepartmentAccess;
+    if (institutionCollegeAccess) updates.institutionCollegeAccess = institutionCollegeAccess;
+    if (institutionMajorAccess) updates.institutionMajorAccess = institutionMajorAccess;
+
   }
 
   if (role === "STUDENT") {
@@ -80,5 +90,6 @@ const UpdateUserDetailsService = async (Request, UsersModel) => {
     user: updatedUser,
   };
 };
+
 
 module.exports = UpdateUserDetailsService;

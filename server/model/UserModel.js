@@ -36,6 +36,25 @@ const UsersSchema = new Schema(
     },
     institutionName: { type: String, default: null },
     institutionPosition: { type: String, default: null },
+
+    // ✅ Added college access (multiple colleges)
+    institutionCollegeAccess: { 
+      type: [String], 
+      default: [] 
+    },
+
+    // ✅ Changed to Array for multiple departments/courses
+    institutionDepartmentAccess: { 
+      type: [String], 
+      default: [] 
+    },
+    
+    // ✅ Added major access (multiple majors)
+    institutionMajorAccess: { 
+      type: [String], 
+      default: [] 
+    },
+    
     accountStatus: {
       type: String,
       enum: ["PENDING", "APPROVED", "DISAPPROVED"],
@@ -62,6 +81,7 @@ const UsersSchema = new Schema(
   },
   { versionKey: false, timestamps: true }
 );
+
 
 const UsersModel = model("User", UsersSchema);
 module.exports = UsersModel;

@@ -11,6 +11,7 @@ import updateUserAccountStatusReducer from './slices/updateUserAccountStatusSlic
 import CertificateReducer from './slices/certificateSlice';
 import IssueCertificateReducer from './slices/issueCertificateSlice';
 import CertViewReducer from './slices/certViewSlice';
+import certificateTemplateReducer from './slices/certificateTemplateSlice'; 
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +26,7 @@ export const store = configureStore({
     certificate: CertificateReducer,
     issueCertificate: IssueCertificateReducer,
     allCertificates: CertViewReducer,
+    certificateTemplate: certificateTemplateReducer, 
   },
 
   middleware: (getDefaultMiddleware) =>
@@ -50,3 +52,4 @@ if (token && user) {
     },
   });
 }
+

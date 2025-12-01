@@ -1,4 +1,4 @@
-import { Home, NotepadText, Package, PackagePlus, UserCheck, UserPlus, Users, Award, UserCog, UserPen  } from "lucide-react";
+import { Home, NotepadText, Package, PackagePlus, UserCheck, UserPlus, Users, Award, UserCog, UserPen, ScanQrCode  } from "lucide-react";
 
 export const navbarAdminLinks = [
     {
@@ -25,7 +25,7 @@ export const navbarAdminLinks = [
                 path: "/institution",
             },
             {
-                label: "Verified Students",
+                label: "Certificate Holder",
                 icon: UserCheck,
                 path: "/students",
             },
@@ -61,21 +61,21 @@ export const navbarAdminLinks = [
             },
         ],
     },
-    {
-        title: "Certificates",
-        links: [
-            {
-                label: "Verify Certificate",
-                icon: Package,
-                path: "/certificates/verify",
-            },
-            {
-                label: "Bulk Verification",
-                icon: PackagePlus,
-                path: "/certificates/bulk-verification",
-            },
-        ],
-    },
+    // {
+    //     title: "Certificates",
+    //     links: [
+    //         {
+    //             label: "Verify Certificate",
+    //             icon: Package,
+    //             path: "/certificates/verify",
+    //         },
+    //         {
+    //             label: "Bulk Verification",
+    //             icon: PackagePlus,
+    //             path: "/certificates/bulk-verification",
+    //         },
+    //     ],
+    // },
 ];
 
 export const navbarStudentLinks = [
@@ -111,18 +111,39 @@ export const navbarVerifierLinks = [
         title: "Certificates",
         links: [
             {
-                label: "Verify Certificate",
+                label: "Verified Certificates",
                 icon: Package,
-                path: "verifier/certificates/verify",
+                path: "verifier/certificates/verified-certificates",
             },
             {
-                label: "Bulk Verification",
-                icon: PackagePlus,
-                path: "verifier/certificates/bulk-verification",
+                label: "Pending Certificates",
+                icon: Package,
+                path: "verifier/certificates/pending-certificates",
+            },
+            {
+                label: "Not Verified Certificates",
+                icon: Package,
+                path: "verifier/certificates/not-verified-certificates",
+            },
+            // {
+            //     label: "Verify Certificate",
+            //     icon: Package,
+            //     path: "verifier/certificates/verify",
+            // },
+            // {
+            //     label: "Bulk Verification",
+            //     icon: PackagePlus,
+            //     path: "verifier/certificates/bulk-verification",
+            // },
+            {
+                label: "QR Scanner",
+                icon: ScanQrCode,
+                path: "verifier/certificates/qr-scanner",
             },
         ],
     },
 ];
+
 
 export const navbarInstitutionLinks = [
     {
@@ -148,6 +169,11 @@ export const navbarInstitutionLinks = [
                 label: "Student List",
                 icon: PackagePlus,
                 path: "/certificates/student/list",
+            },
+             {
+                label: "Certificate Template",
+                icon: PackagePlus,
+                path: "/certificates/templates",
             },
         ],
     },

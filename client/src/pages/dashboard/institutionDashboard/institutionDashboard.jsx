@@ -244,6 +244,94 @@ const InstitutionDashboard = () => {
                             {selectedUser.accountStatus}
                         </span>
                     </div>
+
+                    {/* ✅ College Access Display */}
+                    <div className="max-w-full">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">College Access</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                            {(() => {
+                                let access = selectedUser.institutionCollegeAccess;
+                                if (typeof access === 'string') {
+                                    try {
+                                        access = JSON.parse(access);
+                                    } catch (e) {
+                                        access = [];
+                                    }
+                                }
+                                
+                                if (Array.isArray(access) && access.length > 0) {
+                                    return access.map((college, idx) => (
+                                        <span
+                                            key={idx}
+                                            className="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800 dark:bg-purple-900/40 dark:text-purple-300"
+                                        >
+                                            {college}
+                                        </span>
+                                    ));
+                                }
+                                return <span className="text-slate-500 dark:text-slate-400">No access granted</span>;
+                            })()}
+                        </div>
+                    </div>
+
+                    {/* ✅ Department Access Display */}
+                    <div className="max-w-full">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">Department Access</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                            {(() => {
+                                let access = selectedUser.institutionDepartmentAccess;
+                                if (typeof access === 'string') {
+                                    try {
+                                        access = JSON.parse(access);
+                                    } catch (e) {
+                                        access = [];
+                                    }
+                                }
+                                
+                                if (Array.isArray(access) && access.length > 0) {
+                                    return access.map((dept, idx) => (
+                                        <span
+                                            key={idx}
+                                            className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-300"
+                                        >
+                                            {dept}
+                                        </span>
+                                    ));
+                                }
+                                return <span className="text-slate-500 dark:text-slate-400">No access granted</span>;
+                            })()}
+                        </div>
+                    </div>
+
+                    {/* ✅ Major Access Display */}
+                    <div className="max-w-full">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">Major Access</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                            {(() => {
+                                let access = selectedUser.institutionMajorAccess;
+                                if (typeof access === 'string') {
+                                    try {
+                                        access = JSON.parse(access);
+                                    } catch (e) {
+                                        access = [];
+                                    }
+                                }
+                                
+                                if (Array.isArray(access) && access.length > 0) {
+                                    return access.map((major, idx) => (
+                                        <span
+                                            key={idx}
+                                            className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/40 dark:text-green-300"
+                                        >
+                                            {major}
+                                        </span>
+                                    ));
+                                }
+                                return <span className="text-slate-500 dark:text-slate-400">No access granted</span>;
+                            })()}
+                        </div>
+                    </div>
+
                     <div className="max-w-full">
                         <p className="text-sm text-slate-500 dark:text-slate-400">Accreditation Info</p>
                         <p className="break-words font-medium text-slate-900 dark:text-white">
@@ -360,4 +448,3 @@ const InstitutionDashboard = () => {
 };
 
 export default InstitutionDashboard;
-

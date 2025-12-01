@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const API_BASE_URL = "https://blockchain-based-academic-certificate.onrender.com/api/v1";
+const API_BASE_URL = 'https://blockchain-based-academic-certificate.onrender.com/api/v1';
 
 // Async thunks
 export const addCourse = createAsyncThunk(

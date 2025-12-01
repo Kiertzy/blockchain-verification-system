@@ -3,18 +3,15 @@ import { useNavigate } from "react-router-dom";
 import { FileDown, ArrowUpDown } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, clearUserState } from "../../../store/slices/userSlice";
-import { clearUpdateAccountStatusState } from "../../../store/slices/updateUserAccountStatusSlice";
 import { getAllColleges } from "../../../store/slices/collegeSlice";
 import { getAllCourses } from "../../../store/slices/courseSlice";
 import { getAllMajors } from "../../../store/slices/majorSlice";
 import { message } from "antd";
 
-const InstitutionCertificateStudentList = () => {
+const VerifiedCertificates = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { users, loading, error } = useSelector((state) => state.users);
-    const { user: loggedInUser } = useSelector((state) => state.auth);
-    const { loading: updating, success, error: updateError, message: updateMsg } = useSelector((state) => state.updateUserAccountStatus);
     const { colleges } = useSelector((state) => state.college);
     const { courses } = useSelector((state) => state.course);
     const { majors } = useSelector((state) => state.major);
@@ -25,7 +22,8 @@ const InstitutionCertificateStudentList = () => {
     const [selectedCourse, setSelectedCourse] = useState("");
     const [selectedMajor, setSelectedMajor] = useState("");
     const [selectedCertificate, setSelectedCertificate] = useState("");
-    const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
+    const [sortOrder, setSortOrder] = useState("asc");
+
     const usersPerPage = 5;
 
     useEffect(() => {
@@ -38,28 +36,34 @@ const InstitutionCertificateStudentList = () => {
         };
     }, [dispatch]);
 
-    useEffect(() => {
-        if (success) {
-            message.success(updateMsg);
-            dispatch(getAllUsers());
-            dispatch(clearUpdateAccountStatusState());
-        }
-        if (updateError) {
-            message.error(updateError);
-            dispatch(clearUpdateAccountStatusState());
-        }
-    }, [success, updateError, updateMsg, dispatch]);
+    // ✅ Collect unique certificate names with VERIFIED status
+    const verifiedCertificates = [
+        ...new Set(
+            users
+                .flatMap((user) =>
+                    user.certIssued
+                        ?.filter((cert) => cert.certVerificationStatus === "VERIFIED")
+                        .map((cert) => cert.nameOfCertificate)
+                )
+                .filter(Boolean) // remove null/undefined
+        ),
+    ].sort();
 
-    // Filter pending users, role filter, and search
+    // ✅ Filter students with VERIFIED certificates
     const filteredUsers = users
-        .filter(
-            (user) =>
-                user.accountStatus === "APPROVED" &&
-                user.role?.toUpperCase() === "STUDENT" &&
-                user.certIssued?.some((cert) => cert.issuedBy?._id === loggedInUser._id),
-        )
         .filter((user) => {
-            const fullName = `${user.firstName} ${user.middleName} ${user.lastName}`.toLowerCase();
+            if (user.accountStatus !== "APPROVED" || user.role?.toUpperCase() !== "STUDENT") {
+                return false;
+            }
+
+            const hasVerifiedCert = user.certIssued?.some(
+                (cert) => cert.certVerificationStatus === "VERIFIED"
+            );
+
+            return hasVerifiedCert;
+        })
+        .filter((user) => {
+            const fullName = `${user.firstName} ${user.middleName || ""} ${user.lastName}`.toLowerCase();
             return fullName.includes(searchQuery.toLowerCase());
         })
         .filter((user) => (selectedCollege ? user.college === selectedCollege : true))
@@ -67,11 +71,14 @@ const InstitutionCertificateStudentList = () => {
         .filter((user) => (selectedMajor ? user.major === selectedMajor : true))
         .filter((user) =>
             selectedCertificate
-                ? user.certIssued?.some((cert) => cert.issuedBy?._id === loggedInUser._id && cert.nameOfCertificate === selectedCertificate)
-                : true,
+                ? user.certIssued?.some(
+                      (cert) =>
+                          cert.nameOfCertificate === selectedCertificate &&
+                          cert.certVerificationStatus === "VERIFIED"
+                  )
+                : true
         )
         .sort((a, b) => {
-            // Sort alphabetically by last name, then first name
             const lastNameA = a.lastName?.toLowerCase() || "";
             const lastNameB = b.lastName?.toLowerCase() || "";
             const firstNameA = a.firstName?.toLowerCase() || "";
@@ -90,31 +97,19 @@ const InstitutionCertificateStudentList = () => {
             }
         });
 
-    // ✅ Collect certificate names issued by this institution
-    const institutionCertificates = [
-        ...new Set(
-            users
-                .flatMap((user) => user.certIssued?.filter((cert) => cert.issuedBy?._id === loggedInUser._id).map((cert) => cert.nameOfCertificate))
-                .filter(Boolean), // remove null/undefined
-        ),
-    ];
-
-    // Pagination logic
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
     const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
     const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
 
-    // Toggle sort order
     const toggleSortOrder = () => {
         setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
-        setCurrentPage(1); // Reset to first page when sorting
+        setCurrentPage(1);
     };
 
-    // ✅ Export CSV without any dependency
-    const exportInstitutionsCSV = () => {
+    const exportVerifiedStudentsCSV = () => {
         if (filteredUsers.length === 0) {
-            message.warning("No approved institutions found.");
+            message.warning("No students with verified certificates found.");
             return;
         }
 
@@ -126,56 +121,65 @@ const InstitutionCertificateStudentList = () => {
             "Last Name",
             "Sex",
             "Email",
-            "Role",
             "College",
             "Department",
             "Major",
-            "Status",
-            "Certificates",
+            "Verified Certificates",
+            "Verified Count",
             "Wallet Address",
         ];
 
         const csvRows = filteredUsers.map((user, index) => {
-            const certs =
-                user.certIssued
-                    ?.filter((cert) => cert.issuedBy?._id === loggedInUser._id)
-                    .map((cert) => cert.nameOfCertificate)
-                    .join("; ") || "";
+            const verifiedCerts = user.certIssued
+                ?.filter((cert) => cert.certVerificationStatus === "VERIFIED")
+                .map((cert) => cert.nameOfCertificate)
+                .join("; ") || "";
+
+            const verifiedCount = user.certIssued?.filter(
+                (cert) => cert.certVerificationStatus === "VERIFIED"
+            ).length || 0;
 
             return [
                 index + 1,
-                user.studentId,
+                user.studentId || "",
                 user.firstName,
                 user.middleName || "",
                 user.lastName,
                 user.sex,
                 user.email,
-                user.role,
-                user.college,
-                user.department,
-                user.major,
-                user.accountStatus,
-                certs,
+                user.college || "",
+                user.department || "",
+                user.major || "",
+                verifiedCerts,
+                verifiedCount,
                 user.walletAddress,
             ];
         });
 
-        const csvContent = [csvHeader, ...csvRows].map((row) => row.map((val) => `"${val}"`).join(",")).join("\n");
+        const csvContent = [csvHeader, ...csvRows]
+            .map((row) => row.map((val) => `"${val}"`).join(","))
+            .join("\n");
 
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
 
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", "approved_students.csv");
+        link.setAttribute("download", "verified_certificates_students.csv");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     };
 
+    const getVerifiedCertCount = (user) => {
+        return user.certIssued?.filter(
+            (cert) => cert.certVerificationStatus === "VERIFIED"
+        ).length || 0;
+    };
+
     return (
         <div className="flex flex-col gap-y-4">
-            <h1 className="title">Students</h1>
+            <h1 className="title">Verified Certificates</h1>
 
             <div className="flex flex-col gap-4">
                 <div className="mb-4 flex items-center justify-between gap-4">
@@ -191,7 +195,6 @@ const InstitutionCertificateStudentList = () => {
                     />
 
                     <div className="flex gap-2">
-                        {/* Sort Button */}
                         <button
                             onClick={toggleSortOrder}
                             className="flex items-center gap-2 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
@@ -202,7 +205,7 @@ const InstitutionCertificateStudentList = () => {
                         </button>
 
                         <button
-                            onClick={exportInstitutionsCSV}
+                            onClick={exportVerifiedStudentsCSV}
                             className="flex items-center gap-2 rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600"
                         >
                             <FileDown size={16} />
@@ -213,66 +216,66 @@ const InstitutionCertificateStudentList = () => {
 
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-wrap items-center gap-3">
-                        {/* <select
+                        <select
                             value={selectedCollege}
-                            onChange={(e) => setSelectedCollege(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedCollege(e.target.value);
+                                setCurrentPage(1);
+                            }}
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                         >
                             <option value="">All Colleges</option>
                             {colleges.map((college) => (
-                                <option
-                                    key={college._id}
-                                    value={college.collegeName}
-                                >
+                                <option key={college._id} value={college.collegeName}>
                                     {college.collegeName}
                                 </option>
                             ))}
-                        </select> */}
+                        </select>
 
-                        {/* <select
+                        <select
                             value={selectedCourse}
-                            onChange={(e) => setSelectedCourse(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedCourse(e.target.value);
+                                setCurrentPage(1);
+                            }}
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                         >
                             <option value="">All Courses</option>
                             {courses.map((course) => (
-                                <option
-                                    key={course._id}
-                                    value={course.courseName}
-                                >
+                                <option key={course._id} value={course.courseName}>
                                     {course.courseName}
                                 </option>
                             ))}
-                        </select> */}
+                        </select>
 
-                        {/* <select
+                        <select
                             value={selectedMajor}
-                            onChange={(e) => setSelectedMajor(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedMajor(e.target.value);
+                                setCurrentPage(1);
+                            }}
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                         >
                             <option value="">All Majors</option>
                             {majors.map((major) => (
-                                <option
-                                    key={major._id}
-                                    value={major.majorName}
-                                >
+                                <option key={major._id} value={major.majorName}>
                                     {major.majorName}
                                 </option>
                             ))}
-                        </select> */}
+                        </select>
 
-                        {/* Add here a selection of Certificate name */}
+                        {/* ✅ Certificate Filter */}
                         <select
                             value={selectedCertificate}
-                            onChange={(e) => setSelectedCertificate(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedCertificate(e.target.value);
+                                setCurrentPage(1);
+                            }}
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                         >
                             <option value="">All Certificates</option>
-                            {institutionCertificates.map((certName, idx) => (
-                                <option
-                                    key={idx}
-                                    value={certName}
-                                >
+                            {verifiedCertificates.map((certName, idx) => (
+                                <option key={idx} value={certName}>
                                     {certName}
                                 </option>
                             ))}
@@ -281,11 +284,18 @@ const InstitutionCertificateStudentList = () => {
                 </div>
             </div>
 
+            {/* Stats Summary */}
+            <div className="rounded-lg border border-green-200 bg-green-50 p-4 dark:border-green-700 dark:bg-green-900/20">
+                <p className="text-sm font-semibold text-green-800 dark:text-green-200">
+                    ✅ Total Students with Verified Certificates: <span className="text-lg">{filteredUsers.length}</span>
+                </p>
+            </div>
+
             {/* Table */}
             <div className="rounded border border-gray-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
                 <div className="border-b border-gray-200 p-4 dark:border-slate-700">
                     <p className="text-lg font-medium text-slate-900 dark:text-white">
-                        List of Students {sortOrder === "asc" ? "(A-Z)" : "(Z-A)"}
+                        Students with Verified Certificates {sortOrder === "asc" ? "(A-Z)" : "(Z-A)"}
                     </p>
                 </div>
 
@@ -306,16 +316,12 @@ const InstitutionCertificateStudentList = () => {
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Last Name</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Sex</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Email</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Role</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">College</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Department</th>
                                         <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Major</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Certificates of Student</th>
-                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Status</th>
-                                        <th
-                                            className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700"
-                                            style={{ width: "200px" }}
-                                        >
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Verified Certificates</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">Count</th>
+                                        <th className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700" style={{ width: "150px" }}>
                                             Actions
                                         </th>
                                     </tr>
@@ -323,10 +329,7 @@ const InstitutionCertificateStudentList = () => {
                                 <tbody>
                                     {currentUsers.length > 0 ? (
                                         currentUsers.map((user, index) => (
-                                            <tr
-                                                key={user._id}
-                                                className="hover:bg-gray-50 dark:hover:bg-slate-800"
-                                            >
+                                            <tr key={user._id} className="hover:bg-gray-50 dark:hover:bg-slate-800">
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {indexOfFirstUser + index + 1}
                                                 </td>
@@ -337,7 +340,7 @@ const InstitutionCertificateStudentList = () => {
                                                     {user.firstName}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                                    {user.middleName}
+                                                    {user.middleName || "—"}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.lastName}
@@ -349,9 +352,6 @@ const InstitutionCertificateStudentList = () => {
                                                     {user.email}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
-                                                    {user.role}
-                                                </td>
-                                                <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.college || "—"}
                                                 </td>
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
@@ -360,27 +360,27 @@ const InstitutionCertificateStudentList = () => {
                                                 <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                                     {user.major || "—"}
                                                 </td>
-                                                <td className="whitespace-nowrap border-b px-4 py-2 font-bold text-green-500 dark:border-slate-700">
+                                                <td className="border-b px-4 py-2 dark:border-slate-700">
                                                     {user.certIssued && user.certIssued.length > 0 ? (
                                                         <div
                                                             className="max-w-[200px] truncate"
                                                             title={user.certIssued
-                                                                .filter((cert) => cert.issuedBy?._id === loggedInUser._id)
+                                                                .filter((cert) => cert.certVerificationStatus === "VERIFIED")
                                                                 .map((cert) => cert.nameOfCertificate || "Unnamed Certificate")
                                                                 .join(", ")}
                                                         >
                                                             {user.certIssued
-                                                                .filter((cert) => cert.issuedBy?._id === loggedInUser._id)
-                                                                .slice(0, 3) // show only first 3 badges in table
+                                                                .filter((cert) => cert.certVerificationStatus === "VERIFIED")
+                                                                .slice(0, 2)
                                                                 .map((cert, idx) => (
                                                                     <span
                                                                         key={idx}
-                                                                        className="mr-1 rounded bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300"
+                                                                        className="mr-1 mb-1 inline-block rounded bg-green-100 px-2 py-1 text-xs font-medium text-green-700 dark:bg-green-900 dark:text-green-300"
                                                                     >
-                                                                        {cert.nameOfCertificate || "Unnamed Certificate"}
+                                                                        {cert.nameOfCertificate || "Unnamed"}
                                                                     </span>
                                                                 ))}
-                                                            {user.certIssued.filter((cert) => cert.issuedBy?._id === loggedInUser._id).length > 3 && (
+                                                            {user.certIssued.filter((cert) => cert.certVerificationStatus === "VERIFIED").length > 2 && (
                                                                 <span className="text-xs text-gray-500">+ more</span>
                                                             )}
                                                         </div>
@@ -388,27 +388,25 @@ const InstitutionCertificateStudentList = () => {
                                                         <span className="text-gray-400">No Certificates</span>
                                                     )}
                                                 </td>
-                                                <td className="whitespace-nowrap border-b px-4 py-2 font-bold text-green-500 dark:border-slate-700">
-                                                    {user.accountStatus}
+                                                <td className="whitespace-nowrap border-b px-4 py-2 text-center dark:border-slate-700">
+                                                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-semibold text-green-800 dark:bg-green-900/40 dark:text-green-300">
+                                                        {getVerifiedCertCount(user)}
+                                                    </span>
                                                 </td>
-                                                <td className="flex gap-2 whitespace-nowrap border-b px-4 py-2 font-bold text-yellow-500 dark:border-slate-700">
+                                                <td className="whitespace-nowrap border-b px-4 py-2 dark:border-slate-700">
                                                     <button
                                                         className="rounded bg-green-500 px-3 py-1 text-white hover:bg-green-600"
-                                                        onClick={() => navigate(`/certificates/student/details/${user._id}`)}
-                                                        disabled={updating}
+                                                        onClick={() => navigate(`/verifier/certificates/student-details/${user._id}`)}
                                                     >
-                                                        View
+                                                        View Details
                                                     </button>
                                                 </td>
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
-                                            <td
-                                                colSpan="15"
-                                                className="px-4 py-4 text-center text-gray-500 dark:text-gray-400"
-                                            >
-                                                No pending users found.
+                                            <td colSpan="13" className="px-4 py-4 text-center text-gray-500 dark:text-gray-400">
+                                                No students with verified certificates found.
                                             </td>
                                         </tr>
                                     )}
@@ -441,5 +439,5 @@ const InstitutionCertificateStudentList = () => {
     );
 };
 
-export default InstitutionCertificateStudentList;
+export default VerifiedCertificates;
 

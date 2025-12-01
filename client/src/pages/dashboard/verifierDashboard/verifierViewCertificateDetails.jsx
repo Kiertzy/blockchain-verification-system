@@ -65,8 +65,9 @@ const VerifierCertificateDetails = () => {
                         label="Date Issued"
                         value={certificate.dateIssued ? new Date(certificate.dateIssued).toLocaleString() : "N/A"}
                     />
-                    <Detail label="Certificate Hash" value={certificate.certHash} fullWidth isHash />
-                    <Detail label="Transaction Hash" value={certificate.txHash} fullWidth isHash />
+                    {/* <Detail label="Certificate Hash" value={certificate.certHash} fullWidth isHash />
+                    <Detail label="Transaction Hash" value={certificate.txHash} fullWidth isHash /> */}
+                    
                 </div>
 
                 {/* Back Button */}

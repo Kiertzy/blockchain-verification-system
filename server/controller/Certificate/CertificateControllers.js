@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 
 //Internal Lib Import
 const CertificateIssuedModel = require("../../model/CertificateIssuedModel");
+
 const IssueCertificateService = require("../../services/Certificate/IssueCertificateService");
 const DeleteCertificateService = require("../../services/Certificate/DeleteCertificateService");
 const UpdateCertificateStatusService = require("../../services/Certificate/UpdateCertificateStatusService");
@@ -121,4 +122,3 @@ module.exports = {
   BulkVerificationCertificate,
   GetCertificateById,
 };
-

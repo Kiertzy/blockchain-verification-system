@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Modal, Form, Input, Select, Button, message, Col, Row } from "antd";
 import { useParams } from "react-router-dom";
 import { getUserById, clearUserState, updateUserDetails, clearUpdateState } from "../../../store/slices/userSlice";
+import { getAllCourses } from "../../../store/slices/courseSlice";
+import { getAllColleges } from "../../../store/slices/collegeSlice";
+import { getAllMajors } from "../../../store/slices/majorSlice";
 
 const { Option } = Select;
 
@@ -10,6 +13,9 @@ const AdminInstitutionDetails = () => {
     const { id } = useParams();
     const dispatch = useDispatch();
     const { selectedUser, loading, error, updateLoading, updateError, updateMessage } = useSelector((state) => state.users);
+    const { courses } = useSelector((state) => state.course);
+    const { colleges } = useSelector((state) => state.college);
+    const { majors } = useSelector((state) => state.major);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [form] = Form.useForm();
@@ -18,6 +24,9 @@ const AdminInstitutionDetails = () => {
         if (id) {
             dispatch(getUserById(id));
         }
+        dispatch(getAllCourses());
+        dispatch(getAllColleges());
+        dispatch(getAllMajors());
         return () => {
             dispatch(clearUserState());
         };
@@ -25,6 +34,36 @@ const AdminInstitutionDetails = () => {
 
     useEffect(() => {
         if (selectedUser) {
+            // Parse institutionDepartmentAccess if it's a string
+            let departmentAccess = selectedUser.institutionDepartmentAccess;
+            if (typeof departmentAccess === 'string') {
+                try {
+                    departmentAccess = JSON.parse(departmentAccess);
+                } catch (e) {
+                    departmentAccess = [];
+                }
+            }
+
+            // Parse institutionCollegeAccess if it's a string
+            let collegeAccess = selectedUser.institutionCollegeAccess;
+            if (typeof collegeAccess === 'string') {
+                try {
+                    collegeAccess = JSON.parse(collegeAccess);
+                } catch (e) {
+                    collegeAccess = [];
+                }
+            }
+
+            // Parse institutionMajorAccess if it's a string
+            let majorAccess = selectedUser.institutionMajorAccess;
+            if (typeof majorAccess === 'string') {
+                try {
+                    majorAccess = JSON.parse(majorAccess);
+                } catch (e) {
+                    majorAccess = [];
+                }
+            }
+
             form.setFieldsValue({
                 firstName: selectedUser.firstName,
                 middleName: selectedUser.middleName,
@@ -33,6 +72,9 @@ const AdminInstitutionDetails = () => {
                 sex: selectedUser.sex,
                 institutionName: selectedUser.institutionName,
                 institutionPosition: selectedUser.institutionPosition,
+                institutionCollegeAccess: Array.isArray(collegeAccess) ? collegeAccess : [],
+                institutionMajorAccess: Array.isArray(majorAccess) ? majorAccess : [],
+                institutionDepartmentAccess: Array.isArray(departmentAccess) ? departmentAccess : [],
                 accreditationInfo: selectedUser.accreditationInfo,
                 walletAddress: selectedUser.walletAddress,
                 accountStatus: selectedUser.accountStatus,
@@ -124,7 +166,7 @@ const AdminInstitutionDetails = () => {
                         cert.walletAddressInstitution,
                         cert.dateIssued,
                         cert.certStatus,
-                        issuer.firstName + issuer.middleName + issuer.lastName,
+                        issuer.firstName + " " + issuer.middleName + " " + issuer.lastName,
                         issuer.email,
                     ];
                 });
@@ -195,6 +237,93 @@ const AdminInstitutionDetails = () => {
                         >
                             {selectedUser.accountStatus}
                         </span>
+                    </div>
+
+                    {/* College Access Display */}
+                    <div className="max-w-full">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">College Access</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                            {(() => {
+                                let access = selectedUser.institutionCollegeAccess;
+                                if (typeof access === 'string') {
+                                    try {
+                                        access = JSON.parse(access);
+                                    } catch (e) {
+                                        access = [];
+                                    }
+                                }
+                                
+                                if (Array.isArray(access) && access.length > 0) {
+                                    return access.map((college, idx) => (
+                                        <span
+                                            key={idx}
+                                            className="inline-flex items-center rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-800 dark:bg-purple-900/40 dark:text-purple-300"
+                                        >
+                                            {college}
+                                        </span>
+                                    ));
+                                }
+                                return <span className="text-slate-500 dark:text-slate-400">No access granted</span>;
+                            })()}
+                        </div>
+                    </div>
+
+                    {/* Department Access Display */}
+                    <div className="max-w-full">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">Department Access</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                            {(() => {
+                                let access = selectedUser.institutionDepartmentAccess;
+                                if (typeof access === 'string') {
+                                    try {
+                                        access = JSON.parse(access);
+                                    } catch (e) {
+                                        access = [];
+                                    }
+                                }
+                                
+                                if (Array.isArray(access) && access.length > 0) {
+                                    return access.map((dept, idx) => (
+                                        <span
+                                            key={idx}
+                                            className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:bg-blue-900/40 dark:text-blue-300"
+                                        >
+                                            {dept}
+                                        </span>
+                                    ));
+                                }
+                                return <span className="text-slate-500 dark:text-slate-400">No access granted</span>;
+                            })()}
+                        </div>
+                    </div>
+
+                    {/* Major Access Display */}
+                    <div className="max-w-full">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">Major Access</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                            {(() => {
+                                let access = selectedUser.institutionMajorAccess;
+                                if (typeof access === 'string') {
+                                    try {
+                                        access = JSON.parse(access);
+                                    } catch (e) {
+                                        access = [];
+                                    }
+                                }
+                                
+                                if (Array.isArray(access) && access.length > 0) {
+                                    return access.map((major, idx) => (
+                                        <span
+                                            key={idx}
+                                            className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/40 dark:text-green-300"
+                                        >
+                                            {major}
+                                        </span>
+                                    ));
+                                }
+                                return <span className="text-slate-500 dark:text-slate-400">No access granted</span>;
+                            })()}
+                        </div>
                     </div>
 
                     <div className="max-w-full">
@@ -283,6 +412,7 @@ const AdminInstitutionDetails = () => {
                 open={isModalOpen}
                 onCancel={() => setIsModalOpen(false)}
                 footer={null}
+                width={700}
             >
                 <Form
                     form={form}
@@ -300,10 +430,7 @@ const AdminInstitutionDetails = () => {
                     </Col>
 
                     <Row gutter={16}>
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="firstName"
                                 label="First Name"
@@ -313,23 +440,13 @@ const AdminInstitutionDetails = () => {
                             </Form.Item>
                         </Col>
 
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
-                            <Form.Item
-                                name="middleName"
-                                label="Middle Name"
-                                rules={[{ required: true, message: "Middle Name is required" }]}
-                            >
+                        <Col xs={24} sm={12}>
+                            <Form.Item name="middleName" label="Middle Name">
                                 <Input />
                             </Form.Item>
                         </Col>
 
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="lastName"
                                 label="Last Name"
@@ -339,10 +456,7 @@ const AdminInstitutionDetails = () => {
                             </Form.Item>
                         </Col>
 
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="email"
                                 label="Email"
@@ -352,10 +466,7 @@ const AdminInstitutionDetails = () => {
                             </Form.Item>
                         </Col>
 
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="sex"
                                 label="Sex"
@@ -368,10 +479,7 @@ const AdminInstitutionDetails = () => {
                             </Form.Item>
                         </Col>
 
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="institutionPosition"
                                 label="Institution Position"
@@ -381,14 +489,8 @@ const AdminInstitutionDetails = () => {
                             </Form.Item>
                         </Col>
 
-                        <Col
-                            xs={24}
-                            sm={12}
-                        >
-                            <Form.Item
-                                name="accountStatus"
-                                label="Account Status"
-                            >
+                        <Col xs={24} sm={12}>
+                            <Form.Item name="accountStatus" label="Account Status">
                                 <Select>
                                     <Option value="APPROVED">APPROVED</Option>
                                     <Option value="PENDING">PENDING</Option>
@@ -397,10 +499,7 @@ const AdminInstitutionDetails = () => {
                             </Form.Item>
                         </Col>
 
-                         <Col
-                            xs={24}
-                            sm={12}
-                        >
+                        <Col xs={24} sm={12}>
                             <Form.Item
                                 name="accreditationInfo"
                                 label="Accreditation Info"
@@ -409,14 +508,91 @@ const AdminInstitutionDetails = () => {
                                 <Input />
                             </Form.Item>
                         </Col>
-
                     </Row>
 
+                    {/* ✅ Multi-select College Access */}
                     <Col>
-                        <Form.Item
-                            name="walletAddress"
-                            label="Wallet Address"
+                        <Form.Item 
+                            name="institutionCollegeAccess" 
+                            label="College Access"
+                            help="Select which colleges this institution can access"
                         >
+                            <Select
+                                mode="multiple"
+                                placeholder="Select colleges"
+                                allowClear
+                                showSearch
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                maxTagCount="responsive"
+                            >
+                                {colleges?.map((college) => (
+                                    <Option key={college._id} value={college.collegeName}>
+                                        {college.collegeName}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+
+                    {/* ✅ Multi-select Department Access */}
+                    <Col>
+                        <Form.Item 
+                            name="institutionDepartmentAccess" 
+                            label="Department Access (Courses)"
+                            help="Select which courses/departments this institution can access"
+                        >
+                            <Select
+                                mode="multiple"
+                                placeholder="Select departments/courses"
+                                allowClear
+                                showSearch
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                maxTagCount="responsive"
+                            >
+                                {courses?.map((course) => (
+                                    <Option key={course._id} value={course.courseName}>
+                                        {course.courseName}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+
+                    {/* ✅ Multi-select Major Access */}
+                    <Col>
+                        <Form.Item 
+                            name="institutionMajorAccess" 
+                            label="Major Access"
+                            help="Select which majors this institution can access"
+                        >
+                            <Select
+                                mode="multiple"
+                                placeholder="Select majors"
+                                allowClear
+                                showSearch
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                }
+                                maxTagCount="responsive"
+                            >
+                                {majors?.map((major) => (
+                                    <Option key={major._id} value={major.majorName}>
+                                        {major.majorName}
+                                    </Option>
+                                ))}
+                            </Select>
+                        </Form.Item>
+                    </Col>
+
+                    <Col>
+                        <Form.Item name="walletAddress" label="Wallet Address">
                             <Input disabled />
                         </Form.Item>
                     </Col>
@@ -426,8 +602,9 @@ const AdminInstitutionDetails = () => {
                             type="primary"
                             htmlType="submit"
                             loading={updateLoading}
+                            block
                         >
-                            Update
+                            Update Institution Details
                         </Button>
                     </Form.Item>
                 </Form>
@@ -437,3 +614,4 @@ const AdminInstitutionDetails = () => {
 };
 
 export default AdminInstitutionDetails;
+

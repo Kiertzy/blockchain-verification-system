@@ -41,6 +41,8 @@ import InstitutionCertificates from "./pages/dashboard/institutionDashboard/inst
 import InstitutionCertificateStudentList from "./pages/dashboard/institutionDashboard/institutionCertificateStudentList";
 import InstitutionStudentDetails from "./pages/dashboard/institutionDashboard/studentDetails";
 import InstitutionCertificateDetails from "./pages/dashboard/institutionDashboard/viewCertificateDetails";
+import InstitutionCertTemplate from "./pages/dashboard/institutionDashboard/institutionCertTemplate";
+
 import CertificateDetails from "./components/CertificateDetails";
 
 // Verifier
@@ -51,6 +53,11 @@ import VerifierCertificates from "./pages/dashboard/verifierDashboard/verifyCert
 import BulkVerification from "./pages/dashboard/verifierDashboard/bulkVerification";
 import VerifierStudentDetails from "./pages/dashboard/verifierDashboard/verifierStudentDetails";
 import VerifierViewCertificateDetails from "./pages/dashboard/verifierDashboard/verifierViewCertificateDetails";
+import QrcodeScanner from "./pages/dashboard/verifierDashboard/qrcodeScanner";
+import VerifiedCertificates from "./pages/dashboard/verifierDashboard/verifiedCertificates";
+import PendingCertVerification from "./pages/dashboard/verifierDashboard/pendingCertVerification";
+import NotVerifiedCertificates from "./pages/dashboard/verifierDashboard/notVerifiedCertificates";
+
 
 function App() {
   return (
@@ -64,23 +71,6 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/pending-dashboard" element={<PendingDashboard />} />
 
-          {/* Student deep links (direct access allowed) */}
-          {/* <Route
-            path="/certificates/student/certificate/view/:certId"
-            element={
-              <ProtectedRoute allowedRoles={["STUDENT"]}>
-                <StudentViewCertificateDetails />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/certificates/student/verify/:certId"
-            element={
-              <ProtectedRoute allowedRoles={["STUDENT"]}>
-                <ViewVerifiedCertificateDetails />
-              </ProtectedRoute>
-            }
-          /> */}
           {/* Public certificate links (anyone can open via link, even student) */}
             <Route path="/certificates/student/certificate/view/:certId" element={<StudentViewCertificateDetails />} />
             <Route path="/certificates/student/verify/:certId" element={<ViewVerifiedCertificateDetails />} />
@@ -111,8 +101,6 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={["STUDENT"]} />}>
             <Route element={<LayoutStudent />}>
               <Route path="student-dashboard" element={<StudentDashboardPage />} />
-              {/* <Route path="/certificates/student/certificate/view/:certId" element={<StudentViewCertificateDetails />} />
-              <Route path="/certificates/student/verify/:certId" element={<ViewVerifiedCertificateDetails />} /> */}
             </Route>
           </Route>
 
@@ -121,6 +109,7 @@ function App() {
             <Route element={<LayoutInstitution />}>
               <Route path="institution-dashboard" element={<InstitutionDashboard />} />
               <Route path="certificates/issue" element={<InstitutionCertificates />} />
+              <Route path="certificates/templates" element={<InstitutionCertTemplate />} />
               <Route path="certificates/student/details/:id" element={<InstitutionStudentDetails />} />
               <Route path="certificates/student/list" element={<InstitutionCertificateStudentList />} />
               <Route path="/certificate/details/:certId" element={<InstitutionCertificateDetails />} />
@@ -137,6 +126,10 @@ function App() {
               <Route path="verifier/certificates/student-details/:id" element={<VerifierStudentDetails />} />
               <Route path="certificates/verifier/student/certificate/:certId" element={<VerifierViewCertificateDetails />} />
               <Route path="verifier/certificates/bulk-verification" element={<BulkVerification />} />
+              <Route path="verifier/certificates/qr-scanner" element={<QrcodeScanner/>} />
+              <Route path="verifier/certificates/verified-certificates" element={<VerifiedCertificates/>} />
+              <Route path="verifier/certificates/pending-certificates" element={<PendingCertVerification/>} />
+              <Route path="verifier/certificates/not-verified-certificates" element={<NotVerifiedCertificates/>} />
             </Route>
           </Route>
 

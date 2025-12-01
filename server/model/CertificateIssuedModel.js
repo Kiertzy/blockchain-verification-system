@@ -18,6 +18,10 @@ const CertificateIssuedSchema = new mongoose.Schema(
     walletAddressStudent: { type: String, required: true },
     walletAddressInstitution: { type: String, required: true },
     dateIssued: { type: Date, required: true },
+    certVerificationStatus: {type: String,
+      enum: ["PENDING", "VERIFIED", "NOT VERIFIED"],
+      default: "PENDING"
+    },
     certStatus: {type: String,
       enum: ["CONFIRMED", "REVOKED"],
       default: "CONFIRMED"

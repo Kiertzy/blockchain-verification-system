@@ -173,6 +173,9 @@ const VerifierStudentDetails = () => {
                                         Issued Date
                                     </th>
                                     <th className="border-b px-4 py-2 text-left font-medium text-slate-600 dark:border-slate-700 dark:text-slate-300">
+                                        Verification
+                                    </th>
+                                    <th className="border-b px-4 py-2 text-left font-medium text-slate-600 dark:border-slate-700 dark:text-slate-300">
                                         Certificate Status
                                     </th>
                                     <th className="border-b px-4 py-2 text-left font-medium text-slate-600 dark:border-slate-700 dark:text-slate-300">
@@ -197,6 +200,21 @@ const VerifierStudentDetails = () => {
                                         </td>
                                         <td className="whitespace-nowrap border-b px-4 py-2 text-slate-800 dark:border-slate-700 dark:text-gray-200">
                                             {cert.dateIssued ? new Date(cert.dateIssued).toLocaleDateString() : "N/A"}
+                                        </td>
+                                        <td className="border-b px-4 py-2 dark:border-slate-700">
+                                            <span
+                                                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                                                    cert.certVerificationStatus === "VERIFIED"
+                                                        ? "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300"
+                                                        : cert.certVerificationStatus === "NOT VERIFIED"
+                                                        ? "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300"
+                                                        : cert.certVerificationStatus === "PENDING"
+                                                            ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300"
+                                                            : "bg-gray-100 text-gray-700 dark:bg-gray-900/40 dark:text-gray-300"
+                                                }`}
+                                            >
+                                                {cert.certVerificationStatus}
+                                            </span>
                                         </td>
                                         <td className="border-b px-4 py-2 dark:border-slate-700">
                                             <span
