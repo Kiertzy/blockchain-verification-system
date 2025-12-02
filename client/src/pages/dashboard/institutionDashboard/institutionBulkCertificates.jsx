@@ -33,7 +33,7 @@ const InstitutionBulkCertificates = () => {
     college: "",
     course: "",
     major: "",
-    certStatus: "ACTIVE",
+    certStatus: "CONFIRMED",
     walletAddressInstitution: "",
     dateIssued: new Date().toISOString().split("T")[0],
   });
