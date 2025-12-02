@@ -4,9 +4,6 @@ import { FileDown, ArrowUpDown } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllUsers, clearUserState } from "../../../store/slices/userSlice";
 import { clearUpdateAccountStatusState } from "../../../store/slices/updateUserAccountStatusSlice";
-import { getAllColleges } from "../../../store/slices/collegeSlice";
-import { getAllCourses } from "../../../store/slices/courseSlice";
-import { getAllMajors } from "../../../store/slices/majorSlice";
 import { message } from "antd";
 
 const InstitutionCertificateStudentList = () => {
@@ -15,9 +12,6 @@ const InstitutionCertificateStudentList = () => {
     const { users, loading, error } = useSelector((state) => state.users);
     const { user: loggedInUser } = useSelector((state) => state.auth);
     const { loading: updating, success, error: updateError, message: updateMsg } = useSelector((state) => state.updateUserAccountStatus);
-    const { colleges } = useSelector((state) => state.college);
-    const { courses } = useSelector((state) => state.course);
-    const { majors } = useSelector((state) => state.major);
 
     const [searchQuery, setSearchQuery] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
@@ -30,9 +24,6 @@ const InstitutionCertificateStudentList = () => {
 
     useEffect(() => {
         dispatch(getAllUsers());
-        dispatch(getAllColleges());
-        dispatch(getAllCourses());
-        dispatch(getAllMajors());
         return () => {
             dispatch(clearUserState());
         };
@@ -92,14 +83,40 @@ const InstitutionCertificateStudentList = () => {
             }
         });
 
+    // ✅ Get only students with certificates from this institution (base filter)
+    const baseFilteredUsers = users.filter(
+        (user) =>
+            user.accountStatus === "APPROVED" &&
+            user.role?.toUpperCase() === "STUDENT" &&
+            user.certIssued?.some((cert) => cert.issuedBy?._id === loggedInUser._id)
+    );
+
+    // ✅ Collect unique courses/departments from the student list
+    const availableCourses = [
+        ...new Set(
+            baseFilteredUsers
+                .map((user) => user.department)
+                .filter(Boolean) // remove null/undefined
+        ),
+    ].sort();
+
+    // ✅ Collect unique majors from the student list
+    const availableMajors = [
+        ...new Set(
+            baseFilteredUsers
+                .map((user) => user.major)
+                .filter(Boolean) // remove null/undefined
+        ),
+    ].sort();
+
     // ✅ Collect certificate names issued by this institution
     const institutionCertificates = [
         ...new Set(
-            users
+            baseFilteredUsers
                 .flatMap((user) => user.certIssued?.filter((cert) => cert.issuedBy?._id === loggedInUser._id).map((cert) => cert.nameOfCertificate))
                 .filter(Boolean), // remove null/undefined
         ),
-    ];
+    ].sort();
 
     // Pagination logic
     const indexOfLastUser = currentPage * usersPerPage;
@@ -240,9 +257,9 @@ const InstitutionCertificateStudentList = () => {
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                         >
                             <option value="">All Courses</option>
-                            {courses.map((course) => (
-                                <option key={course._id} value={course.courseName}>
-                                    {course.courseName}
+                            {availableCourses.map((courseName, idx) => (
+                                <option key={idx} value={courseName}>
+                                    {courseName}
                                 </option>
                             ))}
                         </select>
@@ -256,9 +273,9 @@ const InstitutionCertificateStudentList = () => {
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                         >
                             <option value="">All Majors</option>
-                            {majors.map((major) => (
-                                <option key={major._id} value={major.majorName}>
-                                    {major.majorName}
+                            {availableMajors.map((majorName, idx) => (
+                                <option key={idx} value={majorName}>
+                                    {majorName}
                                 </option>
                             ))}
                         </select>
@@ -443,3 +460,4 @@ const InstitutionCertificateStudentList = () => {
 };
 
 export default InstitutionCertificateStudentList;
+
