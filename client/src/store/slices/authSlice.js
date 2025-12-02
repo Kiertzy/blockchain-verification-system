@@ -87,9 +87,26 @@ const authSlice = createSlice({
       // Clear localStorage
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-
-      // Trigger multi-tab logout
-      localStorage.setItem('logout', Date.now());
+      
+      // Signal other tabs to logout
+      localStorage.setItem('logout-event', Date.now().toString());
+    },
+    syncAuthState: (state) => {
+      // Sync state from localStorage
+      const token = localStorage.getItem('token');
+      const userStr = localStorage.getItem('user');
+      const user = userStr ? JSON.parse(userStr) : null;
+      
+      state.token = token;
+      state.user = user;
+      state.isAuthenticated = !!token;
+      
+      // If no token, reset everything
+      if (!token) {
+        state.otpSent = false;
+        state.email = null;
+        state.otpFailed = false;
+      }
     },
     resetOtpState: (state) => {
       state.otpSent = false;
@@ -130,9 +147,17 @@ const authSlice = createSlice({
         state.error = null;
         state.otpFailed = false;
 
-        // Save to localStorage (persist across tabs)
+        // Clear any existing session first
+        localStorage.clear();
+        
+        // Save new session to localStorage
         if (token) localStorage.setItem('token', token);
         if (user) localStorage.setItem('user', JSON.stringify(user));
+        
+        // Generate unique login ID and signal other tabs
+        const loginId = `${user.id}-${Date.now()}`;
+        localStorage.setItem('current-login-id', loginId);
+        localStorage.setItem('login-event', Date.now().toString());
       })
       .addCase(verifyOTP.rejected, (state, action) => {
         state.isLoading = false;
@@ -142,5 +167,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError, logout, resetOtpState } = authSlice.actions;
+export const { clearError, logout, resetOtpState, syncAuthState } = authSlice.actions;
 export default authSlice.reducer;
+

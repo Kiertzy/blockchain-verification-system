@@ -9,3 +9,4 @@ const CertificateRegistryModule = buildModule("CertificateRegistryModule", (m) =
 });
 
 module.exports = CertificateRegistryModule;
+

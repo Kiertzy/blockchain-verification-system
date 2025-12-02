@@ -11,6 +11,8 @@ const GetCertificateByIdService = require("../../services/Certificate/GetCertifi
 const GetAllCertificateService = require("../../services/Certificate/GetAllCertificateService");
 const VerifyCertificateService = require("../../services/Certificate/VerifyCertificateService");
 const BulkVerificationCertificateService = require("../../services/Certificate/BulkVerificationCertificateService");
+const BulkIssueCertificateService = require("../../services/Certificate/BulkIssueCertificateService");
+
 
 /**
  * @desc Issue Certificate
@@ -112,9 +114,25 @@ const BulkVerificationCertificate = async (req, res, next) => {
   }
 };
 
+/**
+ * @desc Bulk Issue Certificates
+ * @access public
+ * @route /api/v1/Certificate/BulkIssueCertificate
+ * @method POST
+ */
+const BulkIssueCertificate = async (req, res, next) => {
+  try {
+    const result = await BulkIssueCertificateService(req);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 module.exports = {
   IssueCertificate,
+  BulkIssueCertificate,
   DeleteCertificate,
   UpdateCertificate,
   GetAllCertificate,

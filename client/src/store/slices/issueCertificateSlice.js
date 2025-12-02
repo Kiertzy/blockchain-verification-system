@@ -64,3 +64,4 @@ const issueCertificateSlice = createSlice({
 export const { clearIssueCertificateState } = issueCertificateSlice.actions;
 
 export default issueCertificateSlice.reducer;
+

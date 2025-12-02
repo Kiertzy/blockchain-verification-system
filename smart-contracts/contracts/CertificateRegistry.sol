@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.28;
 
 contract CertificateRegistry {
@@ -14,7 +13,7 @@ contract CertificateRegistry {
         string certHash; 
         address walletAddressOfStudent;
         address walletAddressOfInstitution;
-        string imageOfCertificate; // Store IPFS hash or URL
+        string imageOfCertificate;
         uint256 dateIssued;
     }
 
@@ -27,11 +26,20 @@ contract CertificateRegistry {
         uint256 dateIssued
     );
 
+    event CertificateBulkIssued(
+        address indexed institution,
+        uint256 totalIssued,
+        uint256 dateIssued
+    );
+
     modifier onlyInstitution() {
         require(msg.sender != address(0), "Invalid institution address");
         _;
     }
 
+    // ======================================================
+    //  SINGLE ISSUE FUNCTION (EXISTING)
+    // ======================================================
     function issueCertificate(
         address _studentWallet,
         string memory _nameOfInstitution,
@@ -43,7 +51,10 @@ contract CertificateRegistry {
         string memory _certStatus,
         string memory _certHash,
         string memory _imageOfCertificate
-    ) public onlyInstitution {
+    ) 
+        public 
+        onlyInstitution 
+    {
         Certificate memory newCert = Certificate({
             nameOfInstitution: _nameOfInstitution,
             nameOfCert: _nameOfCert,
@@ -64,20 +75,82 @@ contract CertificateRegistry {
         emit CertificateIssued(msg.sender, _studentWallet, _nameOfCert, block.timestamp);
     }
 
+    // ======================================================
+    //  BULK ISSUE FUNCTION (NEW 🚀)
+    // ======================================================
+    function issueCertificatesBulk(
+        address[] memory _studentWallets,
+        string memory _nameOfInstitution,
+        string memory _nameOfCert,
+        string[] memory _nameOfStudents,
+        string memory _college,
+        string memory _course,
+        string memory _major,
+        string memory _certStatus,
+        string[] memory _certHashes,
+        string[] memory _imageOfCertificates
+    ) 
+        public 
+        onlyInstitution 
+    {
+        require(
+            _studentWallets.length == _nameOfStudents.length &&
+            _studentWallets.length == _certHashes.length &&
+            _studentWallets.length == _imageOfCertificates.length,
+            "Array length mismatch"
+        );
+
+        uint256 total = _studentWallets.length;
+
+        for (uint256 i = 0; i < total; i++) {
+            Certificate memory newCert = Certificate({
+                nameOfInstitution: _nameOfInstitution,
+                nameOfCert: _nameOfCert,
+                nameOfStudent: _nameOfStudents[i],
+                college: _college,
+                course: _course,
+                certStatus: _certStatus,
+                major: _major,
+                certHash: _certHashes[i],
+                walletAddressOfStudent: _studentWallets[i],
+                walletAddressOfInstitution: msg.sender,
+                imageOfCertificate: _imageOfCertificates[i],
+                dateIssued: block.timestamp
+            });
+
+            studentCertificates[_studentWallets[i]].push(newCert);
+
+            emit CertificateIssued(msg.sender, _studentWallets[i], _nameOfCert, block.timestamp);
+        }
+
+        emit CertificateBulkIssued(msg.sender, total, block.timestamp);
+    }
+
+    // ======================================================
+    //  GETTERS
+    // ======================================================
     function getCertificates(address _studentWallet) public view returns (Certificate[] memory) {
         return studentCertificates[_studentWallet];
     }
 
-    function getCertificateByIndex(address _studentWallet, uint256 index) public view returns (Certificate memory) {
+    function getCertificateByIndex(address _studentWallet, uint256 index) 
+        public 
+        view 
+        returns (Certificate memory) 
+    {
         require(index < studentCertificates[_studentWallet].length, "Index out of bounds");
         return studentCertificates[_studentWallet][index];
     }
 
-    function getCertificateCount(address _studentWallet) public view returns (uint256) {
+    function getCertificateCount(address _studentWallet) 
+        public 
+        view 
+        returns (uint256) 
+    {
         return studentCertificates[_studentWallet].length;
     }
 
-      // ✅ New function to get a certificate by its hash
+    // Search by hash
     function getCertificateByHash(address _studentWallet, string memory _certHash) 
         public 
         view 

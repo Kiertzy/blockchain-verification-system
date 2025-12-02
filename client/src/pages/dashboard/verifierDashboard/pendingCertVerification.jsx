@@ -757,9 +757,15 @@ const PendingCertVerification = () => {
                                             {certificateData.certStatus}
                                         </span>
                                     </div>
+                                    <div>
+                                        <p className="font-medium text-slate-600 dark:text-slate-400">Verification</p>
+                                        <span className="inline-block rounded-full bg-green-200 px-2.5 py-0.5 text-xs font-medium text-green-900 dark:bg-green-800 dark:text-green-100">
+                                            {certificateData.certVerificationStatus}
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <div className="pt-2">
+                                {/* <div className="pt-2">
                                     <p className="font-medium text-slate-600 dark:text-slate-400">Certificate Hash</p>
                                     <p className="break-all font-mono text-xs text-slate-900 dark:text-white">
                                         {certificateData.certHash}
@@ -785,7 +791,8 @@ const PendingCertVerification = () => {
                                     <p className="break-all font-mono text-xs text-slate-900 dark:text-white">
                                         {certificateData.walletAddressInstitution}
                                     </p>
-                                </div>
+                                </div> */}
+
                             </div>
 
                             <div className="flex justify-end">

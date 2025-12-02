@@ -1,4 +1,3 @@
-// src/store/store.js
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice';
 import collegeReducer from './slices/collegeSlice';
@@ -11,7 +10,8 @@ import updateUserAccountStatusReducer from './slices/updateUserAccountStatusSlic
 import CertificateReducer from './slices/certificateSlice';
 import IssueCertificateReducer from './slices/issueCertificateSlice';
 import CertViewReducer from './slices/certViewSlice';
-import certificateTemplateReducer from './slices/certificateTemplateSlice'; 
+import certificateTemplateReducer from './slices/certificateTemplateSlice';
+import BulkIssueCertificateReducer from './slices/bulkIssueCertificate';
 
 export const store = configureStore({
   reducer: {
@@ -26,7 +26,8 @@ export const store = configureStore({
     certificate: CertificateReducer,
     issueCertificate: IssueCertificateReducer,
     allCertificates: CertViewReducer,
-    certificateTemplate: certificateTemplateReducer, 
+    certificateTemplate: certificateTemplateReducer,
+    bulkIssueCertificate: BulkIssueCertificateReducer,
   },
 
   middleware: (getDefaultMiddleware) =>
@@ -38,18 +39,3 @@ export const store = configureStore({
 });
 
 export default store;
-
-// Hydrate auth state from localStorage immediately
-const token = localStorage.getItem('token');
-const user = localStorage.getItem('user');
-
-if (token && user) {
-  store.dispatch({
-    type: 'auth/verifyOTP/fulfilled',
-    payload: {
-      token,
-      user: JSON.parse(user),
-    },
-  });
-}
-

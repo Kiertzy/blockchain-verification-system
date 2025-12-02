@@ -28,6 +28,7 @@
     "react-qr-scanner": "^1.0.0-alpha.11",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.26.2",
+    "react-toastify": "^11.0.5",
     "react-tsparticles": "^2.12.2",
     "recharts": "^2.12.7",
     "tailwind-merge": "^2.5.2",

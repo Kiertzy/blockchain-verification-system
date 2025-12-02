@@ -1,17 +1,46 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import QrScanner from "react-qr-scanner";
 import { message } from "antd";
 
 function QrcodeScanner() {
+    const navigate = useNavigate();
     const [scanResult, setScanResult] = useState(null);
     const [scanning, setScanning] = useState(true);
     const [cameraError, setCameraError] = useState(null);
 
     const handleScan = (data) => {
         if (data) {
-            setScanResult(data.text);
+            const scannedUrl = data.text;
+            setScanResult(scannedUrl);
             setScanning(false);
             message.success("QR Code scanned successfully!");
+
+            // Check if it's a URL and navigate
+            try {
+                const url = new URL(scannedUrl);
+                
+                // Check if it's an internal route (same domain)
+                if (url.hostname === window.location.hostname) {
+                    // Extract the path from the URL
+                    const path = url.pathname + url.search + url.hash;
+                    
+                    // Navigate to the internal route after a short delay
+                    setTimeout(() => {
+                        navigate(path);
+                    }, 1000);
+                } else {
+                    // External URL - open in new tab
+                    setTimeout(() => {
+                        window.open(scannedUrl, '_blank', 'noopener,noreferrer');
+                        resetScanner(); // Reset scanner after opening external link
+                    }, 1000);
+                }
+            } catch (error) {
+                // Not a valid URL, just display it
+                console.log("Scanned content is not a URL:", scannedUrl);
+                message.info("Scanned content is not a URL");
+            }
         }
     };
 
@@ -25,6 +54,24 @@ function QrcodeScanner() {
         setScanResult(null);
         setScanning(true);
         setCameraError(null);
+    };
+
+    const handleManualNavigate = () => {
+        if (scanResult) {
+            try {
+                const url = new URL(scanResult);
+                
+                if (url.hostname === window.location.hostname) {
+                    const path = url.pathname + url.search + url.hash;
+                    navigate(path);
+                } else {
+                    window.open(scanResult, '_blank', 'noopener,noreferrer');
+                    resetScanner();
+                }
+            } catch (error) {
+                message.error("Invalid URL");
+            }
+        }
     };
 
     const previewStyle = {
@@ -92,12 +139,25 @@ function QrcodeScanner() {
                         <div className="break-words rounded bg-white p-4 font-mono text-sm text-slate-900 dark:bg-slate-800 dark:text-white">
                             {scanResult}
                         </div>
-                        <button
-                            onClick={resetScanner}
-                            className="mt-4 w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-                        >
-                            Scan Another QR Code
-                        </button>
+                        <p className="mt-3 text-sm text-green-700 dark:text-green-300">
+                            {scanResult && scanResult.startsWith('http') 
+                                ? "Redirecting you to the certificate..." 
+                                : "Scanned content displayed above"}
+                        </p>
+                        <div className="mt-4 flex gap-3">
+                            <button
+                                onClick={handleManualNavigate}
+                                className="flex-1 rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
+                            >
+                                Go to Link
+                            </button>
+                            <button
+                                onClick={resetScanner}
+                                className="flex-1 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                            >
+                                Scan Another
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
@@ -111,7 +171,8 @@ function QrcodeScanner() {
                     <li>Allow camera access when prompted by your browser</li>
                     <li>Hold the QR code steady within the camera frame</li>
                     <li>Ensure adequate lighting for best results</li>
-                    <li>The scanner will automatically detect and read the QR code</li>
+                    <li>The scanner will automatically detect and navigate to the URL</li>
+                    <li>Internal links will open in the same tab, external links in a new tab</li>
                 </ul>
             </div>
 
@@ -137,3 +198,4 @@ function QrcodeScanner() {
 }
 
 export default QrcodeScanner;
+

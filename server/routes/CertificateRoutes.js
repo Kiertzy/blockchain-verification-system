@@ -6,6 +6,8 @@ const CertificateControllers = require("../controller/Certificate/CertificateCon
 
 CertificateRoutes.post("/IssueCertificate", CertificateControllers.IssueCertificate);
 
+CertificateRoutes.post("/BulkIssueCertificate", CertificateControllers.BulkIssueCertificate);
+
 CertificateRoutes.delete("/DeleteCertificate/:certId", CertificateControllers.DeleteCertificate);
 
 CertificateRoutes.put("/UpdateCertificate/:certId/Status", CertificateControllers.UpdateCertificate);
@@ -19,3 +21,4 @@ CertificateRoutes.post("/VerifyCertificate", CertificateControllers.VerifyCertif
 CertificateRoutes.post("/BulkVerificationCertificate", CertificateControllers.BulkVerificationCertificate);
 
 module.exports = CertificateRoutes;
+

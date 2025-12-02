@@ -26,8 +26,8 @@ const InstitutionCertificate = () => {
     const [previewUrl, setPreviewUrl] = useState(null);
     const [textSettings, setTextSettings] = useState({
         fontSize: 60,
-        fontFamily: 'Arial',
-        color: '#000000',
+        fontFamily: "Arial",
+        color: "#000000",
         yPosition: 50, // percentage from top
     });
 
@@ -49,7 +49,7 @@ const InstitutionCertificate = () => {
         let majorAccess = currentUser?.institutionMajorAccess || [];
 
         // Parse if they're strings
-        if (typeof collegeAccess === 'string') {
+        if (typeof collegeAccess === "string") {
             try {
                 collegeAccess = JSON.parse(collegeAccess);
             } catch (e) {
@@ -57,7 +57,7 @@ const InstitutionCertificate = () => {
             }
         }
 
-        if (typeof departmentAccess === 'string') {
+        if (typeof departmentAccess === "string") {
             try {
                 departmentAccess = JSON.parse(departmentAccess);
             } catch (e) {
@@ -65,7 +65,7 @@ const InstitutionCertificate = () => {
             }
         }
 
-        if (typeof majorAccess === 'string') {
+        if (typeof majorAccess === "string") {
             try {
                 majorAccess = JSON.parse(majorAccess);
             } catch (e) {
@@ -161,7 +161,7 @@ const InstitutionCertificate = () => {
     // Handle template selection
     const handleTemplateSelect = (e) => {
         const templateId = e.target.value;
-        
+
         if (!templateId) {
             // Reset if "Select Template" is chosen
             setSelectedTemplate(null);
@@ -175,17 +175,17 @@ const InstitutionCertificate = () => {
         }
 
         const template = templates.find((t) => t._id === templateId);
-        
+
         if (template) {
             setSelectedTemplate(template);
             setFormData((prev) => ({
                 ...prev,
                 nameOfCertificate: template.nameOfCertificateTemplate,
             }));
-            
+
             // Set preview URL from template
             setPreviewUrl(template.imageOfCertificateTemplate);
-            
+
             // Check for duplicates
             if (selectedStudent) {
                 const duplicate = checkDuplicate(template.nameOfCertificateTemplate, selectedStudent);
@@ -237,15 +237,15 @@ const InstitutionCertificate = () => {
         const { name, value } = e.target;
         setTextSettings((prev) => ({
             ...prev,
-            [name]: name === 'fontSize' || name === 'yPosition' ? parseInt(value) : value,
+            [name]: name === "fontSize" || name === "yPosition" ? parseInt(value) : value,
         }));
     };
 
     // Function to add student name to certificate image
     const addTextToCertificate = async () => {
         return new Promise((resolve, reject) => {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
             const img = new Image();
 
             img.onload = () => {
@@ -259,11 +259,11 @@ const InstitutionCertificate = () => {
                 // Configure text style
                 ctx.font = `bold ${textSettings.fontSize}px ${textSettings.fontFamily}`;
                 ctx.fillStyle = textSettings.color;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
 
                 // Add shadow for better readability
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+                ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
                 ctx.shadowBlur = 4;
                 ctx.shadowOffsetX = 2;
                 ctx.shadowOffsetY = 2;
@@ -275,17 +275,21 @@ const InstitutionCertificate = () => {
                 ctx.fillText(formData.nameOfStudent, canvas.width / 2, yPos);
 
                 // Convert canvas to blob
-                canvas.toBlob((blob) => {
-                    if (blob) {
-                        resolve(blob);
-                    } else {
-                        reject(new Error('Failed to create blob from canvas'));
-                    }
-                }, 'image/png', 1.0);
+                canvas.toBlob(
+                    (blob) => {
+                        if (blob) {
+                            resolve(blob);
+                        } else {
+                            reject(new Error("Failed to create blob from canvas"));
+                        }
+                    },
+                    "image/png",
+                    1.0,
+                );
             };
 
             img.onerror = () => {
-                reject(new Error('Failed to load image'));
+                reject(new Error("Failed to load image"));
             };
 
             img.crossOrigin = "anonymous"; // Handle CORS for external images
@@ -336,7 +340,7 @@ const InstitutionCertificate = () => {
 
             // Upload to Cloudinary
             const formDataCloud = new FormData();
-            formDataCloud.append("file", blob, 'certificate.png');
+            formDataCloud.append("file", blob, "certificate.png");
             formDataCloud.append("upload_preset", UPLOAD_PRESET);
 
             const res = await axios.post(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, formDataCloud);
@@ -358,7 +362,6 @@ const InstitutionCertificate = () => {
             setPreviewUrl(null);
             setSelectedImageFile(null);
             setSelectedTemplate(null);
-
         } catch (error) {
             message.destroy();
             message.error("Failed to process and upload certificate image");
@@ -369,7 +372,7 @@ const InstitutionCertificate = () => {
     // ✅ Show access restrictions info
     const renderAccessInfo = () => {
         const access = getInstitutionAccess();
-        
+
         if (access.colleges.length === 0 && access.departments.length === 0 && access.majors.length === 0) {
             return (
                 <div className="w-full max-w-2xl rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-700 dark:bg-yellow-900/20">
@@ -382,18 +385,22 @@ const InstitutionCertificate = () => {
 
         return (
             <div className="w-full max-w-2xl rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-700 dark:bg-blue-900/20">
-                <p className="mb-2 text-sm font-semibold text-blue-800 dark:text-blue-200">
-                    📋 Your Access Permissions:
-                </p>
+                <p className="mb-2 text-sm font-semibold text-blue-800 dark:text-blue-200">📋 Your Access Permissions:</p>
                 <div className="space-y-1 text-sm text-blue-700 dark:text-blue-300">
                     {access.colleges.length > 0 && (
-                        <p><strong>Colleges:</strong> {access.colleges.join(", ")}</p>
+                        <p>
+                            <strong>Colleges:</strong> {access.colleges.join(", ")}
+                        </p>
                     )}
                     {access.departments.length > 0 && (
-                        <p><strong>Departments:</strong> {access.departments.join(", ")}</p>
+                        <p>
+                            <strong>Departments:</strong> {access.departments.join(", ")}
+                        </p>
                     )}
                     {access.majors.length > 0 && (
-                        <p><strong>Majors:</strong> {access.majors.join(", ")}</p>
+                        <p>
+                            <strong>Majors:</strong> {access.majors.join(", ")}
+                        </p>
                     )}
                 </div>
             </div>
@@ -499,9 +506,7 @@ const InstitutionCertificate = () => {
 
                     {/* Certificate Template Dropdown */}
                     <div className="col-span-2">
-                        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                            Select Certificate Template
-                        </label>
+                        <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Select Certificate Template</label>
                         <select
                             onChange={handleTemplateSelect}
                             value={selectedTemplate?._id || ""}
@@ -509,7 +514,10 @@ const InstitutionCertificate = () => {
                         >
                             <option value="">-- Select Template (or upload custom) --</option>
                             {templates?.map((template) => (
-                                <option key={template._id} value={template._id}>
+                                <option
+                                    key={template._id}
+                                    value={template._id}
+                                >
                                     {template.nameOfCertificateTemplate}
                                 </option>
                             ))}
@@ -541,15 +549,11 @@ const InstitutionCertificate = () => {
                     {previewUrl && formData.nameOfStudent && (
                         <>
                             <div className="col-span-2">
-                                <h3 className="mb-2 font-semibold text-slate-800 dark:text-white">
-                                    Customize Student Name on Certificate
-                                </h3>
+                                <h3 className="mb-2 font-semibold text-slate-800 dark:text-white">Customize Student Name on Certificate</h3>
                             </div>
 
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                                    Font Size
-                                </label>
+                                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Font Size</label>
                                 <input
                                     type="number"
                                     name="fontSize"
@@ -562,9 +566,7 @@ const InstitutionCertificate = () => {
                             </div>
 
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                                    Font Family
-                                </label>
+                                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Font Family</label>
                                 <select
                                     name="fontFamily"
                                     value={textSettings.fontFamily}
@@ -580,9 +582,7 @@ const InstitutionCertificate = () => {
                             </div>
 
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                                    Text Color
-                                </label>
+                                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Text Color</label>
                                 <input
                                     type="color"
                                     name="color"
@@ -593,9 +593,7 @@ const InstitutionCertificate = () => {
                             </div>
 
                             <div>
-                                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">
-                                    Vertical Position (%)
-                                </label>
+                                <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-300">Vertical Position (%)</label>
                                 <input
                                     type="range"
                                     name="yPosition"
@@ -605,16 +603,12 @@ const InstitutionCertificate = () => {
                                     max="90"
                                     className="w-full"
                                 />
-                                <span className="text-xs text-slate-600 dark:text-slate-400">
-                                    {textSettings.yPosition}%
-                                </span>
+                                <span className="text-xs text-slate-600 dark:text-slate-400">{textSettings.yPosition}%</span>
                             </div>
 
                             {/* Preview */}
                             <div className="col-span-2">
-                                <label className="mb-2 block text-sm font-semibold dark:text-white">
-                                    Preview
-                                </label>
+                                <label className="mb-2 block text-sm font-semibold dark:text-white">Preview</label>
                                 <div className="relative overflow-hidden rounded-lg border border-slate-300 dark:border-slate-600">
                                     <img
                                         src={previewUrl}
@@ -625,12 +619,12 @@ const InstitutionCertificate = () => {
                                         className="pointer-events-none absolute left-0 right-0 text-center"
                                         style={{
                                             top: `${textSettings.yPosition}%`,
-                                            transform: 'translateY(-50%)',
+                                            transform: "translateY(-50%)",
                                             fontSize: `${textSettings.fontSize * 0.5}px`,
                                             fontFamily: textSettings.fontFamily,
                                             color: textSettings.color,
-                                            fontWeight: 'bold',
-                                            textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                                            fontWeight: "bold",
+                                            textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
                                         }}
                                     >
                                         {formData.nameOfStudent}
@@ -646,16 +640,10 @@ const InstitutionCertificate = () => {
                             type="submit"
                             disabled={loading || isDuplicate}
                             className={`w-full rounded px-4 py-2 text-white ${
-                                isDuplicate
-                                    ? "bg-gray-500"
-                                    : "bg-green-600 hover:bg-green-700"
+                                isDuplicate ? "bg-gray-500" : "bg-green-600 hover:bg-green-700"
                             } disabled:opacity-50`}
                         >
-                            {loading
-                                ? "Issuing..."
-                                : isDuplicate
-                                ? "Duplicate Certificate Detected"
-                                : "Issue Certificate"}
+                            {loading ? "Issuing..." : isDuplicate ? "Duplicate Certificate Detected" : "Issue Certificate"}
                         </button>
                     </div>
                 </div>
@@ -671,13 +659,24 @@ const InstitutionCertificate = () => {
             {successMsg && issuedCertificate && (
                 <div className="mt-6 max-w-full break-words rounded border border-green-500 bg-green-50 p-4 text-green-800 dark:bg-green-900 dark:text-green-300 sm:max-w-2xl">
                     <h2 className="mb-2 text-lg font-semibold">Certificate Issued ✅</h2>
-                    <p>
+                    <p className="mb-4">
                         <strong>Message:</strong> {successMsg}
                     </p>
 
+                    {/* Display the issued certificate image */}
+                    <div className="mb-4">
+                        <div className="overflow-hidden rounded-lg border border-slate-300 shadow-lg dark:border-slate-600">
+                            <img
+                                src={issuedCertificate.imageOfCertificate}
+                                alt={`Certificate for ${issuedCertificate.nameOfStudent}`}
+                                className="h-auto w-full object-contain"
+                            />
+                        </div>
+                    </div>
+
                     <button
                         onClick={() => navigate(`/certificate/${issuedCertificate._id}`)}
-                        className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                        className="mt-4 w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 sm:w-auto"
                     >
                         View Certificate Details
                     </button>
@@ -688,4 +687,3 @@ const InstitutionCertificate = () => {
 };
 
 export default InstitutionCertificate;
-
