@@ -215,15 +215,15 @@ const InstitutionCertificateStudentList = () => {
                     <div className="flex flex-wrap items-center gap-3">
                         <select
                             value={selectedCollege}
-                            onChange={(e) => setSelectedCollege(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedCollege(e.target.value);
+                                setCurrentPage(1);
+                            }}
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                         >
                             <option value="">All Colleges</option>
                             {colleges.map((college) => (
-                                <option
-                                    key={college._id}
-                                    value={college.collegeName}
-                                >
+                                <option key={college._id} value={college.collegeName}>
                                     {college.collegeName}
                                 </option>
                             ))}
@@ -231,15 +231,15 @@ const InstitutionCertificateStudentList = () => {
 
                         <select
                             value={selectedCourse}
-                            onChange={(e) => setSelectedCourse(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedCourse(e.target.value);
+                                setCurrentPage(1);
+                            }}
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                         >
                             <option value="">All Courses</option>
                             {courses.map((course) => (
-                                <option
-                                    key={course._id}
-                                    value={course.courseName}
-                                >
+                                <option key={course._id} value={course.courseName}>
                                     {course.courseName}
                                 </option>
                             ))}
@@ -247,32 +247,31 @@ const InstitutionCertificateStudentList = () => {
 
                         <select
                             value={selectedMajor}
-                            onChange={(e) => setSelectedMajor(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedMajor(e.target.value);
+                                setCurrentPage(1);
+                            }}
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                         >
                             <option value="">All Majors</option>
                             {majors.map((major) => (
-                                <option
-                                    key={major._id}
-                                    value={major.majorName}
-                                >
+                                <option key={major._id} value={major.majorName}>
                                     {major.majorName}
                                 </option>
                             ))}
                         </select>
 
-                        {/* Add here a selection of Certificate name */}
                         <select
                             value={selectedCertificate}
-                            onChange={(e) => setSelectedCertificate(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedCertificate(e.target.value);
+                                setCurrentPage(1);
+                            }}
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
                         >
                             <option value="">All Certificates</option>
                             {institutionCertificates.map((certName, idx) => (
-                                <option
-                                    key={idx}
-                                    value={certName}
-                                >
+                                <option key={idx} value={certName}>
                                     {certName}
                                 </option>
                             ))}
