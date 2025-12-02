@@ -59,17 +59,19 @@ const InstitutionCertificateStudentList = () => {
                 user.certIssued?.some((cert) => cert.issuedBy?._id === loggedInUser._id),
         )
         .filter((user) => {
-            const fullName = `${user.firstName} ${user.middleName} ${user.lastName}`.toLowerCase();
+            const fullName = `${user.firstName} ${user.middleName || ""} ${user.lastName}`.toLowerCase();
             return fullName.includes(searchQuery.toLowerCase());
         })
-        .filter((user) => (selectedCollege ? user.college === selectedCollege : true))
         .filter((user) => (selectedCourse ? user.department === selectedCourse : true))
         .filter((user) => (selectedMajor ? user.major === selectedMajor : true))
-        .filter((user) =>
-            selectedCertificate
-                ? user.certIssued?.some((cert) => cert.issuedBy?._id === loggedInUser._id && cert.nameOfCertificate === selectedCertificate)
-                : true,
-        )
+        .filter((user) => {
+            if (!selectedCertificate) return true;
+            return user.certIssued?.some(
+                (cert) => 
+                    cert.issuedBy?._id === loggedInUser._id && 
+                    cert.nameOfCertificate === selectedCertificate
+            );
+        })
         .sort((a, b) => {
             // Sort alphabetically by last name, then first name
             const lastNameA = a.lastName?.toLowerCase() || "";
@@ -441,4 +443,3 @@ const InstitutionCertificateStudentList = () => {
 };
 
 export default InstitutionCertificateStudentList;
-
