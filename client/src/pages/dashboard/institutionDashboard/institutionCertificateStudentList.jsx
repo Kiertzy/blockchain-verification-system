@@ -213,7 +213,7 @@ const InstitutionCertificateStudentList = () => {
 
                 <div className="flex flex-col gap-4">
                     <div className="flex flex-wrap items-center gap-3">
-                        <select
+                        {/* <select
                             value={selectedCollege}
                             onChange={(e) => {
                                 setSelectedCollege(e.target.value);
@@ -227,7 +227,7 @@ const InstitutionCertificateStudentList = () => {
                                     {college.collegeName}
                                 </option>
                             ))}
-                        </select>
+                        </select> */}
 
                         <select
                             value={selectedCourse}
