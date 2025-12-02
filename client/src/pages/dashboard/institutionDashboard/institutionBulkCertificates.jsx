@@ -576,9 +576,8 @@ const InstitutionBulkCertificates = () => {
               onChange={handleChange}
               className="w-full rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
             >
-              <option value="ACTIVE">ACTIVE</option>
-              <option value="REVOKED">REVOKED</option>
-              <option value="EXPIRED">EXPIRED</option>
+              <option value="CONFIRMED">CONFIRMED</option>
+              {/* <option value="REVOKED">REVOKED</option> */}
             </select>
           </div>
 
