@@ -108,7 +108,7 @@ const InstitutionDashboard = () => {
                 <div className="card">
                     <div className="card-header">
                         <Users className="text-pink-600" size={28} />
-                        <p className="card-title">Students</p>
+                        <p className="card-title">Certificate Holders</p>
                     </div>
                     <div className="card-body bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
                         <p className="text-3xl font-bold">{totalStudentsWithCertificates}</p>

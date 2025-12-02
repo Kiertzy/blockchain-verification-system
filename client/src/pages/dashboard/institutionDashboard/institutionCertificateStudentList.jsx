@@ -229,7 +229,7 @@ const InstitutionCertificateStudentList = () => {
                             ))}
                         </select> */}
 
-                        {/* <select
+                        <select
                             value={selectedCourse}
                             onChange={(e) => setSelectedCourse(e.target.value)}
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
@@ -243,9 +243,9 @@ const InstitutionCertificateStudentList = () => {
                                     {course.courseName}
                                 </option>
                             ))}
-                        </select> */}
+                        </select>
 
-                        {/* <select
+                        <select
                             value={selectedMajor}
                             onChange={(e) => setSelectedMajor(e.target.value)}
                             className="rounded-md border px-3 py-2 text-sm dark:border-slate-600 dark:bg-slate-800 dark:text-white"
@@ -259,7 +259,7 @@ const InstitutionCertificateStudentList = () => {
                                     {major.majorName}
                                 </option>
                             ))}
-                        </select> */}
+                        </select>
 
                         {/* Add here a selection of Certificate name */}
                         <select
