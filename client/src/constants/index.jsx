@@ -171,7 +171,7 @@ export const navbarInstitutionLinks = [
                 path: "/certificates/bulk-issue",
             },
             {
-                label: "Student List",
+                label: "Certificate Holder List",
                 icon: PackagePlus,
                 path: "/certificates/student/list",
             },

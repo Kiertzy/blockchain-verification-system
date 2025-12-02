@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { message } from "antd";
+import { message, Modal } from "antd";
 import { bulkIssueCertificate, clearBulkIssueCertificateState } from "../../../store/slices/bulkIssueCertificate";
 import { getAllUsers } from "../../../store/slices/userSlice";
 import { getAllCertificateTemplates } from "../../../store/slices/certificateTemplateSlice";
@@ -20,6 +20,7 @@ const InstitutionBulkCertificates = () => {
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [textSettings, setTextSettings] = useState({
     fontSize: 60,
     fontFamily: 'Arial',
@@ -46,6 +47,7 @@ const InstitutionBulkCertificates = () => {
   useEffect(() => {
     if (successMsg && results) {
       message.success(`Successfully issued ${results.length} certificate(s)!`);
+      setShowSuccessModal(true);
     }
   }, [successMsg, results]);
 
@@ -351,6 +353,11 @@ const InstitutionBulkCertificates = () => {
     }
   };
 
+  const handleModalClose = () => {
+    setShowSuccessModal(false);
+    dispatch(clearBulkIssueCertificateState());
+  };
+
   // Render access info
   const renderAccessInfo = () => {
     const access = getInstitutionAccess();
@@ -388,6 +395,78 @@ const InstitutionBulkCertificates = () => {
   return (
     <div className="flex flex-col items-center justify-center gap-6 p-6">
       <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Bulk Issue Certificates</h1>
+
+      {/* Success Modal */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🎉</span>
+            <span className="text-xl font-bold">Certificates Issued Successfully!</span>
+          </div>
+        }
+        open={showSuccessModal}
+        onOk={handleModalClose}
+        onCancel={handleModalClose}
+        width={700}
+        footer={[
+          <button
+            key="close"
+            onClick={handleModalClose}
+            className="rounded-lg bg-green-600 px-6 py-2 text-white hover:bg-green-700"
+          >
+            Close
+          </button>
+        ]}
+      >
+        <div className="py-4">
+          <p className="mb-4 text-base">
+            <strong>Total Issued:</strong> {results?.length || 0} certificate(s)
+          </p>
+          
+          {blockchainData?.txHash && (
+            <div className="mb-4 rounded-lg bg-blue-50 p-3">
+              <p className="mb-1 font-semibold text-blue-800">Blockchain Transaction:</p>
+              <a
+                href={`https://etherscan.io/tx/${blockchainData.txHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="break-all text-sm text-blue-600 hover:underline"
+              >
+                {blockchainData.txHash}
+              </a>
+            </div>
+          )}
+          
+          <div className="max-h-80 overflow-auto rounded-lg border border-slate-200">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-green-100">
+                <tr>
+                  <th className="px-3 py-2 text-left">#</th>
+                  <th className="px-3 py-2 text-left">Student Name</th>
+                  <th className="px-3 py-2 text-left">Wallet Address</th>
+                  <th className="px-3 py-2 text-left">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results?.map((cert, index) => (
+                  <tr key={index} className="border-t border-slate-200 hover:bg-slate-50">
+                    <td className="px-3 py-2">{index + 1}</td>
+                    <td className="px-3 py-2 font-medium">{cert.nameOfStudent}</td>
+                    <td className="px-3 py-2 font-mono text-xs">
+                      {cert.walletAddressStudent?.substring(0, 10)}...
+                    </td>
+                    <td className="px-3 py-2">
+                      <span className="rounded bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800">
+                        PENDING
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </Modal>
 
       {/* Access Permissions */}
       {renderAccessInfo()}
@@ -731,58 +810,6 @@ const InstitutionBulkCertificates = () => {
         </div>
       </form>
 
-      {/* Success Message */}
-      {successMsg && results && (
-        <div className="w-full max-w-4xl rounded-lg border border-green-500 bg-green-50 p-4 text-green-800 dark:bg-green-900 dark:text-green-300">
-          <h2 className="mb-2 text-lg font-semibold">Certificates Issued Successfully ✅</h2>
-          <p className="mb-2">
-            <strong>Total Issued:</strong> {results.length} certificate(s)
-          </p>
-          {blockchainData?.txHash && (
-            <p className="mb-2">
-              <strong>Blockchain Transaction:</strong>{" "}
-              <a
-                href={`https://etherscan.io/tx/${blockchainData.txHash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
-              >
-                {blockchainData.txHash}
-              </a>
-            </p>
-          )}
-          
-          <div className="mt-4 max-h-60 overflow-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-green-100 dark:bg-green-800">
-                <tr>
-                  <th className="px-3 py-2 text-left">#</th>
-                  <th className="px-3 py-2 text-left">Student Name</th>
-                  <th className="px-3 py-2 text-left">Wallet</th>
-                  <th className="px-3 py-2 text-left">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {results.map((cert, index) => (
-                  <tr key={index} className="border-t border-green-200 dark:border-green-700">
-                    <td className="px-3 py-2">{index + 1}</td>
-                    <td className="px-3 py-2">{cert.nameOfStudent}</td>
-                    <td className="px-3 py-2 font-mono text-xs">
-                      {cert.walletAddressStudent?.substring(0, 10)}...
-                    </td>
-                    <td className="px-3 py-2">
-                      <span className="rounded bg-yellow-100 px-2 py-1 text-xs font-semibold text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
-                        PENDING
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
       {/* Error Message */}
       {error && (
         <div className="w-full max-w-4xl rounded-lg border border-red-500 bg-red-100 px-4 py-3 text-red-700 dark:bg-red-800 dark:text-red-300">
@@ -794,3 +821,5 @@ const InstitutionBulkCertificates = () => {
 };
 
 export default InstitutionBulkCertificates;
+
+
